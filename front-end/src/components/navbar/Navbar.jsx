@@ -4,7 +4,6 @@ const Navbar = () => {
   return (
     <nav className="shadow-lg">
       <div className="container mx-auto flex items-center justify-between px-10 py-5">
-        {/* Logo Section */}
         <div className="flex items-center space-x-4">
           <img
             src="./logo.svg"
@@ -41,7 +40,6 @@ const Navbar = () => {
           </a>
         </div>
 
-        {/* Search Bar */}
         <div className="flex items-center bg-gray-200 rounded-lg overflow-hidden hover:bg-gray-300 transition-all duration-200 hover:shadow-lg">
           <input
             type="text"
