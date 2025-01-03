@@ -10,7 +10,7 @@ const Navbar = () => {
           <img
             src="./logo.svg"
             alt="Logo"
-            className=" border-gray-700 cursor-pointer"
+            className=" border-gray-700 cursor-pointer transition-transform transform hover:scale-105"
           />
           </Link>
         </div>
