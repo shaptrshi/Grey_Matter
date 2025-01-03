@@ -1,28 +1,33 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
     <nav className="">
       <div className="container mx-auto flex items-center justify-between px-10 py-5">
         <div className="flex items-center space-x-4">
+          <Link to="/">  
           <img
             src="./logo.svg"
             alt="Logo"
             className=" border-gray-700 cursor-pointer"
           />
+          </Link>
         </div>
 
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
-          {["Featured","Enviroment", "News", "Science", "Technology"].map((section) => (
-            <a
-              key={section}
-              href={`#${section.toLowerCase()}`}
-              className="relative text-gray-900 hover:text-gray-600 transition-colors duration-300 text-xl group"
-            >
-              {section}
-              <span className="absolute left-0 bottom-0 w-0 h-1 bg-gray-300 transition-all duration-550 ease-out group-hover:w-full"></span>
-            </a>
-          ))}
+          {["Featured", "Environment", "News", "Science", "Technology"].map(
+            (section) => (
+              <Link
+                key={section}
+                to={`/${section.toLowerCase()}`}
+                className="relative text-gray-900 hover:text-gray-600 transition-colors duration-300 text-xl group"
+              >
+                {section}
+                <span className="absolute left-0 bottom-0 w-0 h-1 bg-gray-300 transition-all duration-550 ease-out group-hover:w-full"></span>
+              </Link>
+            )
+          )}
         </div>
 
 
