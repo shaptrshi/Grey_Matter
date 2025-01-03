@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import BlogCards from "./BlogCard";
 
 function Home() {
   return (
-    <div>Home</div>
-  )
+    <>
+      <BlogCards />
+    </>
+  );
 }
 
-export default Home
+export default Home;
