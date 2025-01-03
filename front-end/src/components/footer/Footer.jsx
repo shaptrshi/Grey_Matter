@@ -19,21 +19,21 @@ const Footer = () => {
             className="group relative cursor-pointer transition-colors duration-300 hover:text-gray-600"
           >
             Privacy Policy
-            <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-gray-300 transition-all duration-300 ease-out group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-1 bg-gray-300 transition-all duration-300 ease-out group-hover:w-full"></span>
           </Link>
           <Link
             to="/terms-of-use"
             className="group relative cursor-pointer transition-colors duration-300 hover:text-gray-600"
           >
             Terms of Use
-            <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-gray-300 transition-all duration-300 ease-out group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-1 bg-gray-300 transition-all duration-300 ease-out group-hover:w-full"></span>
           </Link>
           <Link
             to="/contact"
             className="group relative cursor-pointer transition-colors duration-300 hover:text-gray-600"
           >
             Contact
-            <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-gray-300 transition-all duration-300 ease-out group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-1 bg-gray-300 transition-all duration-300 ease-out group-hover:w-full"></span>
           </Link>
         </div>
 
