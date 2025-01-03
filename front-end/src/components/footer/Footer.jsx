@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <footer className="bg-white py-10">
-      <div className="container mx-auto text-center space-y-6">
+      <div className="container mx-auto text-center space-y-7">
         <div>
           <img
             src="./logo.svg"
             alt="Logo"
-            className="w-40 h-40 mx-auto transition-transform transform hover:scale-105"
+            className="w-50 h-50 mx-auto transition-transform transform hover:scale-105"
           />
         </div>
 
@@ -37,8 +37,8 @@ const Footer = () => {
           </Link>
         </div>
 
-        <p className="text-gray-500 text-lg">
-          &copy; 2025 Grey-Matter. All rights reserved.
+        <p className="text-gray-700 text-lg">
+          &copy; 2025 Grey-Matter.
         </p>
       </div>
     </footer>
