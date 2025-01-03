@@ -8,9 +8,9 @@ const Footer = () => {
         <div>
           <Link to="/">  
           <img
-            src="./logo.svg"
+            src="./logo2.png"
             alt="Logo"
-            className="w-50 h-50 mx-auto transition-transform transform hover:scale-105 cursor-pointer"
+            className="w-50 h-20 mx-auto transition-transform transform hover:scale-105 cursor-pointer"
           />
           </Link>
         </div>
@@ -40,7 +40,7 @@ const Footer = () => {
         </div>
 
         <p className="text-gray-700 text-lg">
-          &copy; 2025 Grey-Matter.
+          &copy; 2025 Grey Matter.
         </p>
       </div>
     </footer>

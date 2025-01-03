@@ -8,9 +8,9 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           <Link to="/">  
           <img
-            src="./logo.svg"
+            src="./logo2.png"
             alt="Logo"
-            className=" border-gray-700 cursor-pointer transition-transform transform hover:scale-105"
+            className=" border-gray-700 cursor-pointer transition-transform transform hover:scale-105 w-48 h-19"
           />
           </Link>
         </div>
