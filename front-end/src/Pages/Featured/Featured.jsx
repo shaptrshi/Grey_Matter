@@ -76,9 +76,9 @@ const Featured = () => {
               <CardFooter>
                 <Button
                   asChild
-                  className="w-full bg-primary hover:bg-primary/90"
+                  className="w-auto bg-primary hover:bg-primary/90 px-3 py-2 text-center text-black"
                 >
-                  <Link to={article.link}>Read More</Link>
+                  <Link to={article.link} className="text-white hover:text-gray-600 transition-colors">Read More</Link>
                 </Button>
               </CardFooter>
             </Card>
