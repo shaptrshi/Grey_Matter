@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 const Science = () => {
@@ -66,14 +66,6 @@ const Science = () => {
                   {article.description}
                 </p>
               </CardContent>
-              <CardFooter>
-                <Button
-                  asChild
-                  className="w-auto bg-primary hover:bg-primary/90 px-3 py-2 text-center text-black"
-                >
-                  <Link to={article.link} className="text-white hover:text-gray-600 transition-colors">Read More</Link>
-                </Button>
-              </CardFooter>
             </Card>
           ))}
         </div>
