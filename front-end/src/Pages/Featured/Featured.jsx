@@ -1,7 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 const Featured = () => {
   const featuredArticles = [
@@ -24,7 +22,8 @@ const Featured = () => {
     {
       id: 3,
       title: "Space Exploration",
-      description: "Discover the latest missions and findings in space exploration.",
+      description:
+        "Discover the latest missions and findings in space exploration.",
       image: "./space.jpg",
       link: "/articles/space",
       category: "Science",
@@ -46,8 +45,9 @@ const Featured = () => {
           Featured
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          A handpicked selection of standout articles from Environment, News, Science, and Technology. 
-          Explore the best insights across various fields.
+          A handpicked selection of standout articles from Environment, News,
+          Science, and Technology. Explore the best insights across various
+          fields.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredArticles.map((article) => (
