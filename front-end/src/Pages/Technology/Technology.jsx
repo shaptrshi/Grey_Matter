@@ -9,7 +9,7 @@ const Technology = () => {
       id: 1,
       title: "Latest Gadgets",
       description: "Get insights into the newest gadgets and innovations.",
-      image: "./gadgets.jpg",
+      image: "./pic.jpg",
       link: "/articles/gadgets",
     },
     {

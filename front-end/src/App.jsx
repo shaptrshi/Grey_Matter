@@ -12,6 +12,7 @@ import Admin from "./Pages/Admin/Admin";
 import PrivacyPolicy from "./Pages/Privacy/PrivacyPolicy";
 import Terms from "./Pages/TermsOfUse/Terms";
 import Contact from "./Pages/Contact/Contact";
+import Article from "./Pages/Article/Article";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -30,6 +31,7 @@ function App() {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-use" element={<Terms />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/a" element={<Article/>} />
       </Routes>
       <Footer />
     </Router>
