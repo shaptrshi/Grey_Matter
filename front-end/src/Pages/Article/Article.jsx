@@ -2,11 +2,21 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { FaFacebookF, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa';
+import { SiX } from 'react-icons/si'; 
+import { AiOutlineMail, AiOutlineLink } from 'react-icons/ai'; 
 
 const Article = () => {
   const navigate = useNavigate();
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
+  const [isUrlCopied, setIsUrlCopied] = useState(false); // State to track URL copy status
 
   const handleAddComment = () => {
     if (commentText.trim()) {
@@ -16,6 +26,47 @@ const Article = () => {
       ]);
       setCommentText(""); // Clear the input field after adding the comment
     }
+  };
+
+  const shareArticle = (platform) => {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent("Check out this amazing article!");
+
+    switch (platform) {
+      case "x":
+        // Commented for now
+        // window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, "_blank");
+        break;
+      case "facebook":
+        // Commented for now
+        // window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
+        break;
+      case "linkedin":
+        // Commented for now
+        // window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${text}`, "_blank");
+        break;
+      case "whatsapp":
+        // Commented for now
+        // window.open(`https://wa.me/?text=${text} ${url}`, "_blank");
+        break;
+      case "email":
+        window.open(`mailto:?subject=${text}&body=${url}`, "_self");
+        break;
+      default:
+        break;
+    }
+  };
+
+  const copyUrlToClipboard = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        setIsUrlCopied(true); // Set the state to show the copied message
+        setTimeout(() => setIsUrlCopied(false), 2000); // Hide the message after 2 seconds
+      })
+      .catch(() => {
+        alert("Failed to copy URL!"); // In case copying fails
+      });
   };
 
   return (
@@ -33,9 +84,11 @@ const Article = () => {
         {/* Banner Text */}
         <div className="absolute inset-0 z-20 flex items-end px-5 md:px-10 lg:px-20 py-6">
           <div className="text-left text-white pl-10 md:pl-20 lg:pl-32 py-5">
-            <h1 className="text-5xl md:text-6xl font-bold mb-4">Protecting Our Forests</h1>
+            <h1 className="text-5xl md:text-6xl font-bold mb-4">
+              Protecting Our Forests
+            </h1>
             <p className="text-lg md:text-xl text-gray-300">
-              By John Doe | October 5, 2024
+              By <a href="https://www.linkedin.com/in/johndoe" className="text-white hover:underline">John Doe</a> | October 5, 2024
             </p>
           </div>
         </div>
@@ -52,16 +105,17 @@ const Article = () => {
                 species. However, deforestation and habitat destruction have
                 placed immense pressure on these natural wonders.
               </p>
-              {/* Embedded Image */}
+            
               <div className="my-6">
-              <img
-                src="./pic.jpg"
-                alt="A lush green forest"
-                className="w-1/2 rounded-md shadow-md"
-              />
-              <p className="text-sm text-muted-foreground mt-2">
-                A scenic view of a lush green forest, a reminder of nature's beauty.
-              </p>
+                <img
+                  src="./pic.jpg"
+                  alt="A lush green forest"
+                  className="w-1/2 rounded-md shadow-md"
+                />
+                <p className="text-sm text-muted-foreground mt-2">
+                  A scenic view of a lush green forest, a reminder of nature's
+                  beauty.
+                </p>
               </div>
               <p>
                 Efforts to preserve forests worldwide are gaining momentum. From
@@ -85,6 +139,103 @@ const Article = () => {
           </CardContent>
         </Card>
 
+        {/* Share Section */}
+        <div className="mt-8">
+          <h2 className="text-3xl font-semibold text-foreground mb-4">
+            Share this article
+          </h2>
+          <div className="flex space-x-4">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className="bg-black text-white hover:bg-gray-800 rounded-full p-3"
+                    onClick={() => shareArticle("x")}
+                  >
+                    <SiX size={24} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Share on X</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className="bg-blue-600 text-white hover:bg-blue-700 rounded-full p-3"
+                    onClick={() => shareArticle("facebook")}
+                  >
+                    <FaFacebookF size={24} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Share on Facebook</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className="bg-blue-500 text-white hover:bg-blue-600 rounded-full p-3"
+                    onClick={() => shareArticle("linkedin")}
+                  >
+                    <FaLinkedinIn size={24} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Share on LinkedIn</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className="bg-green-500 text-white hover:bg-green-600 rounded-full p-3"
+                    onClick={() => shareArticle("whatsapp")}
+                  >
+                    <FaWhatsapp size={24} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Share on WhatsApp</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className="bg-red-600 text-white hover:bg-red-700 rounded-full p-3"
+                    onClick={() => shareArticle("email")}
+                  >
+                    <AiOutlineMail size={24} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Share via Email</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            {/* Copy URL Button */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className="bg-gray-600 text-white hover:bg-gray-700 rounded-full p-3"
+                    onClick={copyUrlToClipboard}
+                  >
+                    <AiOutlineLink size={24} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Copy URL</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          {isUrlCopied && (
+            <div className="mt-2 text-green-500">
+              URL copied to clipboard!
+            </div>
+          )}
+        </div>
+
         {/* Comment Section */}
         <div className="mt-10">
           <h2 className="text-3xl font-semibold text-foreground mb-4">
@@ -100,12 +251,12 @@ const Article = () => {
             ></textarea>
             <Button
               onClick={handleAddComment}
-              className="mt-3 bg-black text-white hover:bg-primary/90"
+              className="mt-3 bg-black text-white hover:bg-gray-900 transition-all"
             >
               Post Comment
             </Button>
           </div>
-          {comments.length > 0 ? (
+          {comments.length > 0 && (
             <ul className="space-y-4">
               {comments.map((comment) => (
                 <li
@@ -116,8 +267,6 @@ const Article = () => {
                 </li>
               ))}
             </ul>
-          ) : (
-            <p className="text-muted-foreground">No comments yet. Be the first to comment!</p>
           )}
         </div>
       </div>
