@@ -2,30 +2,44 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { FaFacebookF, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa';
-import { SiX } from 'react-icons/si'; 
-import { AiOutlineMail, AiOutlineLink } from 'react-icons/ai'; 
+import { FaFacebookF, FaLinkedinIn, FaThumbsUp, FaThumbsDown, FaLink, FaWhatsapp } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
 
 const Article = () => {
   const navigate = useNavigate();
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
-  const [isUrlCopied, setIsUrlCopied] = useState(false); // State to track URL copy status
+  const [isUrlCopied, setIsUrlCopied] = useState(false);
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
 
   const handleAddComment = () => {
     if (commentText.trim()) {
       setComments((prevComments) => [
         ...prevComments,
-        { id: Date.now(), text: commentText },
+        { id: Date.now(), text: commentText, likes: 0, dislikes: 0 },
       ]);
-      setCommentText(""); // Clear the input field after adding the comment
+      setCommentText("");
     }
+  };
+
+  const handleLike = () => setLikes(likes + 1);
+  const handleDislike = () => setDislikes(dislikes + 1);
+
+  const handleCommentLike = (id) => {
+    setComments((prevComments) =>
+      prevComments.map((comment) =>
+        comment.id === id ? { ...comment, likes: comment.likes + 1 } : comment
+      )
+    );
+  };
+
+  const handleCommentDislike = (id) => {
+    setComments((prevComments) =>
+      prevComments.map((comment) =>
+        comment.id === id ? { ...comment, dislikes: comment.dislikes + 1 } : comment
+      )
+    );
   };
 
   const shareArticle = (platform) => {
@@ -33,21 +47,14 @@ const Article = () => {
     const text = encodeURIComponent("Check out this amazing article!");
 
     switch (platform) {
-      case "x":
-        // Commented for now
-        // window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, "_blank");
-        break;
       case "facebook":
-        // Commented for now
-        // window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
+        window.open(`https://facebook.com/sharer/sharer.php?u=${url}`, "_blank");
         break;
       case "linkedin":
-        // Commented for now
-        // window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${text}`, "_blank");
+        window.open(`https://linkedin.com/shareArticle?url=${url}`, "_blank");
         break;
       case "whatsapp":
-        // Commented for now
-        // window.open(`https://wa.me/?text=${text} ${url}`, "_blank");
+        window.open(`https://wa.me/?text=${text} ${url}`, "_blank");
         break;
       case "email":
         window.open(`mailto:?subject=${text}&body=${url}`, "_self");
@@ -59,43 +66,46 @@ const Article = () => {
 
   const copyUrlToClipboard = () => {
     const url = window.location.href;
-    navigator.clipboard.writeText(url)
+    navigator.clipboard
+      .writeText(url)
       .then(() => {
-        setIsUrlCopied(true); // Set the state to show the copied message
-        setTimeout(() => setIsUrlCopied(false), 2000); // Hide the message after 2 seconds
+        setIsUrlCopied(true);
+        setTimeout(() => setIsUrlCopied(false), 2000);
       })
       .catch(() => {
-        alert("Failed to copy URL!"); // In case copying fails
+        alert("Failed to copy URL!");
       });
   };
 
   return (
     <div className="bg-background min-h-screen">
-      {/* Banner Image with Gradient and Content */}
       <div className="relative w-full h-80 md:h-[25rem] lg:h-[30rem] overflow-hidden">
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/20 z-10"></div>
-        {/* Banner Image */}
         <img
           src="./pic.jpg"
           alt="Protecting Our Forests"
           className="w-full h-full object-cover"
         />
-        {/* Banner Text */}
         <div className="absolute inset-0 z-20 flex items-end px-5 md:px-10 lg:px-20 py-6">
           <div className="text-left text-white pl-10 md:pl-20 lg:pl-32 py-5">
             <h1 className="text-5xl md:text-6xl font-bold mb-4">
               Protecting Our Forests
             </h1>
             <p className="text-lg md:text-xl text-gray-300">
-              By <a href="https://www.linkedin.com/in/johndoe" className="text-white hover:underline">John Doe</a> | October 5, 2024
+              By{" "}
+              <a
+                href="https://www.linkedin.com/in/johndoe"
+                className="text-white hover:underline"
+              >
+                John Doe
+              </a>{" "}
+              | October 5, 2024
             </p>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-5 py-10">
-        {/* Article Content */}
         <Card className="overflow-hidden">
           <CardContent className="p-6">
             <div className="prose prose-invert max-w-none text-lg leading-relaxed">
@@ -105,138 +115,147 @@ const Article = () => {
                 species. However, deforestation and habitat destruction have
                 placed immense pressure on these natural wonders.
               </p>
-            
-              <div className="my-6">
-                <img
-                  src="./pic.jpg"
-                  alt="A lush green forest"
-                  className="w-1/2 rounded-md shadow-md"
-                />
-                <p className="text-sm text-muted-foreground mt-2">
-                  A scenic view of a lush green forest, a reminder of nature's
-                  beauty.
-                </p>
-              </div>
+
+              <h2 className="text-2xl font-semibold text-foreground my-4">
+                The Importance of Forests
+              </h2>
               <p>
-                Efforts to preserve forests worldwide are gaining momentum. From
-                local conservation programs to international treaties, every
-                step counts in combating deforestation. Protecting our forests
-                is not just an environmental issue—it's a necessity for the
-                future of humanity and countless other species.
+                Forests are crucial for the environment and the well-being of
+                all living organisms. The trees in forests absorb carbon dioxide
+                (CO2) and release oxygen, which is essential for the survival of
+                all oxygen-dependent organisms, including humans. They play a
+                vital role in mitigating climate change by acting as carbon sinks,
+                storing more carbon than they release.
               </p>
-              <h2 className="text-2xl font-semibold mt-6">Key Initiatives</h2>
-              <ul>
-                <li>Reforestation programs in Amazon rainforests.</li>
-                <li>Promoting sustainable logging practices.</li>
-                <li>Raising awareness about the importance of biodiversity.</li>
-              </ul>
               <p>
-                We must all play our part in ensuring that forests are preserved
-                for generations to come. Every action, no matter how small, can
-                make a difference in protecting our planet's green lungs.
+                In addition to carbon sequestration, forests help maintain the
+                water cycle by absorbing rainwater and releasing moisture into
+                the atmosphere through transpiration. They also prevent soil
+                erosion by stabilizing the soil with their roots and reducing the
+                risk of flooding. Forests are also home to over 80% of the world's
+                terrestrial biodiversity, offering a habitat for countless species.
+              </p>
+
+              <div className="my-8">
+                <img
+                  src="pic.jpg"
+                  alt="Forest Conservation"
+                  className="w-1/2 h-auto mx-auto rounded-md shadow-lg"
+                />
+                <p className="mt-4 text-center text-gray-600">Forest Conservation Efforts</p>
+              </div>
+
+              <h2 className="text-2xl font-semibold text-foreground my-4">
+                Deforestation and Its Impact
+              </h2>
+              <p>
+                Unfortunately, deforestation is occurring at an alarming rate. It
+                is driven primarily by human activities such as agriculture,
+                urbanization, and logging. Every year, millions of hectares of
+                forest are cleared, with devastating consequences for wildlife,
+                the environment, and the climate. Deforestation leads to habitat
+                loss, threatening the survival of species and disrupting entire
+                ecosystems.
+              </p>
+              <p>
+                The loss of forests also contributes to global warming, as trees
+                that once absorbed CO2 are removed, and the carbon stored in their
+                biomass is released back into the atmosphere. This process
+                exacerbates climate change and leads to more extreme weather
+                events, such as heatwaves, storms, and floods.
+              </p>
+
+              <h2 className="text-2xl font-semibold text-foreground my-4">
+                Efforts to Protect Forests
+              </h2>
+              <p>
+                The good news is that there are many initiatives in place to
+                protect and restore forests. Governments, non-governmental
+                organizations (NGOs), and local communities are working together
+                to combat deforestation through legislation, conservation
+                programs, and reforestation projects.
+              </p>
+              <p>
+                One such initiative is the REDD+ program, which incentivizes
+                developing countries to reduce emissions from deforestation and
+                forest degradation. This program has been successful in reducing
+                deforestation rates in countries like Brazil, where the Amazon
+                rainforest has seen a reduction in clearing.
+              </p>
+              <p>
+                In addition to these programs, there are numerous grassroots
+                efforts around the world that aim to raise awareness about the
+                importance of forests and encourage sustainable practices. Local
+                communities are engaging in reforestation and agroforestry, which
+                involves integrating trees into agricultural systems, to restore
+                degraded lands and improve biodiversity.
+              </p>
+
+              <h2 className="text-2xl font-semibold text-foreground my-4">
+                How You Can Help
+              </h2>
+              <p>
+                As individuals, there are several ways we can contribute to the
+                protection of forests. First and foremost, we can support
+                sustainable products, such as those certified by organizations like
+                the Forest Stewardship Council (FSC), which ensures that products
+                come from responsibly managed forests.
+              </p>
+              <p>
+                Another way to help is by reducing our carbon footprint. By
+                adopting sustainable practices such as using energy-efficient
+                appliances, driving less, and reducing waste, we can help reduce
+                the pressure on forests. Lastly, supporting policies that protect
+                forests and advocating for stronger environmental regulations can
+                also make a significant impact.
+              </p>
+
+              <p>
+                Protecting our forests is not only about saving trees; it's about
+                ensuring a healthier future for all life on Earth. By taking
+                action today, we can help preserve these critical ecosystems for
+                generations to come.
               </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Share Section */}
+        <div className="mt-8 flex items-center space-x-4">
+          <Button variant="outline" onClick={handleLike} className="flex items-center bg-white text-black hover:bg-gray-200 p-4 text-xl rounded-md border-none">
+            <FaThumbsUp className="mr-2" /> {likes}{likes !== 1 ? "" : ""}
+          </Button>
+          <Button variant="outline" onClick={handleDislike} className="flex items-center bg-white text-black hover:bg-gray-200 p-4 text-xl rounded-md border-none">
+            <FaThumbsDown className="mr-2" /> {dislikes}
+            {dislikes !== 1 ? "" : ""}
+          </Button>
+        </div>
+
         <div className="mt-8">
           <h2 className="text-3xl font-semibold text-foreground mb-4">
             Share this article
           </h2>
           <div className="flex space-x-4">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className="bg-black text-white hover:bg-gray-800 rounded-full p-3"
-                    onClick={() => shareArticle("x")}
-                  >
-                    <SiX size={24} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Share on X</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className="bg-blue-600 text-white hover:bg-blue-700 rounded-full p-3"
-                    onClick={() => shareArticle("facebook")}
-                  >
-                    <FaFacebookF size={24} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Share on Facebook</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className="bg-blue-500 text-white hover:bg-blue-600 rounded-full p-3"
-                    onClick={() => shareArticle("linkedin")}
-                  >
-                    <FaLinkedinIn size={24} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Share on LinkedIn</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className="bg-green-500 text-white hover:bg-green-600 rounded-full p-3"
-                    onClick={() => shareArticle("whatsapp")}
-                  >
-                    <FaWhatsapp size={24} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Share on WhatsApp</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className="bg-red-600 text-white hover:bg-red-700 rounded-full p-3"
-                    onClick={() => shareArticle("email")}
-                  >
-                    <AiOutlineMail size={24} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Share via Email</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            {/* Copy URL Button */}
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className="bg-gray-600 text-white hover:bg-gray-700 rounded-full p-3"
-                    onClick={copyUrlToClipboard}
-                  >
-                    <AiOutlineLink size={24} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Copy URL</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Button variant="outline" onClick={() => shareArticle("facebook")} className="bg-white text-black hover:bg-gray-200 p-5 text-xl rounded-md border-none">
+              <FaFacebookF />
+            </Button>
+            <Button variant="outline" onClick={() => shareArticle("linkedin")} className="bg-white text-black hover:bg-gray-200 p-5 text-2xl rounded-md border-none">
+              <FaLinkedinIn />
+            </Button>
+            <Button variant="outline" onClick={() => shareArticle("whatsapp")} className="bg-white text-black hover:bg-gray-200 p-5 text-5xl rounded-md border-none">
+              <FaWhatsapp />
+            </Button>
+            <Button variant="outline" onClick={() => shareArticle("email")} className="bg-white text-black hover:bg-gray-200 p-5 text-5xl rounded-md border-none">
+              <MdEmail />
+            </Button>
+            <Button variant="outline" onClick={copyUrlToClipboard} className="bg-white text-black hover:bg-gray-200 p-5 text-5xl rounded-md border-none">
+              <FaLink />
+            </Button>
           </div>
           {isUrlCopied && (
-            <div className="mt-2 text-green-500">
-              URL copied to clipboard!
-            </div>
+            <div className="mt-2 text-gray-900">URL copied to clipboard!</div>
           )}
         </div>
 
-        {/* Comment Section */}
         <div className="mt-10">
           <h2 className="text-3xl font-semibold text-foreground mb-4">
             Comments
@@ -263,7 +282,15 @@ const Article = () => {
                   key={comment.id}
                   className="p-4 bg-muted-background rounded-md shadow-sm"
                 >
-                  {comment.text}
+                  <p>{comment.text}</p>
+                  <div className="flex space-x-4 mt-2">
+                    <Button variant="outline" onClick={() => handleCommentLike(comment.id)} className="bg-white text-black hover:bg-gray-200 p-3 rounded-md border-none">
+                      <FaThumbsUp className="mr-2" /> {comment.likes}
+                    </Button>
+                    <Button variant="outline" onClick={() => handleCommentDislike(comment.id)} className="bg-white text-black hover:bg-gray-200 p-3 rounded-md border-none">
+                      <FaThumbsDown className="mr-2" /> {comment.dislikes}
+                    </Button>
+                  </div>
                 </li>
               ))}
             </ul>
