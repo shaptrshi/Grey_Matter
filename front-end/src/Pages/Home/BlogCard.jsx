@@ -33,7 +33,7 @@ const BlogCards = () => {
       {articles.map((article, index) => (
         <Card
           key={index}
-          className="overflow-hidden group cursor-pointer transition-transform hover:scale-105"
+          className="overflow-hidden group cursor-pointer transition-transform hover:scale-105 hover:shadow-sm duration-300 hover:shadow-gray-400"
         >
           <div className="relative">
             <img

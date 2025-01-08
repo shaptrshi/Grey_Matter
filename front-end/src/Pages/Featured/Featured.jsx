@@ -53,7 +53,7 @@ const Featured = () => {
           {featuredArticles.map((article) => (
             <Card
               key={article.id}
-              className="hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+              className="hover:shadow-sm duration-300 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-gray-400"
             >
               <CardHeader className="p-0">
                 <img

@@ -221,10 +221,10 @@ const Article = () => {
         </Card>
 
         <div className="mt-8 flex items-center space-x-4">
-          <Button variant="outline" onClick={handleLike} className="flex items-center bg-white text-black hover:bg-gray-200 p-4 text-xl rounded-md border-none">
+          <Button variant="outline" onClick={handleLike} className="flex items-center bg-white text-black hover:bg-blue-400 p-4 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
             <FaThumbsUp className="mr-2" /> {likes}{likes !== 1 ? "" : ""}
           </Button>
-          <Button variant="outline" onClick={handleDislike} className="flex items-center bg-white text-black hover:bg-gray-200 p-4 text-xl rounded-md border-none">
+          <Button variant="outline" onClick={handleDislike} className="flex items-center bg-white text-black hover:bg-red-400 p-4 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
             <FaThumbsDown className="mr-2" /> {dislikes}
             {dislikes !== 1 ? "" : ""}
           </Button>
@@ -235,24 +235,24 @@ const Article = () => {
             Share this article
           </h2>
           <div className="flex space-x-4">
-            <Button variant="outline" onClick={() => shareArticle("facebook")} className="bg-white text-black hover:bg-gray-200 p-5 text-xl rounded-md border-none">
+            <Button variant="outline" onClick={() => shareArticle("facebook")} className="bg-white text-black hover:bg-blue-300 p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
               <FaFacebookF />
             </Button>
-            <Button variant="outline" onClick={() => shareArticle("linkedin")} className="bg-white text-black hover:bg-gray-200 p-5 text-2xl rounded-md border-none">
+            <Button variant="outline" onClick={() => shareArticle("linkedin")} className="bg-white text-black hover:bg-blue-500 p-5 text-2xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
               <FaLinkedinIn />
             </Button>
-            <Button variant="outline" onClick={() => shareArticle("whatsapp")} className="bg-white text-black hover:bg-gray-200 p-5 text-5xl rounded-md border-none">
+            <Button variant="outline" onClick={() => shareArticle("whatsapp")} className="bg-white text-black hover:bg-green-400 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
               <FaWhatsapp />
             </Button>
-            <Button variant="outline" onClick={() => shareArticle("email")} className="bg-white text-black hover:bg-gray-200 p-5 text-5xl rounded-md border-none">
+            <Button variant="outline" onClick={() => shareArticle("email")} className="bg-white text-black hover:bg-red-300 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
               <MdEmail />
             </Button>
-            <Button variant="outline" onClick={copyUrlToClipboard} className="bg-white text-black hover:bg-gray-200 p-5 text-5xl rounded-md border-none">
+            <Button variant="outline" onClick={copyUrlToClipboard} className="bg-white text-black hover:bg-gray-300 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
               <FaLink />
             </Button>
           </div>
           {isUrlCopied && (
-            <div className="mt-2 text-gray-900">URL copied to clipboard!</div>
+            <div className="mt-2 text-red-600">URL copied to clipboard!</div>
           )}
         </div>
 
@@ -265,12 +265,12 @@ const Article = () => {
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Write a comment..."
-              className="w-full p-3 border border-muted-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-              rows="4"
+              className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              rows="5"
             ></textarea>
             <Button
               onClick={handleAddComment}
-              className="mt-3 bg-black text-white hover:bg-gray-900 transition-all"
+              className="mt-3 bg-black text-white hover:bg-gray-900 transition-transform transform hover:scale-110"
             >
               Post Comment
             </Button>
@@ -280,14 +280,14 @@ const Article = () => {
               {comments.map((comment) => (
                 <li
                   key={comment.id}
-                  className="p-4 bg-muted-background rounded-md shadow-sm"
+                  className="p-4 bg-muted-background rounded-md shadow-lg border border-gray-300"
                 >
                   <p>{comment.text}</p>
                   <div className="flex space-x-4 mt-2">
-                    <Button variant="outline" onClick={() => handleCommentLike(comment.id)} className="bg-white text-black hover:bg-gray-200 p-3 rounded-md border-none">
+                    <Button variant="outline" onClick={() => handleCommentLike(comment.id)} className="bg-white text-black hover:bg-blue-400 p-3 text-lg rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
                       <FaThumbsUp className="mr-2" /> {comment.likes}
                     </Button>
-                    <Button variant="outline" onClick={() => handleCommentDislike(comment.id)} className="bg-white text-black hover:bg-gray-200 p-3 rounded-md border-none">
+                    <Button variant="outline" onClick={() => handleCommentDislike(comment.id)} className="bg-white text-black hover:bg-red-400 p-3 text-lg rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
                       <FaThumbsDown className="mr-2" /> {comment.dislikes}
                     </Button>
                   </div>
