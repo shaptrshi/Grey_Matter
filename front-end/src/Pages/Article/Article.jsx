@@ -7,14 +7,15 @@ import { MdEmail } from "react-icons/md";
 
 const Article = () => {
   const navigate = useNavigate();
+  const [isUrlCopied, setIsUrlCopied] = useState(false);
+
+  {/*
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
-  const [isUrlCopied, setIsUrlCopied] = useState(false);
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
   const [hasReacted, setHasReacted] = useState(null);
-
-
+  
   const handleAddComment = () => {
     if (commentText.trim()) {
       setComments((prevComments) => [
@@ -60,6 +61,7 @@ const Article = () => {
       )
     );
   };
+*/}
   
   const shareArticle = (platform) => {
     const url = encodeURIComponent(window.location.href);
@@ -239,6 +241,7 @@ const Article = () => {
           </CardContent>
         </Card>
 
+        {/*
         <div className="mt-8 flex items-center space-x-4">
         {hasReacted !== "dislike" && (
         <Button
@@ -259,7 +262,7 @@ const Article = () => {
         </Button>
       )}
       </div>
-
+      */}    
 
         <div className="mt-8">
           <h2 className="text-3xl font-semibold text-foreground mb-4">
@@ -278,7 +281,7 @@ const Article = () => {
             <Button variant="outline" onClick={() => shareArticle("email")} className="bg-white text-black hover:bg-red-300 p-5 text-7xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
               <MdEmail />
             </Button>
-            <Button variant="outline" onClick={copyUrlToClipboard} className="bg-white text-black hover:bg-gray-300 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
+            <Button variant="outline" onClick={copyUrlToClipboard} className="bg-white text-black hover:bg-gray-400 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
               <FaLink />
             </Button>
           </div>
@@ -287,6 +290,7 @@ const Article = () => {
           )}
         </div>
 
+        {/* 
         <div className="mt-10">
           <h2 className="text-3xl font-semibold text-foreground mb-4">
             Comments
@@ -338,7 +342,19 @@ const Article = () => {
             ))}
           </ul>          
           )}
+          </div>
+        */}
+
+        <div className="mt-10">
+          <Button
+            variant="outline"
+            onClick={() => window.location.href = 'mailto:shaptrshik@gmail.com?subject=Feedback on Article&body=Your message here.'}
+            className="bg-gray-100 text-gray-500 hover:bg-gray-300 p-6 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-2 border-gray-300 hover:shadow-gray-300"
+          >
+            Send Feedback
+          </Button>
         </div>
+
       </div>
     </div>
   );
