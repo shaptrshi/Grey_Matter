@@ -1,37 +1,37 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardHeader,CardContent } from "@/components/ui/card";
 
-const Technology = () => {
+
+const Forest = () => {
   const articles = [
     {
       id: 1,
-      title: "Latest Gadgets",
-      description: "Get insights into the newest gadgets and innovations.",
-      image: "./pic.jpg",
-      link: "/articles/gadgets",
+      title: "Protecting Our Forests",
+      description: "Discover the latest efforts to preserve forests worldwide.",
+      image: "./forest.jpg",
+      link: "/articles/forests",
     },
     {
       id: 2,
-      title: "Blockchain Technology",
-      description: "Exploring the potential and challenges of blockchain.",
-      image: "./blockchain.jpg",
-      link: "/articles/blockchain",
+      title: "Marine Life Conservation",
+      description: "How we can save our oceans and marine biodiversity.",
+      image: "./marine-life.jpg",
+      link: "/articles/marine-life",
     },
     {
       id: 3,
-      title: "Cloud Computing",
-      description: "The future of data storage and processing in the cloud.",
-      image: "./cloud-computing.jpg",
-      link: "/articles/cloud-computing",
+      title: "Climate Change Solutions",
+      description: "Innovative solutions to combat climate change.",
+      image: "./climate-change.jpg",
+      link: "/articles/climate-change",
     },
     {
       id: 4,
-      title: "Cybersecurity Trends",
-      description: "Protecting data in an increasingly digital world.",
-      image: "./cybersecurity.jpg",
-      link: "/articles/cybersecurity",
+      title: "Urban Green Spaces",
+      description: "The importance of parks and greenery in cities.",
+      image: "./urban-green.jpg",
+      link: "/articles/urban-green",
     },
   ];
 
@@ -39,11 +39,11 @@ const Technology = () => {
     <div className="bg-background min-h-screen py-10">
       <div className="container mx-auto px-5">
         <h1 className="text-4xl font-extrabold tracking-tight text-center mb-10">
-          Technology
+          Environment
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Stay updated with the latest trends in technology, from gadgets and 
-          cloud computing to blockchain and cybersecurity.
+        Explore a curated collection of articles on environmental awareness and sustainable living,
+        covering topics like forest conservation and innovative climate change solutions.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => (
@@ -74,4 +74,4 @@ const Technology = () => {
   );
 };
 
-export default Technology;
+export default Forest;

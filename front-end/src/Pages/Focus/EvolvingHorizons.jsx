@@ -2,35 +2,35 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
-const News = () => {
+const EvolvingHorizons = () => {
   const articles = [
     {
       id: 1,
-      title: "Breaking World News",
-      description: "Stay updated with the latest global headlines.",
-      image: "./world-news.jpg",
-      link: "/articles/world-news",
+      title: "Space Exploration",
+      description: "Discover the latest missions and findings in space exploration.",
+      image: "./space.jpg",
+      link: "/articles/space",
     },
     {
       id: 2,
-      title: "Politics and Policies",
-      description: "Insights into current political trends and policy changes.",
-      image: "./politics.jpg",
-      link: "/articles/politics",
+      title: "Medical Breakthroughs",
+      description: "Advancements in healthcare and medical technology.",
+      image: "./medical.jpg",
+      link: "/articles/medical",
     },
     {
       id: 3,
-      title: "Business and Economy",
-      description: "Updates on the global economy and financial markets.",
-      image: "./business.jpg",
-      link: "/articles/business",
+      title: "Physics Discoveries",
+      description: "Learn about groundbreaking discoveries in physics.",
+      image: "./physics.jpg",
+      link: "/articles/physics",
     },
     {
       id: 4,
-      title: "Sports Highlights",
-      description: "Catch up on the latest sports events and scores.",
-      image: "./sports.jpg",
-      link: "/articles/sports",
+      title: "AI and Robotics",
+      description: "The intersection of artificial intelligence and robotics.",
+      image: "./ai-robotics.jpg",
+      link: "/articles/ai-robotics",
     },
   ];
 
@@ -38,11 +38,11 @@ const News = () => {
     <div className="bg-background min-h-screen py-10">
       <div className="container mx-auto px-5">
         <h1 className="text-4xl font-extrabold tracking-tight text-center mb-10">
-          News
+          Science
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Explore breaking news, updates on politics, business, sports, and more. Stay informed with 
-          the latest events shaping our world.
+          Dive into the world of science with articles on space, medical advancements, 
+          physics discoveries, and cutting-edge technology.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => (
@@ -73,4 +73,4 @@ const News = () => {
   );
 };
 
-export default News;
+export default EvolvingHorizons;

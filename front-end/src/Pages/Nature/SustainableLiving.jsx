@@ -1,36 +1,37 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Card, CardHeader,CardContent } from "@/components/ui/card";
 
-const News = () => {
+
+const SustainableLiving = () => {
   const articles = [
     {
       id: 1,
-      title: "Breaking World News",
-      description: "Stay updated with the latest global headlines.",
-      image: "./world-news.jpg",
-      link: "/articles/world-news",
+      title: "Protecting Our Forests",
+      description: "Discover the latest efforts to preserve forests worldwide.",
+      image: "./forest.jpg",
+      link: "/articles/forests",
     },
     {
       id: 2,
-      title: "Politics and Policies",
-      description: "Insights into current political trends and policy changes.",
-      image: "./politics.jpg",
-      link: "/articles/politics",
+      title: "Marine Life Conservation",
+      description: "How we can save our oceans and marine biodiversity.",
+      image: "./marine-life.jpg",
+      link: "/articles/marine-life",
     },
     {
       id: 3,
-      title: "Business and Economy",
-      description: "Updates on the global economy and financial markets.",
-      image: "./business.jpg",
-      link: "/articles/business",
+      title: "Climate Change Solutions",
+      description: "Innovative solutions to combat climate change.",
+      image: "./climate-change.jpg",
+      link: "/articles/climate-change",
     },
     {
       id: 4,
-      title: "Sports Highlights",
-      description: "Catch up on the latest sports events and scores.",
-      image: "./sports.jpg",
-      link: "/articles/sports",
+      title: "Urban Green Spaces",
+      description: "The importance of parks and greenery in cities.",
+      image: "./urban-green.jpg",
+      link: "/articles/urban-green",
     },
   ];
 
@@ -38,11 +39,11 @@ const News = () => {
     <div className="bg-background min-h-screen py-10">
       <div className="container mx-auto px-5">
         <h1 className="text-4xl font-extrabold tracking-tight text-center mb-10">
-          News
+          Environment
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Explore breaking news, updates on politics, business, sports, and more. Stay informed with 
-          the latest events shaping our world.
+        Explore a curated collection of articles on environmental awareness and sustainable living,
+        covering topics like forest conservation and innovative climate change solutions.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => (
@@ -73,4 +74,4 @@ const News = () => {
   );
 };
 
-export default News;
+export default SustainableLiving;
