@@ -12,6 +12,7 @@ import PrivacyPolicy from "./Pages/Privacy/PrivacyPolicy";
 import Terms from "./Pages/TermsOfUse/Terms";
 import Contact from "./Pages/Contact/Contact";
 import Article from "./Pages/Article/Article";
+import CreateArticle from "./Pages/Article/CreateArticle";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/terms-of-use" element={<Terms />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/a" element={<Article />} />
+                <Route path="/ca" element={<CreateArticle/>}/>
               </Routes>
               <Footer />
             </>

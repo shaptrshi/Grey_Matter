@@ -12,36 +12,55 @@ const Article = () => {
   const [isUrlCopied, setIsUrlCopied] = useState(false);
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
+  const [hasReacted, setHasReacted] = useState(null);
+
 
   const handleAddComment = () => {
     if (commentText.trim()) {
       setComments((prevComments) => [
         ...prevComments,
-        { id: Date.now(), text: commentText, likes: 0, dislikes: 0 },
+        { id: Date.now(), text: commentText, likes: 0, dislikes: 0, reacted: null },
       ]);
       setCommentText("");
     }
   };
+  
 
-  const handleLike = () => setLikes(likes + 1);
-  const handleDislike = () => setDislikes(dislikes + 1);
+  const handleLike = () => {
+    if (!hasReacted) {
+      setLikes(likes + 1);
+      setHasReacted("like");
+    }
+  };
+  
+  const handleDislike = () => {
+    if (!hasReacted) {
+      setDislikes(dislikes + 1);
+      setHasReacted("dislike");
+    }
+  };
+  
 
   const handleCommentLike = (id) => {
     setComments((prevComments) =>
       prevComments.map((comment) =>
-        comment.id === id ? { ...comment, likes: comment.likes + 1 } : comment
+        comment.id === id && comment.reacted === null
+          ? { ...comment, likes: comment.likes + 1, reacted: "like" }
+          : comment
       )
     );
   };
-
+  
   const handleCommentDislike = (id) => {
     setComments((prevComments) =>
       prevComments.map((comment) =>
-        comment.id === id ? { ...comment, dislikes: comment.dislikes + 1 } : comment
+        comment.id === id && comment.reacted === null
+          ? { ...comment, dislikes: comment.dislikes + 1, reacted: "dislike" }
+          : comment
       )
     );
   };
-
+  
   const shareArticle = (platform) => {
     const url = encodeURIComponent(window.location.href);
     const text = encodeURIComponent("Check out this amazing article!");
@@ -221,14 +240,26 @@ const Article = () => {
         </Card>
 
         <div className="mt-8 flex items-center space-x-4">
-          <Button variant="outline" onClick={handleLike} className="flex items-center bg-white text-black hover:bg-blue-400 p-4 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
-            <FaThumbsUp className="mr-2" /> {likes}{likes !== 1 ? "" : ""}
-          </Button>
-          <Button variant="outline" onClick={handleDislike} className="flex items-center bg-white text-black hover:bg-red-400 p-4 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
-            <FaThumbsDown className="mr-2" /> {dislikes}
-            {dislikes !== 1 ? "" : ""}
-          </Button>
-        </div>
+        {hasReacted !== "dislike" && (
+        <Button
+        variant="outline"
+        onClick={handleLike}
+        className="flex items-center bg-white text-black hover:bg-blue-400 p-4 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+        >
+        <FaThumbsUp className="mr-2" /> {likes}
+        </Button>
+        )}
+        {hasReacted !== "like" && (
+        <Button
+        variant="outline"
+        onClick={handleDislike}
+        className="flex items-center bg-white text-black hover:bg-red-400 p-4 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+        >
+        <FaThumbsDown className="mr-2" /> {dislikes}
+        </Button>
+      )}
+      </div>
+
 
         <div className="mt-8">
           <h2 className="text-3xl font-semibold text-foreground mb-4">
@@ -241,10 +272,10 @@ const Article = () => {
             <Button variant="outline" onClick={() => shareArticle("linkedin")} className="bg-white text-black hover:bg-blue-500 p-5 text-2xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
               <FaLinkedinIn />
             </Button>
-            <Button variant="outline" onClick={() => shareArticle("whatsapp")} className="bg-white text-black hover:bg-green-400 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
+            <Button variant="outline" onClick={() => shareArticle("whatsapp")} className="bg-white text-black hover:bg-green-400 p-5 text-7xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
               <FaWhatsapp />
             </Button>
-            <Button variant="outline" onClick={() => shareArticle("email")} className="bg-white text-black hover:bg-red-300 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
+            <Button variant="outline" onClick={() => shareArticle("email")} className="bg-white text-black hover:bg-red-300 p-5 text-7xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
               <MdEmail />
             </Button>
             <Button variant="outline" onClick={copyUrlToClipboard} className="bg-white text-black hover:bg-gray-300 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
@@ -277,23 +308,35 @@ const Article = () => {
           </div>
           {comments.length > 0 && (
             <ul className="space-y-4">
-              {comments.map((comment) => (
-                <li
-                  key={comment.id}
-                  className="p-4 bg-muted-background rounded-md shadow-lg border border-gray-300"
-                >
-                  <p>{comment.text}</p>
-                  <div className="flex space-x-4 mt-2">
-                    <Button variant="outline" onClick={() => handleCommentLike(comment.id)} className="bg-white text-black hover:bg-blue-400 p-3 text-lg rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
-                      <FaThumbsUp className="mr-2" /> {comment.likes}
+            {comments.map((comment) => (
+              <li
+                key={comment.id}
+                className="p-4 bg-muted-background rounded-md shadow-lg border border-gray-300"
+              >
+                <p>{comment.text}</p>
+                <div className="flex space-x-4 mt-2">
+                  {comment.reacted !== "dislike" && (
+                    <Button
+                      variant="outline"
+                      onClick={() => handleCommentLike(comment.id)}
+                      className="bg-white text-black hover:bg-blue-400 p-3 text-lg rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+                    >
+                    <FaThumbsUp className="mr-2" /> {comment.likes}
                     </Button>
-                    <Button variant="outline" onClick={() => handleCommentDislike(comment.id)} className="bg-white text-black hover:bg-red-400 p-3 text-lg rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
-                      <FaThumbsDown className="mr-2" /> {comment.dislikes}
+                  )}
+                  {comment.reacted !== "like" && (
+                    <Button
+                      variant="outline"
+                      onClick={() => handleCommentDislike(comment.id)}
+                      className="bg-white text-black hover:bg-red-400 p-3 text-lg rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+                    >
+                    <FaThumbsDown className="mr-2" /> {comment.dislikes}
                     </Button>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>          
           )}
         </div>
       </div>
