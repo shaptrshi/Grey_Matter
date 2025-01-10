@@ -23,21 +23,21 @@ const Footer = () => {
             className="group relative cursor-pointer transition-colors duration-300 hover:text-gray-600 text-gray-700 text-base sm:text-lg md:text-xl font-medium"
           >
             Privacy Policy
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 ease-out group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-custom-accent-green transition-all duration-300 ease-out group-hover:w-full"></span>
           </Link>
           <Link
             to="/terms-of-use"
             className="group relative cursor-pointer transition-colors duration-300 hover:text-gray-600 text-gray-700 text-base sm:text-lg md:text-xl font-medium"
           >
             Terms of Use
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 ease-out group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-custom-accent-green transition-all duration-300 ease-out group-hover:w-full"></span>
           </Link>
           <Link
             to="/contact"
             className="group relative cursor-pointer transition-colors duration-300 hover:text-gray-600 text-gray-700 text-base sm:text-lg md:text-xl font-medium"
           >
             Contact
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 ease-out group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-custom-accent-green transition-all duration-300 ease-out group-hover:w-full"></span>
           </Link>
         </nav>
 

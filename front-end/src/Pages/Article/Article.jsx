@@ -106,7 +106,7 @@ const Article = () => {
                 <img
                   src="pic.jpg"
                   alt="Forest Conservation"
-                  className="w-1/2 h-auto mx-auto rounded-md shadow-lg"
+                  className="w-1/2 h-auto mx-auto rounded-md shadow-lg transition-transform transform hover:scale-105"
                 />
                 <p className="mt-4 text-center text-gray-600">Forest Conservation Efforts</p>
               </div>
@@ -216,12 +216,11 @@ const Article = () => {
           <Button
             variant="outline"
             onClick={() => window.location.href = 'mailto:shaptrshik@gmail.com?subject=Feedback on Article&body=Your message here.'}
-            className="bg-gray-100 text-gray-500 hover:bg-gray-300 p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-2 border-gray-300 hover:shadow-gray-300"
+            className="bg-gray-100 text-gray-500 hover:bg-custom-accent-green p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-2 border-gray-300 hover:shadow-gray-300"
           >
             Send Feedback
           </Button>
         </div>
-
       </div>
     </div>
   );

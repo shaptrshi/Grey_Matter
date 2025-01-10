@@ -6,7 +6,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
-    { name: "Trending", link: "/featured" },
+    { name: "Trending", link: "/trending" },
     { name: "News", link: "/news" },
     {
       name: "Nature",
@@ -72,7 +72,7 @@ const Navbar = () => {
                       size={16}
                       className="ml-1 transition-transform group-hover:rotate-180"
                     />
-                    <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 ease-out group-hover:w-full" />
+                    <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-custom-accent-green transition-all duration-300 ease-out group-hover:w-full" />
                   </button>
                   <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-md border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
                     {item.dropdown.map((option) => (
@@ -93,7 +93,7 @@ const Navbar = () => {
                   className="relative text-base lg:text-lg text-gray-900 hover:text-gray-600 transition-colors duration-300 group"
                 >
                   {item.name}
-                  <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 ease-out group-hover:w-full" />
+                  <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-custom-accent-green transition-all duration-300 ease-out group-hover:w-full" />
                 </Link>
               )
             )}
@@ -101,7 +101,7 @@ const Navbar = () => {
 
           {/* Search Bar */}
           <div className="hidden sm:flex items-center max-w-xs flex-1 ml-4">
-            <div className="w-full flex items-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+            <div className="w-full flex items-center bg-gray-100 rounded-lg hover:bg-custom-accent-green transition-colors duration-200">
               <input
                 type="text"
                 placeholder="Search"
