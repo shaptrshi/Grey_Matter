@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
 import Home from "./Pages/Home/Home";
-import Featured from "./Pages/Featured/Featured";
 import News from "./Pages/News/News";
 import Footer from "./components/footer/Footer";
 import Admin from "./Pages/Admin/Admin";
@@ -22,6 +21,7 @@ import EvolvingHorizons from "./Pages/Focus/EvolvingHorizons";
 import Interviews from "./Pages/Focus/Interviews";
 import Spotlight from "./Pages/Focus/Spotlight";
 import PolicyAndGovernance from "./Pages/Focus/PolicyAndGovernance";
+import Trending from "./Pages/Trending/Trending";
 
 function App() {
   return (
@@ -35,7 +35,7 @@ function App() {
               <Navbar />
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/featured" element={<Featured />} />
+                <Route path="/trending" element={<Trending />} />
                 <Route path="/environment" element={<Environment />} />
                 <Route path="/weather" element={<Weather />} />
                 <Route path="/agriculture" element={<Agriculture />} />
