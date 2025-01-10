@@ -72,13 +72,14 @@ const Navbar = () => {
                       size={16}
                       className="ml-1 transition-transform group-hover:rotate-180"
                     />
+                    <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 ease-out group-hover:w-full" />
                   </button>
                   <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-md border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
                     {item.dropdown.map((option) => (
                       <Link
                         key={option.name}
                         to={option.link}
-                        className="block px-4 py-2 text-gray-900 hover:bg-gray-100"
+                        className="block px-4 py-2 text-gray-900 hover:bg-gray-300 "
                       >
                         {option.name}
                       </Link>
