@@ -15,6 +15,7 @@ export default {
   		colors: {
         'custom-green': '#3c8070',
         'custom-accent-green': '#9fc9c0',
+        'custom-green-1': '#a9ded1'
       }
   	}
   },

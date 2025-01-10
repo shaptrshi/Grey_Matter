@@ -101,7 +101,7 @@ const Navbar = () => {
 
           {/* Search Bar */}
           <div className="hidden sm:flex items-center max-w-xs flex-1 ml-4">
-            <div className="w-full flex items-center bg-gray-100 rounded-lg hover:bg-custom-accent-green transition-colors duration-200">
+            <div className="w-full flex items-center bg-gray-100 rounded-lg hover:bg-custom-green-1 transition-colors duration-200">
               <input
                 type="text"
                 placeholder="Search"
