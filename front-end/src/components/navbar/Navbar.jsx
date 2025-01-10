@@ -79,7 +79,7 @@ const Navbar = () => {
                       <Link
                         key={option.name}
                         to={option.link}
-                        className="block px-4 py-2 text-gray-900 hover:bg-gray-300 "
+                        className="block px-4 py-2 text-gray-900 hover:bg-custom-green-1 "
                       >
                         {option.name}
                       </Link>
