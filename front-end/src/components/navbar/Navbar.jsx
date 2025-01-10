@@ -154,7 +154,7 @@ const Navbar = () => {
             </div>
 
             <div className="mt-6 mb-8">
-              <div className="flex items-center bg-gray-100 rounded-lg">
+              <div className="flex items-center bg-gray-100  hover:bg-custom-green-1 rounded-lg transition-colors duration-200">
                 <input
                   type="text"
                   placeholder="Search"
@@ -170,7 +170,7 @@ const Navbar = () => {
               {navItems.map((item) =>
                 item.dropdown ? (
                   <div key={item.name} className="space-y-2">
-                    <span className="font-semibold">{item.name}</span>
+                    <span>{item.name}</span>
                     {item.dropdown.map((option) => (
                       <Link
                         key={option.name}
