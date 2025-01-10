@@ -9,60 +9,6 @@ const Article = () => {
   const navigate = useNavigate();
   const [isUrlCopied, setIsUrlCopied] = useState(false);
 
-  {/*
-  const [comments, setComments] = useState([]);
-  const [commentText, setCommentText] = useState("");
-  const [likes, setLikes] = useState(0);
-  const [dislikes, setDislikes] = useState(0);
-  const [hasReacted, setHasReacted] = useState(null);
-  
-  const handleAddComment = () => {
-    if (commentText.trim()) {
-      setComments((prevComments) => [
-        ...prevComments,
-        { id: Date.now(), text: commentText, likes: 0, dislikes: 0, reacted: null },
-      ]);
-      setCommentText("");
-    }
-  };
-  
-
-  const handleLike = () => {
-    if (!hasReacted) {
-      setLikes(likes + 1);
-      setHasReacted("like");
-    }
-  };
-  
-  const handleDislike = () => {
-    if (!hasReacted) {
-      setDislikes(dislikes + 1);
-      setHasReacted("dislike");
-    }
-  };
-  
-
-  const handleCommentLike = (id) => {
-    setComments((prevComments) =>
-      prevComments.map((comment) =>
-        comment.id === id && comment.reacted === null
-          ? { ...comment, likes: comment.likes + 1, reacted: "like" }
-          : comment
-      )
-    );
-  };
-  
-  const handleCommentDislike = (id) => {
-    setComments((prevComments) =>
-      prevComments.map((comment) =>
-        comment.id === id && comment.reacted === null
-          ? { ...comment, dislikes: comment.dislikes + 1, reacted: "dislike" }
-          : comment
-      )
-    );
-  };
-*/}
-  
   const shareArticle = (platform) => {
     const url = encodeURIComponent(window.location.href);
     const text = encodeURIComponent("Check out this amazing article!");
@@ -108,14 +54,13 @@ const Article = () => {
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 z-20 flex items-end px-5 md:px-10 lg:px-20 py-6">
-          <div className="text-left text-white pl-10 md:pl-20 lg:pl-32 py-5">
+          <div className="text-left text-white pl-9 md:pl-13 lg:pl-16 py-5">
             <h1 className="text-5xl md:text-6xl font-bold mb-4">
               Protecting Our Forests
             </h1>
             <p className="text-lg md:text-xl text-gray-300">
               By{" "}
               <a
-                href="https://www.linkedin.com/in/johndoe"
                 className="text-white hover:underline"
               >
                 John Doe
@@ -126,7 +71,7 @@ const Article = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-5 py-10">
+      <div className="container mx-auto px-8 py-10 max-w-screen-xl">
         <Card className="overflow-hidden">
           <CardContent className="p-6">
             <div className="prose prose-invert max-w-none text-lg leading-relaxed">
@@ -241,29 +186,6 @@ const Article = () => {
           </CardContent>
         </Card>
 
-        {/*
-        <div className="mt-8 flex items-center space-x-4">
-        {hasReacted !== "dislike" && (
-        <Button
-        variant="outline"
-        onClick={handleLike}
-        className="flex items-center bg-white text-black hover:bg-blue-400 p-4 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
-        >
-        <FaThumbsUp className="mr-2" /> {likes}
-        </Button>
-        )}
-        {hasReacted !== "like" && (
-        <Button
-        variant="outline"
-        onClick={handleDislike}
-        className="flex items-center bg-white text-black hover:bg-red-400 p-4 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
-        >
-        <FaThumbsDown className="mr-2" /> {dislikes}
-        </Button>
-      )}
-      </div>
-      */}    
-
         <div className="mt-8">
           <h2 className="text-3xl font-semibold text-foreground mb-4">
             Share this article
@@ -290,66 +212,11 @@ const Article = () => {
           )}
         </div>
 
-        {/* 
-        <div className="mt-10">
-          <h2 className="text-3xl font-semibold text-foreground mb-4">
-            Comments
-          </h2>
-          <div className="mb-6">
-            <textarea
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Write a comment..."
-              className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-              rows="5"
-            ></textarea>
-            <Button
-              onClick={handleAddComment}
-              className="mt-3 bg-black text-white hover:bg-gray-900 transition-transform transform hover:scale-110"
-            >
-              Post Comment
-            </Button>
-          </div>
-          {comments.length > 0 && (
-            <ul className="space-y-4">
-            {comments.map((comment) => (
-              <li
-                key={comment.id}
-                className="p-4 bg-muted-background rounded-md shadow-lg border border-gray-300"
-              >
-                <p>{comment.text}</p>
-                <div className="flex space-x-4 mt-2">
-                  {comment.reacted !== "dislike" && (
-                    <Button
-                      variant="outline"
-                      onClick={() => handleCommentLike(comment.id)}
-                      className="bg-white text-black hover:bg-blue-400 p-3 text-lg rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
-                    >
-                    <FaThumbsUp className="mr-2" /> {comment.likes}
-                    </Button>
-                  )}
-                  {comment.reacted !== "like" && (
-                    <Button
-                      variant="outline"
-                      onClick={() => handleCommentDislike(comment.id)}
-                      className="bg-white text-black hover:bg-red-400 p-3 text-lg rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
-                    >
-                    <FaThumbsDown className="mr-2" /> {comment.dislikes}
-                    </Button>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>          
-          )}
-          </div>
-        */}
-
         <div className="mt-10">
           <Button
             variant="outline"
             onClick={() => window.location.href = 'mailto:shaptrshik@gmail.com?subject=Feedback on Article&body=Your message here.'}
-            className="bg-gray-100 text-gray-500 hover:bg-gray-300 p-6 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-2 border-gray-300 hover:shadow-gray-300"
+            className="bg-gray-100 text-gray-500 hover:bg-gray-300 p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-2 border-gray-300 hover:shadow-gray-300"
           >
             Send Feedback
           </Button>
