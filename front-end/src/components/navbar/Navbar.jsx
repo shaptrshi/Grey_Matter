@@ -2,6 +2,50 @@ import React, { useState } from "react";
 import { Menu, X, Search, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const Dropdown = ({ label, items }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={handleToggle}
+        className="flex items-center text-base lg:text-lg text-gray-900 hover:text-custom-green transition-colors duration-300 "
+      >
+        {label}
+        <ChevronDown
+          size={16}
+          className={`ml-1 transition-transform ${isOpen ? "rotate-180" : ""}`}
+        />
+      </button>
+      {isOpen && (
+        <div
+          className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-md border border-gray-200 z-50"
+          onMouseLeave={handleClose}
+        >
+          {items.map((item) => (
+            <Link
+              key={item.name}
+              to={item.link}
+              className="block px-4 py-2 text-gray-900 hover:bg-custom-green-1"
+              onClick={handleClose}
+            >
+              {item.name}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -22,7 +66,7 @@ const Navbar = () => {
       name: "Innovation",
       dropdown: [
         { name: "Science And Research", link: "/science-and-research" },
-        { name: "Startups And Entrepreneurship", link: "startups-and-entrepreneurship" },
+        { name: "Startups And Entrepreneurship", link: "/startups-and-entrepreneurship" },
         { name: "Technology And Advancement", link: "/technology-and-advancement" },
       ],
     },
@@ -65,35 +109,14 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {navItems.map((item) =>
               item.dropdown ? (
-                <div key={item.name} className="relative group">
-                  <button className="flex items-center text-base lg:text-lg text-gray-900 hover:text-gray-600 transition-colors duration-300">
-                    {item.name}
-                    <ChevronDown
-                      size={16}
-                      className="ml-1 transition-transform group-hover:rotate-180"
-                    />
-                    <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-custom-accent-green transition-all duration-300 ease-out group-hover:w-full" />
-                  </button>
-                  <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-md border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
-                    {item.dropdown.map((option) => (
-                      <Link
-                        key={option.name}
-                        to={option.link}
-                        className="block px-4 py-2 text-gray-900 hover:bg-custom-green-1 "
-                      >
-                        {option.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
+                <Dropdown key={item.name} label={item.name} items={item.dropdown} />
               ) : (
                 <Link
                   key={item.name}
                   to={item.link}
-                  className="relative text-base lg:text-lg text-gray-900 hover:text-gray-600 transition-colors duration-300 group"
+                  className="relative text-base lg:text-lg text-gray-900 hover:text-custom-green transition-colors duration-300"
                 >
                   {item.name}
-                  <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-custom-accent-green transition-all duration-300 ease-out group-hover:w-full" />
                 </Link>
               )
             )}

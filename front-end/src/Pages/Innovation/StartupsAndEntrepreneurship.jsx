@@ -47,7 +47,7 @@ const StartupsAndEntrepreneurship = () => {
           {articles.map((article) => (
             <Card
               key={article.id}
-              className="hover:shadow-sm duration-300 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-custom-green"
+              className="hover:shadow-md duration-300 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-custom-green"
             >
               <CardHeader className="p-0">
                 <img

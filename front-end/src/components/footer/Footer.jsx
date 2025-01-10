@@ -20,24 +20,21 @@ const Footer = () => {
         <nav className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 md:space-x-8">
           <Link
             to="/privacy-policy"
-            className="group relative cursor-pointer transition-colors duration-300 hover:text-gray-600 text-gray-700 text-base sm:text-lg md:text-xl font-medium"
+            className="group relative cursor-pointer transition-colors duration-300 hover:text-custom-green text-gray-700 text-base sm:text-lg md:text-xl font-medium"
           >
             Privacy Policy
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-custom-accent-green transition-all duration-300 ease-out group-hover:w-full"></span>
           </Link>
           <Link
             to="/terms-of-use"
-            className="group relative cursor-pointer transition-colors duration-300 hover:text-gray-600 text-gray-700 text-base sm:text-lg md:text-xl font-medium"
+            className="group relative cursor-pointer transition-colors duration-300 hover:text-custom-green text-gray-700 text-base sm:text-lg md:text-xl font-medium"
           >
             Terms of Use
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-custom-accent-green transition-all duration-300 ease-out group-hover:w-full"></span>
           </Link>
           <Link
             to="/contact"
-            className="group relative cursor-pointer transition-colors duration-300 hover:text-gray-600 text-gray-700 text-base sm:text-lg md:text-xl font-medium"
+            className="group relative cursor-pointer transition-colors duration-300 hover:text-custom-green text-gray-700 text-base sm:text-lg md:text-xl font-medium"
           >
             Contact
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-custom-accent-green transition-all duration-300 ease-out group-hover:w-full"></span>
           </Link>
         </nav>
 
