@@ -1,38 +1,36 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Card, CardHeader,CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
-
-const Environment = () => {
+const EvolvingHorizons = () => {
   const articles = [
     {
       id: 1,
-      title: "Protecting Our Forests",
-      description: "Discover the latest efforts to preserve forests worldwide.",
-      image: "./forest.jpg",
-      link: "/articles/forests",
+      title: "Space Exploration",
+      description: "Discover the latest missions and findings in space exploration.",
+      image: "./space.jpg",
+      link: "/articles/space",
     },
     {
       id: 2,
-      title: "Marine Life Conservation",
-      description: "How we can save our oceans and marine biodiversity.",
-      image: "./marine-life.jpg",
-      link: "/articles/marine-life",
+      title: "Medical Breakthroughs",
+      description: "Advancements in healthcare and medical technology.",
+      image: "./medical.jpg",
+      link: "/articles/medical",
     },
     {
       id: 3,
-      title: "Climate Change Solutions",
-      description: "Innovative solutions to combat climate change.",
-      image: "./climate-change.jpg",
-      link: "/articles/climate-change",
+      title: "Physics Discoveries",
+      description: "Learn about groundbreaking discoveries in physics.",
+      image: "./physics.jpg",
+      link: "/articles/physics",
     },
     {
       id: 4,
-      title: "Urban Green Spaces",
-      description: "The importance of parks and greenery in cities.",
-      image: "./urban-green.jpg",
-      link: "/articles/urban-green",
+      title: "AI and Robotics",
+      description: "The intersection of artificial intelligence and robotics.",
+      image: "./ai-robotics.jpg",
+      link: "/articles/ai-robotics",
     },
   ];
 
@@ -40,17 +38,17 @@ const Environment = () => {
     <div className="bg-background min-h-screen py-10">
       <div className="container mx-auto px-5">
         <h1 className="text-4xl font-extrabold tracking-tight text-center mb-10">
-          Environment
+        Evolving Horizons
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-        Explore a curated collection of articles on environmental awareness and sustainable living,
-        covering topics like forest conservation and innovative climate change solutions.
+          Dive into the world of science with articles on space, medical advancements, 
+          physics discoveries, and cutting-edge technology.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => (
             <Card
               key={article.id}
-              className="hover:shadow-sm duration-300 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-gray-400"
+              className="hover:shadow-md duration-300 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-custom-green"
             >
               <CardHeader className="p-0">
                 <img
@@ -75,4 +73,4 @@ const Environment = () => {
   );
 };
 
-export default Environment;
+export default EvolvingHorizons;

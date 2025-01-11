@@ -1,36 +1,40 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
-const News = () => {
-  const articles = [
+const Trending = () => {
+  const featuredArticles = [
     {
       id: 1,
-      title: "Breaking World News",
-      description: "Stay updated with the latest global headlines.",
-      image: "./world-news.jpg",
-      link: "/articles/world-news",
+      title: "Protecting Our Forests",
+      description: "Discover the latest efforts to preserve forests worldwide.",
+      image: "forest.jpg",
+      link: "/articles/forests",
+      category: "Environment",
     },
     {
       id: 2,
-      title: "Politics and Policies",
-      description: "Insights into current political trends and policy changes.",
-      image: "./politics.jpg",
-      link: "/articles/politics",
+      title: "Breaking World News",
+      description: "Stay updated with the latest global headlines.",
+      image: "world-news.jpg",
+      link: "/articles/world-news",
+      category: "News",
     },
     {
       id: 3,
-      title: "Business and Economy",
-      description: "Updates on the global economy and financial markets.",
-      image: "./business.jpg",
-      link: "/articles/business",
+      title: "Space Exploration",
+      description:
+        "Discover the latest missions and findings in space exploration.",
+      image: "./space.jpg",
+      link: "/articles/space",
+      category: "Science",
     },
     {
       id: 4,
-      title: "Sports Highlights",
-      description: "Catch up on the latest sports events and scores.",
-      image: "./sports.jpg",
-      link: "/articles/sports",
+      title: "Latest Gadgets",
+      description: "Get insights into the newest gadgets and innovations.",
+      image: "./gadgets.jpg",
+      link: "/articles/gadgets",
+      category: "Technology",
     },
   ];
 
@@ -38,14 +42,15 @@ const News = () => {
     <div className="bg-background min-h-screen py-10">
       <div className="container mx-auto px-5">
         <h1 className="text-4xl font-extrabold tracking-tight text-center mb-10">
-          News
+          Trending
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Explore breaking news, updates on politics, business, sports, and more. Stay informed with 
-          the latest events shaping our world.
+          A handpicked selection of standout articles from Environment, News,
+          Science, and Technology. Explore the best insights across various
+          fields.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articles.map((article) => (
+          {featuredArticles.map((article) => (
             <Card
               key={article.id}
               className="hover:shadow-md duration-300 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-custom-green"
@@ -64,6 +69,9 @@ const News = () => {
                 <p className="text-muted-foreground mt-2">
                   {article.description}
                 </p>
+                <p className="mt-2 text-sm text-primary font-medium">
+                  Category: {article.category}
+                </p>
               </CardContent>
             </Card>
           ))}
@@ -73,4 +81,4 @@ const News = () => {
   );
 };
 
-export default News;
+export default Trending;

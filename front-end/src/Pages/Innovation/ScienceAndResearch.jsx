@@ -2,35 +2,35 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
-const News = () => {
+const ScienceAndResearch = () => {
   const articles = [
     {
       id: 1,
-      title: "Breaking World News",
-      description: "Stay updated with the latest global headlines.",
-      image: "./world-news.jpg",
-      link: "/articles/world-news",
+      title: "Latest Gadgets",
+      description: "Get insights into the newest gadgets and innovations.",
+      image: "./pic.jpg",
+      link: "/articles/gadgets",
     },
     {
       id: 2,
-      title: "Politics and Policies",
-      description: "Insights into current political trends and policy changes.",
-      image: "./politics.jpg",
-      link: "/articles/politics",
+      title: "Blockchain Technology",
+      description: "Exploring the potential and challenges of blockchain.",
+      image: "./blockchain.jpg",
+      link: "/articles/blockchain",
     },
     {
       id: 3,
-      title: "Business and Economy",
-      description: "Updates on the global economy and financial markets.",
-      image: "./business.jpg",
-      link: "/articles/business",
+      title: "Cloud Computing",
+      description: "The future of data storage and processing in the cloud.",
+      image: "./cloud-computing.jpg",
+      link: "/articles/cloud-computing",
     },
     {
       id: 4,
-      title: "Sports Highlights",
-      description: "Catch up on the latest sports events and scores.",
-      image: "./sports.jpg",
-      link: "/articles/sports",
+      title: "Cybersecurity Trends",
+      description: "Protecting data in an increasingly digital world.",
+      image: "./cybersecurity.jpg",
+      link: "/articles/cybersecurity",
     },
   ];
 
@@ -38,11 +38,10 @@ const News = () => {
     <div className="bg-background min-h-screen py-10">
       <div className="container mx-auto px-5">
         <h1 className="text-4xl font-extrabold tracking-tight text-center mb-10">
-          News
+        Science And Research
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Explore breaking news, updates on politics, business, sports, and more. Stay informed with 
-          the latest events shaping our world.
+          Eco-Friendly lifestyles and sustainable living.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => (
@@ -73,4 +72,4 @@ const News = () => {
   );
 };
 
-export default News;
+export default ScienceAndResearch;

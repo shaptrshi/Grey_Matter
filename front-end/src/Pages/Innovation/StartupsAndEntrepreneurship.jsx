@@ -1,37 +1,36 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
-const Science = () => {
+const StartupsAndEntrepreneurship = () => {
   const articles = [
     {
       id: 1,
-      title: "Space Exploration",
-      description: "Discover the latest missions and findings in space exploration.",
-      image: "./space.jpg",
-      link: "/articles/space",
+      title: "Latest Gadgets",
+      description: "Get insights into the newest gadgets and innovations.",
+      image: "./pic.jpg",
+      link: "/articles/gadgets",
     },
     {
       id: 2,
-      title: "Medical Breakthroughs",
-      description: "Advancements in healthcare and medical technology.",
-      image: "./medical.jpg",
-      link: "/articles/medical",
+      title: "Blockchain Technology",
+      description: "Exploring the potential and challenges of blockchain.",
+      image: "./blockchain.jpg",
+      link: "/articles/blockchain",
     },
     {
       id: 3,
-      title: "Physics Discoveries",
-      description: "Learn about groundbreaking discoveries in physics.",
-      image: "./physics.jpg",
-      link: "/articles/physics",
+      title: "Cloud Computing",
+      description: "The future of data storage and processing in the cloud.",
+      image: "./cloud-computing.jpg",
+      link: "/articles/cloud-computing",
     },
     {
       id: 4,
-      title: "AI and Robotics",
-      description: "The intersection of artificial intelligence and robotics.",
-      image: "./ai-robotics.jpg",
-      link: "/articles/ai-robotics",
+      title: "Cybersecurity Trends",
+      description: "Protecting data in an increasingly digital world.",
+      image: "./cybersecurity.jpg",
+      link: "/articles/cybersecurity",
     },
   ];
 
@@ -39,17 +38,16 @@ const Science = () => {
     <div className="bg-background min-h-screen py-10">
       <div className="container mx-auto px-5">
         <h1 className="text-4xl font-extrabold tracking-tight text-center mb-10">
-          Science
+        Startups And Entrepreneurship
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Dive into the world of science with articles on space, medical advancements, 
-          physics discoveries, and cutting-edge technology.
+          Eco-Friendly lifestyles and sustainable living.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => (
             <Card
               key={article.id}
-              className="hover:shadow-sm duration-300 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-gray-400"
+              className="hover:shadow-md duration-300 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-custom-green"
             >
               <CardHeader className="p-0">
                 <img
@@ -74,4 +72,4 @@ const Science = () => {
   );
 };
 
-export default Science;
+export default StartupsAndEntrepreneurship;

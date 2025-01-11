@@ -1,40 +1,37 @@
 import React from "react";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import { Card, CardHeader,CardContent } from "@/components/ui/card";
 
-const Featured = () => {
-  const featuredArticles = [
+
+const Weather = () => {
+  const articles = [
     {
       id: 1,
       title: "Protecting Our Forests",
       description: "Discover the latest efforts to preserve forests worldwide.",
-      image: "forest.jpg",
+      image: "./forest.jpg",
       link: "/articles/forests",
-      category: "Environment",
     },
     {
       id: 2,
-      title: "Breaking World News",
-      description: "Stay updated with the latest global headlines.",
-      image: "world-news.jpg",
-      link: "/articles/world-news",
-      category: "News",
+      title: "Marine Life Conservation",
+      description: "How we can save our oceans and marine biodiversity.",
+      image: "./marine-life.jpg",
+      link: "/articles/marine-life",
     },
     {
       id: 3,
-      title: "Space Exploration",
-      description:
-        "Discover the latest missions and findings in space exploration.",
-      image: "./space.jpg",
-      link: "/articles/space",
-      category: "Science",
+      title: "Climate Change Solutions",
+      description: "Innovative solutions to combat climate change.",
+      image: "./climate-change.jpg",
+      link: "/articles/climate-change",
     },
     {
       id: 4,
-      title: "Latest Gadgets",
-      description: "Get insights into the newest gadgets and innovations.",
-      image: "./gadgets.jpg",
-      link: "/articles/gadgets",
-      category: "Technology",
+      title: "Urban Green Spaces",
+      description: "The importance of parks and greenery in cities.",
+      image: "./urban-green.jpg",
+      link: "/articles/urban-green",
     },
   ];
 
@@ -42,18 +39,17 @@ const Featured = () => {
     <div className="bg-background min-h-screen py-10">
       <div className="container mx-auto px-5">
         <h1 className="text-4xl font-extrabold tracking-tight text-center mb-10">
-          Featured
+          Weather
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          A handpicked selection of standout articles from Environment, News,
-          Science, and Technology. Explore the best insights across various
-          fields.
+        Explore a curated collection of articles on environmental awareness and sustainable living,
+        covering topics like forest conservation and innovative climate change solutions.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredArticles.map((article) => (
+          {articles.map((article) => (
             <Card
               key={article.id}
-              className="hover:shadow-sm duration-300 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-gray-400"
+              className="hover:shadow-md duration-300 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-custom-green"
             >
               <CardHeader className="p-0">
                 <img
@@ -69,9 +65,6 @@ const Featured = () => {
                 <p className="text-muted-foreground mt-2">
                   {article.description}
                 </p>
-                <p className="mt-2 text-sm text-primary font-medium">
-                  Category: {article.category}
-                </p>
               </CardContent>
             </Card>
           ))}
@@ -81,4 +74,4 @@ const Featured = () => {
   );
 };
 
-export default Featured;
+export default Weather;
