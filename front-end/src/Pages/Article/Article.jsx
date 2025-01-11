@@ -2,11 +2,17 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { FaFacebookF, FaLinkedinIn, FaThumbsUp, FaThumbsDown, FaLink, FaWhatsapp } from "react-icons/fa";
+import {
+  FaFacebookF,
+  FaLinkedinIn,
+  FaThumbsUp,
+  FaThumbsDown,
+  FaLink,
+  FaWhatsapp,
+} from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 
 const Article = () => {
-  const navigate = useNavigate();
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
   const [isUrlCopied, setIsUrlCopied] = useState(false);
@@ -23,6 +29,8 @@ const Article = () => {
     }
   };
 
+  console.log(comments);
+
   const handleLike = () => setLikes(likes + 1);
   const handleDislike = () => setDislikes(dislikes + 1);
 
@@ -37,7 +45,9 @@ const Article = () => {
   const handleCommentDislike = (id) => {
     setComments((prevComments) =>
       prevComments.map((comment) =>
-        comment.id === id ? { ...comment, dislikes: comment.dislikes + 1 } : comment
+        comment.id === id
+          ? { ...comment, dislikes: comment.dislikes + 1 }
+          : comment
       )
     );
   };
@@ -48,7 +58,10 @@ const Article = () => {
 
     switch (platform) {
       case "facebook":
-        window.open(`https://facebook.com/sharer/sharer.php?u=${url}`, "_blank");
+        window.open(
+          `https://facebook.com/sharer/sharer.php?u=${url}`,
+          "_blank"
+        );
         break;
       case "linkedin":
         window.open(`https://linkedin.com/shareArticle?url=${url}`, "_blank");
@@ -124,16 +137,17 @@ const Article = () => {
                 all living organisms. The trees in forests absorb carbon dioxide
                 (CO2) and release oxygen, which is essential for the survival of
                 all oxygen-dependent organisms, including humans. They play a
-                vital role in mitigating climate change by acting as carbon sinks,
-                storing more carbon than they release.
+                vital role in mitigating climate change by acting as carbon
+                sinks, storing more carbon than they release.
               </p>
               <p>
                 In addition to carbon sequestration, forests help maintain the
                 water cycle by absorbing rainwater and releasing moisture into
                 the atmosphere through transpiration. They also prevent soil
-                erosion by stabilizing the soil with their roots and reducing the
-                risk of flooding. Forests are also home to over 80% of the world's
-                terrestrial biodiversity, offering a habitat for countless species.
+                erosion by stabilizing the soil with their roots and reducing
+                the risk of flooding. Forests are also home to over 80% of the
+                world's terrestrial biodiversity, offering a habitat for
+                countless species.
               </p>
 
               <div className="my-8">
@@ -142,15 +156,17 @@ const Article = () => {
                   alt="Forest Conservation"
                   className="w-1/2 h-auto mx-auto rounded-md shadow-lg"
                 />
-                <p className="mt-4 text-center text-gray-600">Forest Conservation Efforts</p>
+                <p className="mt-4 text-center text-gray-600">
+                  Forest Conservation Efforts
+                </p>
               </div>
 
               <h2 className="text-2xl font-semibold text-foreground my-4">
                 Deforestation and Its Impact
               </h2>
               <p>
-                Unfortunately, deforestation is occurring at an alarming rate. It
-                is driven primarily by human activities such as agriculture,
+                Unfortunately, deforestation is occurring at an alarming rate.
+                It is driven primarily by human activities such as agriculture,
                 urbanization, and logging. Every year, millions of hectares of
                 forest are cleared, with devastating consequences for wildlife,
                 the environment, and the climate. Deforestation leads to habitat
@@ -159,8 +175,8 @@ const Article = () => {
               </p>
               <p>
                 The loss of forests also contributes to global warming, as trees
-                that once absorbed CO2 are removed, and the carbon stored in their
-                biomass is released back into the atmosphere. This process
+                that once absorbed CO2 are removed, and the carbon stored in
+                their biomass is released back into the atmosphere. This process
                 exacerbates climate change and leads to more extreme weather
                 events, such as heatwaves, storms, and floods.
               </p>
@@ -186,9 +202,9 @@ const Article = () => {
                 In addition to these programs, there are numerous grassroots
                 efforts around the world that aim to raise awareness about the
                 importance of forests and encourage sustainable practices. Local
-                communities are engaging in reforestation and agroforestry, which
-                involves integrating trees into agricultural systems, to restore
-                degraded lands and improve biodiversity.
+                communities are engaging in reforestation and agroforestry,
+                which involves integrating trees into agricultural systems, to
+                restore degraded lands and improve biodiversity.
               </p>
 
               <h2 className="text-2xl font-semibold text-foreground my-4">
@@ -197,34 +213,43 @@ const Article = () => {
               <p>
                 As individuals, there are several ways we can contribute to the
                 protection of forests. First and foremost, we can support
-                sustainable products, such as those certified by organizations like
-                the Forest Stewardship Council (FSC), which ensures that products
-                come from responsibly managed forests.
+                sustainable products, such as those certified by organizations
+                like the Forest Stewardship Council (FSC), which ensures that
+                products come from responsibly managed forests.
               </p>
               <p>
                 Another way to help is by reducing our carbon footprint. By
                 adopting sustainable practices such as using energy-efficient
                 appliances, driving less, and reducing waste, we can help reduce
-                the pressure on forests. Lastly, supporting policies that protect
-                forests and advocating for stronger environmental regulations can
-                also make a significant impact.
+                the pressure on forests. Lastly, supporting policies that
+                protect forests and advocating for stronger environmental
+                regulations can also make a significant impact.
               </p>
 
               <p>
-                Protecting our forests is not only about saving trees; it's about
-                ensuring a healthier future for all life on Earth. By taking
-                action today, we can help preserve these critical ecosystems for
-                generations to come.
+                Protecting our forests is not only about saving trees; it's
+                about ensuring a healthier future for all life on Earth. By
+                taking action today, we can help preserve these critical
+                ecosystems for generations to come.
               </p>
             </div>
           </CardContent>
         </Card>
 
         <div className="mt-8 flex items-center space-x-4">
-          <Button variant="outline" onClick={handleLike} className="flex items-center bg-white text-black hover:bg-blue-400 p-4 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
-            <FaThumbsUp className="mr-2" /> {likes}{likes !== 1 ? "" : ""}
+          <Button
+            variant="outline"
+            onClick={handleLike}
+            className="flex items-center bg-white text-black hover:bg-blue-400 p-4 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+          >
+            <FaThumbsUp className="mr-2" /> {likes}
+            {likes !== 1 ? "" : ""}
           </Button>
-          <Button variant="outline" onClick={handleDislike} className="flex items-center bg-white text-black hover:bg-red-400 p-4 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
+          <Button
+            variant="outline"
+            onClick={handleDislike}
+            className="flex items-center bg-white text-black hover:bg-red-400 p-4 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+          >
             <FaThumbsDown className="mr-2" /> {dislikes}
             {dislikes !== 1 ? "" : ""}
           </Button>
@@ -235,19 +260,39 @@ const Article = () => {
             Share this article
           </h2>
           <div className="flex space-x-4">
-            <Button variant="outline" onClick={() => shareArticle("facebook")} className="bg-white text-black hover:bg-blue-300 p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
+            <Button
+              variant="outline"
+              onClick={() => shareArticle("facebook")}
+              className="bg-white text-black hover:bg-blue-300 p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+            >
               <FaFacebookF />
             </Button>
-            <Button variant="outline" onClick={() => shareArticle("linkedin")} className="bg-white text-black hover:bg-blue-500 p-5 text-2xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
+            <Button
+              variant="outline"
+              onClick={() => shareArticle("linkedin")}
+              className="bg-white text-black hover:bg-blue-500 p-5 text-2xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+            >
               <FaLinkedinIn />
             </Button>
-            <Button variant="outline" onClick={() => shareArticle("whatsapp")} className="bg-white text-black hover:bg-green-400 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
+            <Button
+              variant="outline"
+              onClick={() => shareArticle("whatsapp")}
+              className="bg-white text-black hover:bg-green-400 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+            >
               <FaWhatsapp />
             </Button>
-            <Button variant="outline" onClick={() => shareArticle("email")} className="bg-white text-black hover:bg-red-300 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
+            <Button
+              variant="outline"
+              onClick={() => shareArticle("email")}
+              className="bg-white text-black hover:bg-red-300 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+            >
               <MdEmail />
             </Button>
-            <Button variant="outline" onClick={copyUrlToClipboard} className="bg-white text-black hover:bg-gray-300 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
+            <Button
+              variant="outline"
+              onClick={copyUrlToClipboard}
+              className="bg-white text-black hover:bg-gray-300 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+            >
               <FaLink />
             </Button>
           </div>
@@ -284,10 +329,18 @@ const Article = () => {
                 >
                   <p>{comment.text}</p>
                   <div className="flex space-x-4 mt-2">
-                    <Button variant="outline" onClick={() => handleCommentLike(comment.id)} className="bg-white text-black hover:bg-blue-400 p-3 text-lg rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
+                    <Button
+                      variant="outline"
+                      onClick={() => handleCommentLike(comment.id)}
+                      className="bg-white text-black hover:bg-blue-400 p-3 text-lg rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+                    >
                       <FaThumbsUp className="mr-2" /> {comment.likes}
                     </Button>
-                    <Button variant="outline" onClick={() => handleCommentDislike(comment.id)} className="bg-white text-black hover:bg-red-400 p-3 text-lg rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400">
+                    <Button
+                      variant="outline"
+                      onClick={() => handleCommentDislike(comment.id)}
+                      className="bg-white text-black hover:bg-red-400 p-3 text-lg rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+                    >
                       <FaThumbsDown className="mr-2" /> {comment.dislikes}
                     </Button>
                   </div>
