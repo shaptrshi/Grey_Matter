@@ -5,8 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   FaFacebookF,
   FaLinkedinIn,
-  FaThumbsUp,
-  FaThumbsDown,
   FaLink,
   FaWhatsapp,
 } from "react-icons/fa";
