@@ -103,13 +103,16 @@ const CreateArticle = () => {
                 <Label htmlFor="content" className="text-sm font-medium">
                   Article Content
                 </Label>
+
+                <QuillToolbar />
                 <ReactQuill
+                  theme="snow"
                   id="content"
                   value={content}
                   onChange={setContent}
-                  placeholder="Write the article content..."
-                  className="mt-2"
-                  theme="snow" // You can change this to 'bubble' for a different theme
+                  placeholder={"Write something awesome..."}
+                  modules={modules}
+                  formats={formats}
                 />
               </div>
               <div className="flex items-center space-x-2">
