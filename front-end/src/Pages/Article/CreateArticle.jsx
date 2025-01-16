@@ -15,7 +15,7 @@ const CreateArticle = () => {
   const [author, setAuthor] = useState("");
   const [bannerImage, setBannerImage] = useState(null);
   const [content, setContent] = useState("");
-  const [isFeatured, setIsFeatured] = useState(false); // New state for featured toggle
+  const [isFeatured, setIsFeatured] = useState(false);
 
   const handleBannerImageUpload = (event) => {
     const file = event.target.files[0];
@@ -38,7 +38,7 @@ const CreateArticle = () => {
       bannerImage,
       content,
       date: new Date().toLocaleDateString(),
-      isFeatured, // Include featured status
+      isFeatured,
     };
 
     navigate("/article", { state: newArticle });
@@ -46,9 +46,9 @@ const CreateArticle = () => {
 
   return (
     <div className="bg-background min-h-screen py-10 px-6">
-      <div className="container mx-auto max-w-3xl">
+      <div className="container mx-auto max-w-6xl">
         <Card>
-          <CardContent className="p-6 space-y-6">
+          <CardContent className="p-7 space-y-7">
             <h1 className="text-2xl font-semibold">Create New Article</h1>
             <Separator />
             <div className="space-y-4">
@@ -87,14 +87,14 @@ const CreateArticle = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleBannerImageUpload}
-                  className="mt-2"
+                  className="mt-2 w-50 cursor-pointer bg-gray-200 shadow-md transition-transform transform hover:scale-105 hover:bg-custom-green-1"
                 />
                 {bannerImage && (
                   <div className="mt-4">
                     <img
                       src={bannerImage}
                       alt="Banner Preview"
-                      className="w-full rounded-md shadow-md"
+                      className="w-50 h-50 rounded-md shadow-md"
                     />
                   </div>
                 )}
@@ -110,17 +110,32 @@ const CreateArticle = () => {
                   id="content"
                   value={content}
                   onChange={setContent}
-                  placeholder={"Write something awesome..."}
+                  placeholder="Write something awesome..."
                   modules={modules}
                   formats={formats}
+                  className="mt-2"
                 />
+                <style>
+                  {`
+                  .ql-container {
+                    min-height: 150px;
+                    max-height: 500px;
+                    overflow-y: auto;
+                  }
+                  @media (max-width: 768px) {
+                    .ql-container {
+                      min-height: 120px;
+                    }
+                  }
+                  `}
+                </style>
               </div>
               <div className="flex items-center space-x-2">
                 <Label htmlFor="featured" className="text-sm font-medium">
                   Mark as Featured
                 </Label>
                 <button
-                  onClick={() => setIsFeatured(!isFeatured)} // Toggle the featured state
+                  onClick={() => setIsFeatured(!isFeatured)}
                   className={`w-14 h-8 flex items-center rounded-full p-1 transition-colors ${
                     isFeatured ? "bg-custom-green" : "bg-gray-600"
                   }`}
@@ -135,7 +150,7 @@ const CreateArticle = () => {
             </div>
             <Button
               onClick={handlePublish}
-              className="w-full bg-gray-900 text-gray-200 hover:bg-custom-green transition-transform transform hover:scale-105"
+              className="w-50 bg-gray-900 text-gray-200 hover:bg-custom-green transition-transform transform hover:scale-105"
             >
               Publish Article
             </Button>
