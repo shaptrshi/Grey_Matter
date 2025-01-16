@@ -5,6 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import Quill's CSS for styling
 import QuillToolbar, { modules, formats } from "./EditorToolbar";
@@ -16,6 +22,24 @@ const CreateArticle = () => {
   const [bannerImage, setBannerImage] = useState(null);
   const [content, setContent] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
+  const [tags, setTags] = useState([]); // State to store selected tags
+
+  const availableTags = [
+    "Technology",
+    "Health",
+    "Education",
+    "Lifestyle",
+    "Science",
+    "Travel",
+    "Food",
+    "Finance",
+    "Sports",
+    "Politics",
+    "Entertainment",
+    "Environment",
+    "Art",
+    "Business",
+  ];
 
   const handleBannerImageUpload = (event) => {
     const file = event.target.files[0];
@@ -24,6 +48,20 @@ const CreateArticle = () => {
       reader.onload = (e) => setBannerImage(e.target.result);
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleTagToggle = (tag) => {
+    setTags((prevTags) =>
+      prevTags.includes(tag) ? prevTags.filter((t) => t !== tag) : [...prevTags, tag]
+    );
+  };
+
+  const handleSelectAll = () => {
+    setTags(availableTags);
+  };
+
+  const handleClearAll = () => {
+    setTags([]);
   };
 
   const handlePublish = () => {
@@ -37,6 +75,7 @@ const CreateArticle = () => {
       author,
       bannerImage,
       content,
+      tags,
       date: new Date().toLocaleDateString(),
       isFeatured,
     };
@@ -114,21 +153,71 @@ const CreateArticle = () => {
                   modules={modules}
                   formats={formats}
                   className="mt-2"
+                  style={{ minHeight: "200px", maxHeight: "600px", overflowY: "auto" }}
                 />
                 <style>
-                  {`
+               {`
                   .ql-container {
-                    min-height: 150px;
-                    max-height: 500px;
+                    min-height: 200px;
+                    max-height: 600px;
                     overflow-y: auto;
                   }
                   @media (max-width: 768px) {
                     .ql-container {
-                      min-height: 120px;
+                      min-height: 200px;
                     }
                   }
                   `}
-                </style>
+               </style>
+              </div>
+              <div>
+                <Label htmlFor="tags" className="text-sm font-medium pr-2">
+                  Tags
+                </Label>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="w-50 p-2 bg-gray-100 text-gray-700 border-2 rounded-md hover:bg-custom-green-1 border-gray-300 transition-transform transform hover:scale-105">
+                      {tags.length > 0
+                        ? `Selected Tags (${tags.length})`
+                        : "Select Tags"}
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="p-4 grid grid-cols-3 gap-2 w-full bg-white border rounded-md shadow-lg">
+                    {availableTags.map((tag) => (
+                      <DropdownMenuItem
+                        key={tag}
+                        className={`p-2 rounded-md cursor-pointer transition-colors ${
+                          tags.includes(tag) ? "bg-blue-200" : ""
+                        }`}
+                        onClick={() => handleTagToggle(tag)}
+                      >
+                        {tag}
+                      </DropdownMenuItem>
+                    ))}
+                    <div className="col-span-3 flex justify-between mt-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleSelectAll}
+                        className="w-24 border-2 shadow-sm border-gray-300 hover:bg-blue-300"
+                      >
+                        Select All
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={handleClearAll}
+                        className="w-24 bg-gray-500 shadow-sm"
+                      >
+                        Clear All
+                      </Button>
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <div className="mt-2">
+                  Selected Tags:{" "}
+                  {tags.length > 0 ? tags.join(", ") : "No tags selected"}
+                </div>
               </div>
               <div className="flex items-center space-x-2">
                 <Label htmlFor="featured" className="text-sm font-medium">
