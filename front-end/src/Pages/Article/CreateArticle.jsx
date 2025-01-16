@@ -87,7 +87,7 @@ const CreateArticle = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleBannerImageUpload}
-                  className="mt-2 w-50 cursor-pointer bg-gray-200 shadow-md transition-transform transform hover:scale-105 hover:bg-custom-green-1"
+                  className="mt-2 w-50 cursor-pointer bg-gray-100 text-gray-500 hover:bg-custom-green-1 shadow-sm transition-transform transform hover:scale-105 border-2 border-gray-300"
                 />
                 {bannerImage && (
                   <div className="mt-4">
