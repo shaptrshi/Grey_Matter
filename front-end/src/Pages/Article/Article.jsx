@@ -62,19 +62,32 @@ const Article = () => {
               Protecting Our Forests
             </h1>
             <p className="text-lg md:text-xl text-gray-300">
-              By <a className="text-white hover:underline">John Doe</a> | October 5, 2024
+              By <a className="text-white hover:underline cursor-pointer">John Doe</a> | October 5, 2024
             </p>
           </div>
 
           {/* Banner Image */}
           <img
-            src="./pic.jpg"
+            src="/pic.jpg"
             alt="Protecting Our Forests"
             className="absolute inset-0 w-full h-full object-cover z-10"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/20 z-10"></div>
+
+          {/* Tags Below Banner Text within the Banner Image */}
+          <div className="absolute bottom-36 left-1/2 transform -translate-x-1/2 flex justify-center space-x-4 z-20">
+            <div className="bg-gray-500 bg-opacity-60 text-white text-xs px-2 py-1 rounded-md shadow-lg cursor-pointer hover:bg-gray-600  hover:bg-opacity-60">
+              Featured Article
+            </div>
+            <div className="bg-gray-500 bg-opacity-60 text-white text-xs px-2 py-1 rounded-md shadow-lg cursor-pointer hover:bg-gray-600  hover:bg-opacity-60">
+              Environment
+            </div>
+            <div className="bg-gray-500 bg-opacity-60 text-white text-xs px-2 py-1 rounded-md shadow-lg cursor-pointer hover:bg-gray-600  hover:bg-opacity-60">
+              Must Read
+            </div>
+          </div>
         </div>
-      
+
         <Card className="overflow-hidden">
           <CardContent className="p-6">
             <div className="prose prose-invert max-w-none text-lg leading-relaxed">
@@ -108,7 +121,7 @@ const Article = () => {
 
               <div className="my-8">
                 <img
-                  src="pic.jpg"
+                  src="/pic.jpg"
                   alt="Forest Conservation"
                   className="w-1/2 h-auto mx-auto rounded-md shadow-lg transition-transform transform hover:scale-105"
                 />
@@ -192,46 +205,27 @@ const Article = () => {
           </CardContent>
         </Card>
 
+        {/* Social Media Share and Feedback */}
         <div className="mt-8">
           <h2 className="text-2xl font-semibold text-foreground mb-4">
             Share this article
           </h2>
           <div className="flex space-x-4">
-            <Button
-              variant="outline"
-              onClick={() => shareArticle("facebook")}
-              className="bg-white text-black hover:bg-blue-300 p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
-            >
-              <FaFacebookF />
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => shareArticle("linkedin")}
-              className="bg-white text-black hover:bg-blue-500 p-5 text-2xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
-            >
-              <FaLinkedinIn />
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => shareArticle("whatsapp")}
-              className="bg-white text-black hover:bg-green-400 p-5 text-7xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
-            >
-              <FaWhatsapp />
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => shareArticle("email")}
-              className="bg-white text-black hover:bg-red-300 p-5 text-7xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
-            >
-              <MdEmail />
-            </Button>
-            <Button
-              variant="outline"
-              onClick={copyUrlToClipboard}
-              className="bg-white text-black hover:bg-gray-400 p-5 text-5xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
-            >
-              <FaLink />
-            </Button>
+            {/* Social Share Buttons */}
+            {["facebook", "linkedin", "whatsapp", "email", "link"].map((platform, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                onClick={() => shareArticle(platform)}
+                className="bg-white text-black hover:bg-gray-300 p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+              >
+                {platform === "facebook" && <FaFacebookF />}
+                {platform === "linkedin" && <FaLinkedinIn />}
+                {platform === "whatsapp" && <FaWhatsapp />}
+                {platform === "email" && <MdEmail />}
+                {platform === "link" && <FaLink />}
+              </Button>
+            ))}
           </div>
           {isUrlCopied && (
             <div className="mt-2 text-red-600">URL copied to clipboard!</div>
@@ -245,7 +239,7 @@ const Article = () => {
           <Card className="hover:shadow-sm border-2">
             <CardContent className="p-6 flex items-center space-x-6">
               <img
-                src="./pic.jpg"
+                src="/pic.jpg"
                 alt="John Doe"
                 className="w-20 h-20 rounded-full object-cover shadow-lg"
               />
@@ -254,15 +248,12 @@ const Article = () => {
                 <p className="text-gray-600 mt-2">
                   John Doe is an environmental journalist with over a decade of
                   experience covering topics related to conservation, climate change,
-                  and sustainable living. His passion for protecting the planet drives
-                  his storytelling and advocacy work. When not writing, John enjoys
-                  hiking and exploring natural landscapes.
+                  and sustainable living.
                 </p>
               </div>
             </CardContent>
           </Card>
         </div>
-
 
         <div className="mt-10">
           <Button
@@ -278,46 +269,46 @@ const Article = () => {
         </div>
 
         <div className="mt-12">
-        <h2 className="text-2xl font-semibold text-foreground mb-6">
-        You May Enjoy
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          {
-            title: "The Future of Renewable Energy",
-            img: "./pic.jpg",
-            link: "",
-          },
-          {
-            title: "Conservation Strategies for Wildlife",
-            img: "wildlife.jpg",
-            link: "",
-          },
-          {
-            title: "Sustainable Living Practices",
-            img: "sustainable.jpg",
-            link: "",
-          },
-          {
-            title: "Sustainable Living Practices",
-            img: "sustainable.jpg",
-            link: "",
-          },
-          ].map((article, index) => (
-          <Card key={index} className="hover:shadow-sm transition-transform transform hover:scale-105 hover:shadow-custom-green">
-            <img
-              src={article.img}
-              alt={article.title}
-              className="w-full h-30 object-cover rounded-t-md"
-            />
-          <CardContent className="p-3">
-          <h3 className="text-lg font-semibold text-foreground mb-2">
-            {article.title}
-          </h3>
-          </CardContent>
-          </Card>
-         ))}
-        </div>
+          <h2 className="text-2xl font-semibold text-foreground mb-6">
+            You May Enjoy
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                title: "The Future of Renewable Energy",
+                img: "/pic.jpg",
+                link: "",
+              },
+              {
+                title: "Conservation Strategies for Wildlife",
+                img: "/wildlife.jpg",
+                link: "",
+              },
+              {
+                title: "Sustainable Living Practices",
+                img: "/sustainable.jpg",
+                link: "",
+              },
+              {
+                title: "Sustainable Living Practices",
+                img: "/sustainable.jpg",
+                link: "",
+              },
+            ].map((article, index) => (
+              <div
+                key={index}
+                className="hover:shadow-lg cursor-pointer"
+                onClick={() => navigate(`/article/${article.title}`)}
+              >
+                <img
+                  src={article.img}
+                  alt={article.title}
+                  className="rounded-lg w-full h-48 object-cover"
+                />
+                <h3 className="text-lg font-medium mt-2">{article.title}</h3>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
