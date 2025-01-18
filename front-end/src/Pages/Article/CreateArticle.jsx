@@ -100,7 +100,7 @@ const CreateArticle = () => {
                   placeholder="Enter the title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="mt-2"
+                  className="mt-2 border-2 border-gray-300"
                 />
               </div>
               <div>
@@ -113,7 +113,7 @@ const CreateArticle = () => {
                   placeholder="Enter the author's name"
                   value={author}
                   onChange={(e) => setAuthor(e.target.value)}
-                  className="mt-2"
+                  className="mt-2 border-2 border-gray-300"
                 />
               </div>
               <div>
