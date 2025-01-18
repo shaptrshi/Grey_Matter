@@ -63,7 +63,7 @@ const Article = () => {
         />
         <div className="absolute inset-0 z-20 flex items-end px-5 md:px-10 lg:px-20 py-6">
           <div className="text-left text-white pl-9 md:pl-13 lg:pl-16 py-5">
-            <h1 className="text-5xl md:text-6xl font-bold mb-4">
+            <h1 className="text-5xl md:text-6xl font-semibold mb-4">
               Protecting Our Forests
             </h1>
             <p className="text-lg md:text-xl text-gray-300">
@@ -193,7 +193,7 @@ const Article = () => {
         </Card>
 
         <div className="mt-8">
-          <h2 className="text-3xl font-semibold text-foreground mb-4">
+          <h2 className="text-2xl font-semibold text-foreground mb-4">
             Share this article
           </h2>
           <div className="flex space-x-4">
@@ -238,6 +238,32 @@ const Article = () => {
           )}
         </div>
 
+        <div className="mt-12">
+          <h2 className="text-2xl font-semibold text-foreground mb-6">
+            About the Author
+          </h2>
+          <Card className="hover:shadow-sm border-2">
+            <CardContent className="p-6 flex items-center space-x-6">
+              <img
+                src="./pic.jpg"
+                alt="John Doe"
+                className="w-20 h-20 rounded-full object-cover shadow-lg"
+              />
+              <div>
+                <h3 className="text-xl font-semibold text-foreground">John Doe</h3>
+                <p className="text-gray-600 mt-2">
+                  John Doe is an environmental journalist with over a decade of
+                  experience covering topics related to conservation, climate change,
+                  and sustainable living. His passion for protecting the planet drives
+                  his storytelling and advocacy work. When not writing, John enjoys
+                  hiking and exploring natural landscapes.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+
         <div className="mt-10">
           <Button
             variant="outline"
@@ -245,10 +271,53 @@ const Article = () => {
               (window.location.href =
                 "mailto:shaptrshik@gmail.com?subject=Feedback on Article&body=Your message here.")
             }
-            className="bg-gray-100 text-gray-500 hover:bg-custom-accent-green p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-2 border-gray-300 hover:shadow-gray-300"
+            className="bg-gray-100 text-gray-700 hover:bg-custom-accent-green p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-2 border-gray-300 hover:shadow-gray-300"
           >
             Send Feedback
           </Button>
+        </div>
+
+        <div className="mt-12">
+        <h2 className="text-2xl font-semibold text-foreground mb-6">
+        You May Enjoy
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          {
+            title: "The Future of Renewable Energy",
+            img: "./pic.jpg",
+            link: "",
+          },
+          {
+            title: "Conservation Strategies for Wildlife",
+            img: "wildlife.jpg",
+            link: "",
+          },
+          {
+            title: "Sustainable Living Practices",
+            img: "sustainable.jpg",
+            link: "",
+          },
+          {
+            title: "Sustainable Living Practices",
+            img: "sustainable.jpg",
+            link: "",
+          },
+          ].map((article, index) => (
+          <Card key={index} className="hover:shadow-sm transition-transform transform hover:scale-105 hover:shadow-custom-green">
+            <img
+              src={article.img}
+              alt={article.title}
+              className="w-full h-30 object-cover rounded-t-md"
+            />
+          <CardContent className="p-3">
+          <h3 className="text-lg font-semibold text-foreground mb-2">
+            {article.title}
+          </h3>
+          </CardContent>
+          </Card>
+         ))}
+        </div>
         </div>
       </div>
     </div>
