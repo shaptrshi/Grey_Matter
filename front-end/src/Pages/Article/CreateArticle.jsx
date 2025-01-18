@@ -25,20 +25,19 @@ const CreateArticle = () => {
   const [tags, setTags] = useState([]); // State to store selected tags
 
   const availableTags = [
-    "Technology",
-    "Health",
-    "Education",
-    "Lifestyle",
-    "Science",
-    "Travel",
-    "Food",
-    "Finance",
-    "Sports",
-    "Politics",
-    "Entertainment",
+    "Trending",
     "Environment",
-    "Art",
-    "Business",
+    "Weather",
+    "Agriculture",
+    "Forest",
+    "Sustainable Living",
+    "Technology and Advancements",
+    "Science and Research",
+    "Startups and Entrepreneurship", 
+    "Evolving Horizons",
+    "Interviews",
+    "Spotlight",
+    "Policy and Governance",
   ];
 
   const handleBannerImageUpload = (event) => {
@@ -194,12 +193,12 @@ const CreateArticle = () => {
                         {tag}
                       </DropdownMenuItem>
                     ))}
-                    <div className="col-span-3 flex justify-between mt-2">
+                    <div className="col-span-3 flex flex-col sm:flex-row justify-between mt-2">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={handleSelectAll}
-                        className="w-24 border-2 shadow-sm border-gray-300 hover:bg-blue-300"
+                        className="w-full sm:w-24 mb-2 sm:mb-0 border-2 shadow-sm border-gray-300 hover:bg-blue-300"
                       >
                         Select All
                       </Button>
@@ -207,7 +206,7 @@ const CreateArticle = () => {
                         size="sm"
                         variant="destructive"
                         onClick={handleClearAll}
-                        className="w-24 bg-gray-500 shadow-sm"
+                        className="w-fulls sm:w-24 bg-gray-500 shadow-sm"
                       >
                         Clear All
                       </Button>

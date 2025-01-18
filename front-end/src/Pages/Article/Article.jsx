@@ -54,27 +54,27 @@ const Article = () => {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="relative w-full h-80 md:h-[25rem] lg:h-[30rem] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/20 z-10"></div>
-        <img
-          src="./pic.jpg"
-          alt="Protecting Our Forests"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 z-20 flex items-end px-5 md:px-10 lg:px-20 py-6">
-          <div className="text-left text-white pl-9 md:pl-13 lg:pl-16 py-5">
+      <div className="container mx-auto px-8 py-10 max-w-screen-xl">
+        <div className="relative w-70 h-60 md:h-[25rem] lg:h-[30rem] overflow-hidden mb-8 flex items-center justify-center text-center">
+          {/* Banner Text */}
+          <div className="absolute z-20 text-white px-5 md:px-10 lg:px-20">
             <h1 className="text-5xl md:text-6xl font-semibold mb-4">
               Protecting Our Forests
             </h1>
             <p className="text-lg md:text-xl text-gray-300">
-              By <a className="text-white hover:underline">John Doe</a> |
-              October 5, 2024
+              By <a className="text-white hover:underline">John Doe</a> | October 5, 2024
             </p>
           </div>
-        </div>
-      </div>
 
-      <div className="container mx-auto px-8 py-10 max-w-screen-xl">
+          {/* Banner Image */}
+          <img
+            src="./pic.jpg"
+            alt="Protecting Our Forests"
+            className="absolute inset-0 w-full h-full object-cover z-10"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/20 z-10"></div>
+        </div>
+      
         <Card className="overflow-hidden">
           <CardContent className="p-6">
             <div className="prose prose-invert max-w-none text-lg leading-relaxed">
