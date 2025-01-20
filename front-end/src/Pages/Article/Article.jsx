@@ -34,6 +34,9 @@ const Article = () => {
       case "email":
         window.open(`mailto:?subject=${text}&body=${url}`, "_self");
         break;
+      case "link":
+        copyUrlToClipboard();
+        break;
       default:
         break;
     }
@@ -45,7 +48,7 @@ const Article = () => {
       .writeText(url)
       .then(() => {
         setIsUrlCopied(true);
-        setTimeout(() => setIsUrlCopied(false), 2000);
+        setTimeout(() => setIsUrlCopied(false), 2000); // Reset after 2 seconds
       })
       .catch(() => {
         alert("Failed to copy URL!");
@@ -214,13 +217,22 @@ const Article = () => {
             Share this article
           </h2>
           <div className="flex space-x-4">
-            {/* Social Share Buttons */}
             {["facebook", "linkedin", "whatsapp", "email", "link"].map((platform, index) => (
               <Button
                 key={index}
                 variant="outline"
                 onClick={() => shareArticle(platform)}
-                className="bg-white text-black hover:bg-gray-300 p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400"
+                className={`bg-white text-black p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400 ${
+                  platform === "facebook" && "text-blue-600 hover:bg-blue-400"
+                } ${
+                  platform === "linkedin" && "text-blue-900 hover:bg-blue-700"
+                } ${
+                  platform === "whatsapp" && "text-green-600 hover:bg-green-400"
+                } ${
+                  platform === "email" && "text-red-600 hover:bg-red-400"
+                } ${
+                  platform === "link" && "text-gray-600 hover:bg-gray-500"
+                }`}
               >
                 {platform === "facebook" && <FaFacebookF />}
                 {platform === "linkedin" && <FaLinkedinIn />}
@@ -230,6 +242,7 @@ const Article = () => {
               </Button>
             ))}
           </div>
+
           {isUrlCopied && (
             <div className="mt-2 text-red-600">URL copied to clipboard!</div>
           )}
@@ -249,47 +262,32 @@ const Article = () => {
         </div>
 
         <div className="mt-12">
-          <h2 className="text-2xl font-semibold text-foreground mb-6">
-            You May Enjoy
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                title: "The Future of Renewable Energy",
-                img: "/pic.jpg",
-                link: "",
-              },
-              {
-                title: "Conservation Strategies for Wildlife",
-                img: "/wildlife.jpg",
-                link: "",
-              },
-              {
-                title: "Sustainable Living Practices",
-                img: "/sustainable.jpg",
-                link: "",
-              },
-              {
-                title: "Sustainable Living Practices",
-                img: "/sustainable.jpg",
-                link: "",
-              },
-            ].map((article, index) => (
-              <div
-                key={index}
-                className="hover:shadow-lg cursor-pointer"
-                onClick={() => navigate(`/article/${article.title}`)}
-              >
-                <img
-                  src={article.img}
-                  alt={article.title}
-                  className="rounded-lg w-full h-48 object-cover"
-                />
-                <h3 className="text-lg font-medium mt-2">{article.title}</h3>
-              </div>
-            ))}
-          </div>
+            <h2 className="text-2xl font-semibold text-foreground mb-6">You May Enjoy</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { title: "The Future of Renewable Energy", img: "/pic.jpg", link: "#" },
+                { title: "Conservation Strategies for Wildlife", img: "/wildlife.jpg", link: "#" },
+                { title: "Sustainable Living Practices", img: "/sustainable.jpg", link: "#" },
+                { title: "The Role of Solar Energy", img: "/solar.jpg", link: "#" },
+              ].map((article, index) => (
+                <Card
+                  key={index}
+                  className="hover:shadow-sm cursor-pointer hover:shadow-custom-green transition-transform transform hover:scale-105"
+                  onClick={() => navigate(article.link)}
+                >
+                  <img
+                    src={article.img}
+                    alt={article.title}
+                    className="rounded-t-lg w-full h-48 object-cover"
+                  />
+                  <div className="p-4">
+                    <h3 className="text-lg font-medium">{article.title}</h3>
+                  </div>
+                </Card>
+              ))}
+            </div>
         </div>
+
       </div>
     </div>
   );

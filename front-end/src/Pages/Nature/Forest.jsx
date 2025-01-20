@@ -45,7 +45,7 @@ const Forest = () => {
         Explore a curated collection of articles on environmental awareness and sustainable living,
         covering topics like forest conservation and innovative climate change solutions.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {articles.map((article) => (
             <Card
               key={article.id}

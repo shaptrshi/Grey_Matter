@@ -8,7 +8,7 @@ const News = () => {
       id: 1,
       title: "Breaking World News",
       description: "Stay updated with the latest global headlines.",
-      image: "./world-news.jpg",
+      image: "./pic.jpg",
       link: "/articles/world-news",
     },
     {
@@ -44,7 +44,7 @@ const News = () => {
           Explore breaking news, updates on politics, business, sports, and more. Stay informed with 
           the latest events shaping our world.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {articles.map((article) => (
             <Card
               key={article.id}
