@@ -232,29 +232,6 @@ const Article = () => {
           )}
         </div>
 
-        <div className="mt-12">
-          <h2 className="text-2xl font-semibold text-foreground mb-6">
-            About the Author
-          </h2>
-          <Card className="hover:shadow-sm border-2">
-            <CardContent className="p-6 flex items-center space-x-6">
-              <img
-                src="/pic.jpg"
-                alt="John Doe"
-                className="w-20 h-20 rounded-full object-cover shadow-lg"
-              />
-              <div>
-                <h3 className="text-xl font-semibold text-foreground">John Doe</h3>
-                <p className="text-gray-600 mt-2">
-                  John Doe is an environmental journalist with over a decade of
-                  experience covering topics related to conservation, climate change,
-                  and sustainable living.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         <div className="mt-10">
           <Button
             variant="outline"

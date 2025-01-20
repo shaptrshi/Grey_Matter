@@ -22,12 +22,14 @@ import Interviews from "./Pages/Focus/Interviews";
 import Spotlight from "./Pages/Focus/Spotlight";
 import PolicyAndGovernance from "./Pages/Focus/PolicyAndGovernance";
 import Trending from "./Pages/Trending/Trending";
+import SignUp from "./Pages/Admin/SignUp";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/admin" element={<Admin />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route
           path="*"
           element={
