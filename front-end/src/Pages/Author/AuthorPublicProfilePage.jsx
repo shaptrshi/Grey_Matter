@@ -7,6 +7,7 @@ const AuthorPublicProfilePage = () => {
   const [authorInfo] = useState({
     name: "John Doe",
     email: "johndoe@example.com",
+    mobile: "123-456-7890",
     bio: "A passionate writer and tech enthusiast.",
     socialMedia: [
       { id: 1, platform: "X", url: "https://twitter.com/johndoe", icon: <BsTwitter className="text-blue-400" /> },
@@ -31,7 +32,7 @@ const AuthorPublicProfilePage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4 lg:px-16">
-      <Card className="w-full max-w-4xl p-8 shadow-lg rounded-lg bg-gray-100">
+      <Card className="w-full max-w-6xl p-8 shadow-lg rounded-lg bg-gray-100">
         <div className="text-center">
           <div
             className="relative mx-auto w-40 h-40 rounded-full overflow-hidden border-4 border-gray-200 shadow-md"
@@ -50,9 +51,16 @@ const AuthorPublicProfilePage = () => {
           </div>
 
           <h1 className="text-2xl font-semibold mt-4">{authorInfo.name}</h1>
-          <p className="text-gray-600">{authorInfo.email}</p>
         </div>
         <div className="mt-6 space-y-4">
+          <div>
+            <strong className="block text-gray-600">Email:</strong>
+            <p className="mt-2 text-blue-600">{authorInfo.email}</p>
+          </div>
+          <div>
+            <strong className="block text-gray-600">Mobile Number:</strong>
+            <p className="mt-2">{authorInfo.mobile}</p>
+          </div>
           <div>
             <strong className="block text-gray-600">Bio:</strong>
             <p className="mt-2">{authorInfo.bio}</p>
