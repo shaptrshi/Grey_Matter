@@ -242,12 +242,20 @@ const EditArticle = () => {
                 </button>
               </div>
             </div>
+            <div className="flex space-x-3 mt-6">
             <Button
               onClick={handleSaveChanges}
-              className="w-50 bg-gray-900 text-gray-200 hover:bg-custom-green transition-transform transform hover:scale-105"
+              className="w-50 bg-gray-900 text-gray-200 hover:bg-gray-700 transition-transform transform hover:scale-105"
             >
               Save Changes
             </Button>
+            <Button
+              onClick={() => navigate(-1)} // Navigate to the previous page
+              className="w-50 bg-gray-100 text-black hover:bg-custom-accent-green transition-transform transform hover:scale-105 border-2 border-gray-300"
+            >
+              Cancel
+            </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

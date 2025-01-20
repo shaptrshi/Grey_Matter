@@ -10,6 +10,7 @@ const AuthorProfilePage = () => {
   const [authorInfo, setAuthorInfo] = useState({
     name: "John Doe",
     email: "johndoe@example.com",
+    mobile: "123-456-7890",
     bio: "A passionate writer and tech enthusiast.",
     socialMedia: [
       { id: 1, platform: "X", url: "https://twitter.com/johndoe", icon: <BsTwitter className="text-blue-400" /> },
@@ -96,8 +97,8 @@ const AuthorProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-4 lg:px-16">
-      <Card className="w-full max-w-4xl p-8 shadow-lg rounded-lg bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-slate-200 px-4 lg:px-16">
+      <Card className="w-full max-w-5xl p-10 bg-gray-100">
         <div className="text-center">
           <div
             className="relative mx-auto w-40 h-40 rounded-full overflow-hidden border-4 border-gray-200 shadow-md cursor-pointer"
@@ -131,6 +132,28 @@ const AuthorProfilePage = () => {
         </div>
         <div className="mt-6 space-y-4">
           <div>
+            <strong className="block text-gray-600">Email:</strong>
+            <Input
+              name="email"
+              value={authorInfo.email}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+              className={`w-full mt-2 ${isEditing ? "bg-white border-gray-300" : "bg-gray-100"}`}
+            />
+          </div>
+
+          <div>
+            <strong className="block text-gray-600">Mobile Number:</strong>
+            <Input
+              name="mobile"
+              value={authorInfo.mobile}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+              className={`w-full mt-2 ${isEditing ? "bg-white border-gray-300" : "bg-gray-100"}`}
+            />
+          </div>
+
+          <div>
             <strong className="block text-gray-600">Bio:</strong>
             <Textarea
               name="bio"
@@ -156,7 +179,7 @@ const AuthorProfilePage = () => {
                           handleSocialMediaChange(social.id, "url", e.target.value)
                         }
                         placeholder="Profile URL"
-                        className="w-full mt-1"
+                        className="w-80 mt-1"
                       />
                     ) : (
                       <a
@@ -189,11 +212,11 @@ const AuthorProfilePage = () => {
           </div>
         </div>
         <div className="mt-6 flex justify-center space-x-4">
-          <Button onClick={toggleEdit} variant="outline" className="px-4 py-2">
+          <Button onClick={toggleEdit} variant="outline" className="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-custom-accent-green rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-2 border-gray-300 hover:shadow-gray-300">
             {isEditing ? "Cancel" : "Edit Profile"}
           </Button>
           {isEditing && (
-            <Button onClick={handleSave} className="bg-blue-500 text-white px-4 py-2">
+            <Button onClick={handleSave} className=" px-4 py-2 transition-transform transform hover:scale-110">
               Save Changes
             </Button>
           )}
