@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -62,7 +62,10 @@ const Article = () => {
               Protecting Our Forests
             </h1>
             <p className="text-lg md:text-xl text-gray-300">
-              By <a className="text-white hover:underline cursor-pointer">John Doe</a> | October 5, 2024
+              By{" "}
+              <Link to="/public-profile" className="text-white hover:underline">
+                John Doe
+              </Link>{" "} | October 5, 2024
             </p>
           </div>
 

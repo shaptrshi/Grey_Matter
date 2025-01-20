@@ -23,6 +23,10 @@ import Spotlight from "./Pages/Focus/Spotlight";
 import PolicyAndGovernance from "./Pages/Focus/PolicyAndGovernance";
 import Trending from "./Pages/Trending/Trending";
 import SignUp from "./Pages/Admin/SignUp";
+import AuthorPage from "./Pages/Author/AuthorPage";
+import EditArticle from "./Pages/Article/EditArticle";
+import AuthorProfilePage from "./Pages/Author/AuthorProfilePage";
+import AuthorPublicProfilePage from "./Pages/Author/AuthorPublicProfilePage";
 
 function App() {
   return (
@@ -30,6 +34,10 @@ function App() {
       <Routes>
         <Route path="/admin" element={<Admin />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/author-page" element={<AuthorPage />} />
+        <Route path="/profile" element={<AuthorProfilePage />} />
+        <Route path="/create-article" element={<CreateArticle />} />
+        <Route path="/edit-article" element={<EditArticle />} />
         <Route
           path="*"
           element={
@@ -73,8 +81,8 @@ function App() {
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-use" element={<Terms />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/a" element={<Article />} />
-                <Route path="/ca" element={<CreateArticle />} />
+                <Route path="/article" element={<Article />} />
+                <Route path="/public-profile" element={<AuthorPublicProfilePage/>} />
               </Routes>
               <Footer />
             </>
