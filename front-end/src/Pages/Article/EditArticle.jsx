@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { FaArrowLeft } from "react-icons/fa";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -93,7 +94,16 @@ const EditArticle = () => {
       <div className="container mx-auto max-w-6xl">
         <Card>
           <CardContent className="p-7 space-y-7">
-            <h1 className="text-2xl font-semibold">Edit Article</h1>
+            <div className="flex items-center space-x-4 mb-6">
+              {/* Back button with icon */}
+              <button
+                onClick={() => navigate(-1)} // Navigate to the previous page
+                className="p-2 bg-gray-100 text-gray-700 rounded-full hover:bg-red-400 transition"
+              >
+                <FaArrowLeft size={24} />
+              </button>
+              <h1 className="text-2xl font-semibold">Edit Article</h1>
+            </div>
             <Separator />
             <div className="space-y-4">
               <div>
@@ -172,7 +182,7 @@ const EditArticle = () => {
                       min-height: 200px;
                     }
                   }
-                  `}
+                  `} 
                </style>
               </div>
               <div>
@@ -235,26 +245,25 @@ const EditArticle = () => {
                   }`}
                 >
                   <div
-                    className={`w-6 h-6 bg-white rounded-full transition-transform ${
-                      isFeatured ? "transform translate-x-6" : ""
+                    className={`w-6 h-6 bg-white rounded-full transform transition-transform ${
+                      isFeatured ? "translate-x-6" : "translate-x-0"
                     }`}
-                  ></div>
+                  />
                 </button>
               </div>
             </div>
-            <div className="flex space-x-3 mt-6">
-            <Button
-              onClick={handleSaveChanges}
-              className="w-50 bg-gray-900 text-gray-200 hover:bg-gray-700 transition-transform transform hover:scale-105"
-            >
-              Save Changes
-            </Button>
-            <Button
-              onClick={() => navigate(-1)} // Navigate to the previous page
-              className="w-50 bg-gray-100 text-black hover:bg-custom-accent-green transition-transform transform hover:scale-105 border-2 border-gray-300"
-            >
-              Cancel
-            </Button>
+            <div className="flex justify-end mt-6 space-x-4">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => navigate("/article")}
+                className="text-gray-500"
+              >
+                Cancel
+              </Button>
+              <Button size="lg" onClick={handleSaveChanges}>
+                Save Changes
+              </Button>
             </div>
           </CardContent>
         </Card>

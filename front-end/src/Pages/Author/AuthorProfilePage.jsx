@@ -95,7 +95,7 @@ const AuthorProfilePage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 lg:px-16">
-      <Card className="w-full max-w-5xl p-10 bg-white shadow-md">
+      <Card className="w-full max-w-5xl p-10 bg-white shadow-none">
         <div className="text-center">
           <div
             className="relative mx-auto w-40 h-40 rounded-full overflow-hidden border-4 border-gray-300 shadow-md cursor-pointer"
@@ -206,10 +206,10 @@ const AuthorProfilePage = () => {
         <div className="mt-6 flex justify-center space-x-4">
           {isEditing ? (
             <>
-              <Button onClick={handleCancel} variant="outline" className="text-gray-700">
+              <Button onClick={handleCancel} variant="outline" className="w-50 bg-gray-100 text-black hover:bg-custom-accent-green transition-transform transform hover:scale-105 border-2 border-gray-300">
                 Cancel
               </Button>
-              <Button onClick={handleSave} className="text-white bg-green-500">
+              <Button onClick={handleSave} className="w-50 bg-gray-900 text-gray-200 hover:bg-gray-500 transition-transform transform hover:scale-105">
                 Save Changes
               </Button>
             </>
@@ -217,7 +217,7 @@ const AuthorProfilePage = () => {
             <Button
               onClick={() => setIsEditing(true)}
               variant="outline"
-              className="text-gray-700"
+              className="w-50 bg-gray-900 text-gray-200 hover:bg-gray-500 transition-transform transform hover:scale-105"
             >
               Edit Profile
             </Button>

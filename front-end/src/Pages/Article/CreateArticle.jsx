@@ -14,6 +14,7 @@ import {
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import Quill's CSS for styling
 import QuillToolbar, { modules, formats } from "./EditorToolbar";
+import { FaArrowLeft } from "react-icons/fa"; // Import the back arrow icon
 
 const CreateArticle = () => {
   const navigate = useNavigate();
@@ -75,11 +76,11 @@ const CreateArticle = () => {
       bannerImage,
       content,
       tags,
-      date: new Date().toLocaleDateString(),
+      date: new Date().toLocaleDateString(), // Save the current date when the article is published
       isFeatured,
     };
 
-    navigate("/article", { state: newArticle });
+    navigate("/article", { state: newArticle }); // Pass article data along with the navigation
   };
 
   return (
@@ -87,7 +88,16 @@ const CreateArticle = () => {
       <div className="container mx-auto max-w-6xl">
         <Card>
           <CardContent className="p-7 space-y-7">
-            <h1 className="text-2xl font-semibold">Create New Article</h1>
+             <div className="flex items-center space-x-4 mb-6">
+                {/* Back button with icon */}
+                <button
+                  onClick={() => navigate(-1)} // Navigate to the previous page
+                  className="p-2 bg-gray-100 text-gray-700 rounded-full hover:bg-red-400 transition"
+                >
+                <FaArrowLeft size={24} />
+                </button>
+                <h1 className="text-2xl font-semibold">Create Article</h1>
+              </div>
             <Separator />
             <div className="space-y-4">
               <div>
@@ -239,7 +249,7 @@ const CreateArticle = () => {
             <div className="flex space-x-3 mt-6">
             <Button
               onClick={handlePublish}
-              className="w-50 bg-gray-900 text-gray-200 hover:bg-custom-green transition-transform transform hover:scale-105"
+              className="w-50 bg-gray-900 text-gray-200 hover:bg-gray-500 transition-transform transform hover:scale-105"
             >
               Publish Article
             </Button>

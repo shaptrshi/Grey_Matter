@@ -255,7 +255,7 @@ const Article = () => {
               (window.location.href =
                 "mailto:shaptrshik@gmail.com?subject=Feedback on Article&body=Your message here.")
             }
-            className="bg-gray-100 text-gray-700 hover:bg-custom-accent-green p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-2 border-gray-300 hover:shadow-gray-300"
+            className="rounded-lg border-2 border-black bg-white px-6 py-3 font-semibold uppercase text-black transition-all duration-300 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:rounded-md hover:shadow-[4px_4px_0px_black] active:translate-x-[0px] active:translate-y-[0px] active:rounded-2xl active:shadow-none"
           >
             Send Feedback
           </Button>
