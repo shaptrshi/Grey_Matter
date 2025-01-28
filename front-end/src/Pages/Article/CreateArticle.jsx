@@ -180,8 +180,8 @@ const CreateArticle = () => {
                     <button
                       key={tag}
                       type="button"
-                      className={`px-4 py-2 rounded-full ${
-                        tags.includes(tag) ? "bg-blue-200" : "bg-gray-200"
+                      className={`px-4 py-2 rounded-full transiton-transform transform hover:scale-105 ${
+                        tags.includes(tag) ? "bg-custom-green-1" : "bg-gray-200"
                       }`}
                       onClick={() => handleTagToggle(tag)}
                     >
@@ -214,7 +214,7 @@ const CreateArticle = () => {
                 <Button
                   type="button"
                   onClick={() => navigate(-1)}
-                  className="w-50 bg-gray-100 text-black hover:bg-custom-accent-green transition-transform transform hover:scale-105 border-2 border-gray-300"
+                  className="w-50 bg-gray-100 text-black hover:bg-custom-green-1 transition-transform transform hover:scale-105 border-2 border-gray-300"
                 >
                   Cancel
                 </Button>
