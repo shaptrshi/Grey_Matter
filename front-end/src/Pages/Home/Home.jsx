@@ -110,7 +110,6 @@ const Home = () => {
     },
   ];
 
-
   // Function to handle the change of the article for the Featured Section
   const handleNext = () => {
     setActiveArticle((prev) => (prev + 1) % featuredArticles.length);
@@ -121,7 +120,7 @@ const Home = () => {
   };
 
   return (
-    <div className="container mx-auto px-6 md:px-10 lg:px-20 py-10 mt-2 bg-gray-100">
+    <div className="container mx-auto px-6 md:px-10 lg:px-20 py-8 mt-2 bg-gray-100">
       <div className="grid grid-cols-1 md:grid-cols-11 gap-5">
         {/* Trending News Section (left section) */}
         <div className="md:col-span-3 bg-white rounded-2xl shadow-md p-6 hidden md:block">
@@ -147,13 +146,13 @@ const Home = () => {
         <div className="md:col-span-6">
           {/* Featured News Section */}
           <div className="bg-white rounded-2xl shadow-md overflow-hidden relative h-[300px] md:h-[400px]">
-              <img
-                src={featuredArticles[activeArticle].image}
-                alt={featuredArticles[activeArticle].title}
-                className="w-full h-full object-cover absolute top-0 left-0 rounded-t-2xl transition-all duration-1000 ease-in-out"
-              />
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black opacity-50"></div>
-              <Link to={featuredArticles[activeArticle].link}>
+            <img
+              src={featuredArticles[activeArticle].image}
+              alt={featuredArticles[activeArticle].title}
+              className="w-full h-full object-cover absolute top-0 left-0 rounded-t-2xl transition-all duration-1000 ease-in-out"
+            />
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black opacity-50"></div>
+            <Link to={featuredArticles[activeArticle].link}>
               <div className="absolute bottom-0 left-0 w-full text-white p-4 mb-2 ml-4 text-left text-xl md:text-3xl font-semibold z-10 hover:underline">
                 {featuredArticles[activeArticle].title}
               </div>
@@ -164,21 +163,21 @@ const Home = () => {
                 onClick={handlePrev}
                 className="text-white cursor-pointer hover:text-custom-green flex items-center justify-center"
               >
-                <MdNavigateBefore size={32} md:size={42} />
+                <MdNavigateBefore size={32} />
               </div>
               <div
                 onClick={handleNext}
                 className="text-white cursor-pointer hover:text-custom-green flex items-center justify-center"
               >
-                <MdNavigateNext size={32} md:size={42} />
+                <MdNavigateNext size={32} />
               </div>
             </div>
           </div>
 
-         {/* Latest News Section */}
+          {/* Latest News Section */}
           <div className="mt-5">
             <h2 className="text-lg font-semibold text-gray-800 mb-1">Latest News</h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {latestArticles.slice(0, 4).map((latestArticles, index) => (
                 <Link to={latestArticles.link} key={index} className="block">
                   <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]"> {/* Fixed card height */}
@@ -195,8 +194,10 @@ const Home = () => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="flex justify-between items-center -mt-3">
-                      <p className="text-sm font-semibold text-teal-700">{latestArticles.author}</p>
-                      <p className="text-sm font-semibold text-teal-700">{latestArticles.date}</p>
+                      <div className="hidden md:flex justify-between w-full">
+                        <p className="text-sm font-semibold text-teal-700">{latestArticles.author}</p>
+                        <p className="text-sm font-semibold text-teal-700">{latestArticles.date}</p>
+                      </div>
                     </CardContent>
                   </Card>
                 </Link>
@@ -219,6 +220,14 @@ const Home = () => {
             </Button>
           </Link>
         </div>
+      </div>
+      {/* Banner Section */}
+      <div className="w-full mt-10">
+        <img
+          src="./Grey Matter.png"
+          alt="Promotional Banner"
+          className="w-auto h-auto object-cover rounded-2xl shadow-lg"
+        />
       </div>
     </div>
   );
