@@ -124,13 +124,13 @@ const Home = () => {
       <div className="grid grid-cols-1 md:grid-cols-11 gap-5">
         {/* Trending News Section (left section) */}
         <div className="md:col-span-3 bg-white rounded-2xl shadow-md p-6 hidden md:block">
-          <h2 className="text-lg font-semibold text-gray-800 mb-1">Trending</h2>
-          <ul className="space-y-4">
+          <h2 className="text-lg font-semibold text-gray-800 -mt-2 mb-5">Trending</h2>
+          <ul className="space-y-6">
             {trendingArticles.slice(0, 6).map((trendingArticles, index) => (
               <Link to={trendingArticles.link} key={index} className="block">
                 <Card className="hover:shadow-lg max-w-full transition-transform transform hover:scale-105 hover:bg-custom-green-1">
                   <CardHeader>
-                    <CardTitle className="text-lg font-semibold text-gray-800">{trendingArticles.title}</CardTitle>
+                    <CardTitle className="text-lg font-semibold text-gray-800 hover:underline">{trendingArticles.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="flex justify-between items-center">
                     <p className="text-sm font-semibold text-teal-700">{trendingArticles.author}</p>
@@ -189,7 +189,7 @@ const Home = () => {
                       />
                     </div>
                     <CardHeader className="mt-1">
-                      <CardTitle className="text-lg font-semibold text-gray-800 line-clamp-3 h-[60px]"> {/* Line clamping for titles */}
+                      <CardTitle className="text-lg font-semibold text-gray-800 line-clamp-3 h-[60px] hover:underline"> {/* Line clamping for titles */}
                         {latestArticles.title}
                       </CardTitle>
                     </CardHeader>
