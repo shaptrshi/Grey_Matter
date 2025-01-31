@@ -37,8 +37,16 @@ const AuthorPage = () => {
   return (
     <div>
       {/* Top Section */}
-      <div className="flex justify-between items-center px-1 py-3 mb-6 shadow-md bg-white">
-        <h1 className="text-3xl font-bold pl-4">{`${author.name}'s Page`}</h1>
+      <nav className="sticky top-0 z-50 flex justify-between items-center px-4 py-3 mb-6 shadow-md bg-gray-100">
+        <div className="flex-shrink-0 pl-4">
+            <a href="/">
+              <img
+                src="./logo2.png"
+                alt="Logo"
+                className="h-8 md:h-12 w-auto transition-transform hover:scale-105"
+              />
+            </a>
+        </div>
         <div className="flex items-center space-x-4">
           {/* Search Bar */}
           <div className="hidden sm:flex items-center max-w-xs flex-1 ml-4">
@@ -84,10 +92,10 @@ const AuthorPage = () => {
             </Tooltip>
           </TooltipProvider>
         </div>
-      </div>
+      </nav>
 
       {/* Main Content */}
-      <div className="container mx-auto p-2 -mt-4">
+      <div className="container mx-auto px-10 py-5 -mt-4 bg-gray-100">
         {/* Profile Section */}
         <div className="flex items-center mb-6 space-y-4 relative">
           <div className="bg-gray-100 p-4 w-full max-w-3xl rounded-lg flex items-center">
@@ -135,7 +143,7 @@ const AuthorPage = () => {
 
         {/* Articles Section */}
         <TooltipProvider>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredArticles.map((article) => (
               <Card
                 key={article.id}

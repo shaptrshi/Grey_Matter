@@ -9,7 +9,6 @@ const Trending = () => {
       description: "Discover the latest efforts to preserve forests worldwide.",
       image: "forest.jpg",
       link: "/articles/forests",
-      category: "Environment",
     },
     {
       id: 2,
@@ -17,7 +16,6 @@ const Trending = () => {
       description: "Stay updated with the latest global headlines.",
       image: "world-news.jpg",
       link: "/articles/world-news",
-      category: "News",
     },
     {
       id: 3,
@@ -26,7 +24,6 @@ const Trending = () => {
         "Discover the latest missions and findings in space exploration.",
       image: "./space.jpg",
       link: "/articles/space",
-      category: "Science",
     },
     {
       id: 4,
@@ -34,7 +31,6 @@ const Trending = () => {
       description: "Get insights into the newest gadgets and innovations.",
       image: "./gadgets.jpg",
       link: "/articles/gadgets",
-      category: "Technology",
     },
   ];
 
@@ -49,7 +45,7 @@ const Trending = () => {
           Science, and Technology. Explore the best insights across various
           fields.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredArticles.map((article) => (
             <Card
               key={article.id}
@@ -68,9 +64,6 @@ const Trending = () => {
                 </h2>
                 <p className="text-muted-foreground mt-2">
                   {article.description}
-                </p>
-                <p className="mt-2 text-sm text-primary font-medium">
-                  Category: {article.category}
                 </p>
               </CardContent>
             </Card>

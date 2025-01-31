@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MdNavigateBefore, MdNavigateNext } from "react-icons/md"; // Importing new icons
+import { MdNavigateBefore, MdNavigateNext, MdRssFeed } from "react-icons/md"; // Importing new icons
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card"; // Importing ShadCN's Card components
 import { Link } from "react-router-dom"; // Importing Link for internal routing
@@ -110,31 +110,80 @@ const Home = () => {
     },
   ];
 
+  const NatureArticles = [
+    {
+      title: "The Importance of Green Roofs in Urban Planning",
+      image: "./pic.jpg",
+      link: "/article/green-roofs",
+      author: "Michael Green",
+      date: "January 18, 2024",
+    },
+    {
+      title: "The Impact of Electric Vehicles on Pollution",
+      image: "./pic.jpg",
+      link: "/article/electric-vehicles",
+      author: "Sarah White",
+      date: "January 16, 2024",
+    },
+    {
+      title: "How Technology is Helping Combat Climate Change",
+      image: "./pic.jpg",
+      link: "/article/climate-tech",
+      author: "David Black",
+      date: "January 14, 2024",
+    },
+    {
+      title: "Sustainable Tourism and Eco-friendly Practices",
+      image: "./pic.jpg",
+      link: "/article/sustainable-tourism",
+      author: "Emily Brown",
+      date: "January 12, 2024",
+    },
+  ];
+
   // Function to handle the change of the article for the Featured Section
   const handleNext = () => {
     setActiveArticle((prev) => (prev + 1) % featuredArticles.length);
   };
 
   const handlePrev = () => {
-    setActiveArticle((prev) => (prev - 1 + featuredArticles.length) % featuredArticles.length);
+    setActiveArticle(
+      (prev) => (prev - 1 + featuredArticles.length) % featuredArticles.length
+    );
   };
 
   return (
     <div className="container mx-auto px-6 md:px-10 lg:px-20 py-8 mt-2 bg-gray-100">
+      {/* Banner Section Top*/}
+      <div className="w-full -mt-5 mb-5">
+        <img
+          src="./whitegreen.png"
+          alt="Promotional Banner"
+          className="w-full h-auto md:h-32  object-cover rounded-2xl shadow-sm"
+        />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-11 gap-5">
         {/* Trending News Section (left section) */}
         <div className="md:col-span-3 bg-white rounded-2xl shadow-md p-6 hidden md:block">
-          <h2 className="text-lg font-semibold text-gray-800 -mt-2 mb-5">Trending</h2>
+          <h2 className="text-lg font-semibold text-gray-800 -mt-2 mb-5">
+            Trending
+          </h2>
           <ul className="space-y-6">
             {trendingArticles.slice(0, 6).map((trendingArticles, index) => (
               <Link to={trendingArticles.link} key={index} className="block">
                 <Card className="hover:shadow-lg max-w-full transition-transform transform hover:scale-105 hover:bg-custom-green-1">
                   <CardHeader>
-                    <CardTitle className="text-lg font-semibold text-gray-800 hover:underline">{trendingArticles.title}</CardTitle>
+                    <CardTitle className="text-lg font-semibold text-gray-800 hover:underline">
+                      {trendingArticles.title}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="flex justify-between items-center">
-                    <p className="text-sm font-semibold text-teal-700">{trendingArticles.author}</p>
-                    <p className="text-sm font-semibold text-teal-700">{trendingArticles.date}</p>
+                    <p className="text-sm font-semibold text-teal-700">
+                      {trendingArticles.author}
+                    </p>
+                    <p className="text-sm font-semibold text-teal-700">
+                      {trendingArticles.date}
+                    </p>
                   </CardContent>
                 </Card>
               </Link>
@@ -176,12 +225,18 @@ const Home = () => {
 
           {/* Latest News Section */}
           <div className="mt-5">
-            <h2 className="text-lg font-semibold text-gray-800 mb-1">Latest News</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <h2 className="text-lg font-semibold text-gray-800 mb-1">
+              Latest News
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
               {latestArticles.slice(0, 4).map((latestArticles, index) => (
                 <Link to={latestArticles.link} key={index} className="block">
-                  <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]"> {/* Fixed card height */}
-                    <div className="relative h-[150px]"> {/* Fixed image height */}
+                  <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+                    {" "}
+                    {/* Fixed card height */}
+                    <div className="relative h-[150px]">
+                      {" "}
+                      {/* Fixed image height */}
                       <img
                         src={latestArticles.image}
                         alt={latestArticles.title}
@@ -189,14 +244,20 @@ const Home = () => {
                       />
                     </div>
                     <CardHeader className="mt-1">
-                      <CardTitle className="text-lg font-semibold text-gray-800 line-clamp-3 h-[60px] hover:underline"> {/* Line clamping for titles */}
+                      <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                        {" "}
+                        {/* Line clamping for titles */}
                         {latestArticles.title}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="flex justify-between items-center -mt-3">
                       <div className="hidden md:flex justify-between w-full">
-                        <p className="text-sm font-semibold text-teal-700">{latestArticles.author}</p>
-                        <p className="text-sm font-semibold text-teal-700">{latestArticles.date}</p>
+                        <p className="text-sm font-semibold text-teal-700">
+                          {latestArticles.author}
+                        </p>
+                        <p className="text-sm font-semibold text-teal-700">
+                          {latestArticles.date}
+                        </p>
                       </div>
                     </CardContent>
                   </Card>
@@ -207,20 +268,43 @@ const Home = () => {
         </div>
 
         {/* Contact Us Section (right section) */}
-        <div className="md:col-span-2 rounded-2xl shadow-md p-6 h-[300px] md:h-[400px] bg-custom-green-1">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Contact Us</h2>
-          <p className="text-gray-800 mb-4">Got a story or suggestion? <br /> We'd love to hear from you!</p>
-          <Link to="/contact">
-            <Button
-              variant="primary"
-              className="w-full rounded-full bg-custom-green text-custom-green-1 transition-transform transform hover:scale-105 mt-10 md:mt-36"
-            >
+        <div className="md:col-span-2 space-y-6">
+          <div className="rounded-2xl shadow-md p-6 h-[300px] md:h-[400px] bg-custom-green-1">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
               Contact Us
-              <MdNavigateNext size={24} className="ml-2" />
-            </Button>
-          </Link>
+            </h2>
+            <p className="text-gray-800 mb-4">
+              Got a story or suggestion? <br /> We'd love to hear from you!
+            </p>
+            <Link to="/contact">
+              <Button
+                variant="primary"
+                className="w-full rounded-full bg-custom-green text-custom-green-1 transition-transform transform hover:scale-105 mt-10 md:mt-36 font-bold"
+              >
+                Contact Us
+                <MdNavigateNext size={24} className="ml-2" />
+              </Button>
+            </Link>
+          </div>
+          {/* RSS Feed Subscription Section */}
+          <div className="rounded-2xl shadow-md p-6 h-[300px] md:h-[300px] bg-custom-green">
+            <h2 className="text-2xl font-bold text-gray-200 mb-4">Subscribe</h2>
+            <p className="text-gray-200 mb-4">
+              Stay updated with our latest articles. <br /> Subscribe to our RSS
+              feed now!
+            </p>
+            <a href="https://rss.com/" target="_blank" rel="noreferrer">
+              <Button
+                variant="primary"
+                className="w-full rounded-full bg-custom-accent-green text-custom-green transition-transform transform hover:scale-105 mt-10 md:mt-31 font-bold"
+              >
+                Subscribe <MdRssFeed size={24} className="ml-2" />
+              </Button>
+            </a>
+          </div>
         </div>
       </div>
+
       {/* Banner Section */}
       <div className="w-full mt-10">
         <img
@@ -228,6 +312,179 @@ const Home = () => {
           alt="Promotional Banner"
           className="w-auto h-auto object-cover rounded-2xl shadow-lg"
         />
+      </div>
+
+      {/* More Articles Section */}
+      <div className="flex justify-center items-center">
+        <h1 className="text-3xl mt-10 font-semibold text-gray-800">
+          More Articles You’ll Love
+        </h1>
+      </div>
+      {/* Spotlight Articles Section */}
+      <div className="mt-10">
+        <h2 className="text-xl font-semibold text-gray-800 mb-5">Spotlight</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+          {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
+            <Link to={NatureArticles.link} key={index} className="block">
+              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+                {" "}
+                {/* Fixed card height */}
+                <div className="relative h-[150px]">
+                  {" "}
+                  {/* Fixed image height */}
+                  <img
+                    src={NatureArticles.image}
+                    alt={NatureArticles.title}
+                    className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+                  />
+                </div>
+                <CardHeader className="mt-1">
+                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                    {" "}
+                    {/* Line clamping for titles */}
+                    {NatureArticles.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex justify-between items-center -mt-3">
+                  <div className="hidden md:flex justify-between w-full">
+                    <p className="text-sm font-semibold text-teal-700">
+                      {NatureArticles.author}
+                    </p>
+                    <p className="text-sm font-semibold text-teal-700">
+                      {NatureArticles.date}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-10">
+        <h2 className="text-xl font-semibold text-gray-800 mb-5">
+          Environment
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+          {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
+            <Link to={NatureArticles.link} key={index} className="block">
+              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+                {" "}
+                {/* Fixed card height */}
+                <div className="relative h-[150px]">
+                  {" "}
+                  {/* Fixed image height */}
+                  <img
+                    src={NatureArticles.image}
+                    alt={NatureArticles.title}
+                    className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+                  />
+                </div>
+                <CardHeader className="mt-1">
+                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                    {" "}
+                    {/* Line clamping for titles */}
+                    {NatureArticles.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex justify-between items-center -mt-3">
+                  <div className="hidden md:flex justify-between w-full">
+                    <p className="text-sm font-semibold text-teal-700">
+                      {NatureArticles.author}
+                    </p>
+                    <p className="text-sm font-semibold text-teal-700">
+                      {NatureArticles.date}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-10">
+        <h2 className="text-xl font-semibold text-gray-800 mb-5">
+          Sustainable Living
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+          {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
+            <Link to={NatureArticles.link} key={index} className="block">
+              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+                {" "}
+                {/* Fixed card height */}
+                <div className="relative h-[150px]">
+                  {" "}
+                  {/* Fixed image height */}
+                  <img
+                    src={NatureArticles.image}
+                    alt={NatureArticles.title}
+                    className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+                  />
+                </div>
+                <CardHeader className="mt-1">
+                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                    {" "}
+                    {/* Line clamping for titles */}
+                    {NatureArticles.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex justify-between items-center -mt-3">
+                  <div className="hidden md:flex justify-between w-full">
+                    <p className="text-sm font-semibold text-teal-700">
+                      {NatureArticles.author}
+                    </p>
+                    <p className="text-sm font-semibold text-teal-700">
+                      {NatureArticles.date}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-10">
+        <h2 className="text-xl font-semibold text-gray-800 mb-5">
+          Interviews
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+          {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
+            <Link to={NatureArticles.link} key={index} className="block">
+              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+                {" "}
+                {/* Fixed card height */}
+                <div className="relative h-[150px]">
+                  {" "}
+                  {/* Fixed image height */}
+                  <img
+                    src={NatureArticles.image}
+                    alt={NatureArticles.title}
+                    className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+                  />
+                </div>
+                <CardHeader className="mt-1">
+                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                    {" "}
+                    {/* Line clamping for titles */}
+                    {NatureArticles.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex justify-between items-center -mt-3">
+                  <div className="hidden md:flex justify-between w-full">
+                    <p className="text-sm font-semibold text-teal-700">
+                      {NatureArticles.author}
+                    </p>
+                    <p className="text-sm font-semibold text-teal-700">
+                      {NatureArticles.date}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );
