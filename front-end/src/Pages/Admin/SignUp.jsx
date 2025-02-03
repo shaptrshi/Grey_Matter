@@ -5,14 +5,12 @@ const AuthPage = () => {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    phone: "",
     password: "",
     confirmPassword: "",
   });
   const [errors, setErrors] = useState({
     fullName: "",
     email: "",
-    phone: "",
     password: "",
     confirmPassword: "",
   });
@@ -30,7 +28,6 @@ const AuthPage = () => {
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
     return passwordRegex.test(password);
   };
-  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -46,7 +43,10 @@ const AuthPage = () => {
     // Live feedback for email
     if (name === "email") {
       if (!validateEmail(value)) {
-        setErrors((prev) => ({ ...prev, email: "Please enter a valid email." }));
+        setErrors((prev) => ({
+          ...prev,
+          email: "Please enter a valid email.",
+        }));
       } else {
         setErrors((prev) => ({ ...prev, email: "" }));
       }
@@ -57,7 +57,8 @@ const AuthPage = () => {
       if (!validatePassword(value)) {
         setErrors((prev) => ({
           ...prev,
-          password: "Password must be at least 8 characters long and contain at least one number.",
+          password:
+            "Password must be at least 8 characters long and contain at least one number.",
         }));
       } else {
         setErrors((prev) => ({ ...prev, password: "" }));
@@ -73,39 +74,29 @@ const AuthPage = () => {
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
-            <>
-              <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="fullName"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                  placeholder="Enter your full name"
-                />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                  Phone Number
-                </label>
-                <input
-                  type="text"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                  placeholder="Enter your phone number"
-                />
-              </div>
-            </>
+            <div>
+              <label
+                htmlFor="fullName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="fullName"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                placeholder="Enter your full name"
+              />
+            </div>
           )}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
@@ -117,10 +108,15 @@ const AuthPage = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
               placeholder="Enter your email"
             />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email}</p>
+            )}
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -132,25 +128,35 @@ const AuthPage = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
               placeholder="Enter your password"
             />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-          </div>
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-              placeholder="Confirm your password"
-            />
-            {formData.password !== formData.confirmPassword && formData.confirmPassword && (
-              <p className="text-red-500 text-sm">Passwords do not match.</p>
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password}</p>
             )}
           </div>
+          {!isLogin && (
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                placeholder="Confirm your password"
+              />
+              {formData.password !== formData.confirmPassword &&
+                formData.confirmPassword && (
+                  <p className="text-red-500 text-sm">
+                    Passwords do not match.
+                  </p>
+                )}
+            </div>
+          )}
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"

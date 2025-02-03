@@ -19,10 +19,11 @@ const adminLogin = async (req, res) => {
     
     if (!adminExist) {
       return res
-      .status(400)
-      .json({ success: false, message: "Admin already exist" });
+        .status(400)
+        .json({ success: false, message: "Admin not found" });
     }
-    console.log('here')
+
+    console.log('here');
 
     if (adminExist && (await adminExist.matchPassword(password))) {
       res.status(200).json({
@@ -37,27 +38,32 @@ const adminLogin = async (req, res) => {
       res.status(401).json({ success: false, message: "Invalid admin data" });
     }
   } catch (error) {
-
     res.status(500).json({ error: "Server error", error });
   }
 };
 
 const adminRegister = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, confirmPassword } = req.body;
 
   try {
-    if (!email || !password) {
+    if (!email || !password || !confirmPassword) {
       return res
         .status(400)
         .json({ success: false, message: "All fields required" });
     }
 
-    const adminExist = await Admin.find({ email });
-
-    if (!adminExist) {
+    if (password !== confirmPassword) {
       return res
         .status(400)
-        .json({ success: false, message: "Admin already exist" });
+        .json({ success: false, message: "Passwords do not match" }); // Check if passwords match
+    }
+
+    const adminExist = await Admin.findOne({ email });
+
+    if (adminExist) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Admin already exists" });
     }
 
     const admin = new Admin({ email, password });
