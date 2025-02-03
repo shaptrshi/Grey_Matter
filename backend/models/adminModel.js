@@ -17,7 +17,7 @@ const adminSchema = new mongoose.Schema({
   },
 });
 
-adminSchema.pre("save", async (next) => {
+adminSchema.pre("save", async function(next) {
   if (!this.isModified("password")) {
     next();
   }
@@ -26,7 +26,7 @@ adminSchema.pre("save", async (next) => {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-adminSchema.methods.matchPassword = async (enteredPassword) => {
+adminSchema.methods.matchPassword = async function (enteredPassword)  {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

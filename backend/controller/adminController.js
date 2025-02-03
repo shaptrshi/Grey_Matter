@@ -1,5 +1,9 @@
 const Admin = require("../models/adminModel");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const adminLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -12,12 +16,13 @@ const adminLogin = async (req, res) => {
     }
 
     const adminExist = await Admin.findOne({ email });
-
+    
     if (!adminExist) {
       return res
-        .status(400)
-        .json({ success: false, message: "Admin already exist" });
+      .status(400)
+      .json({ success: false, message: "Admin already exist" });
     }
+    console.log('here')
 
     if (adminExist && (await adminExist.matchPassword(password))) {
       res.status(200).json({
@@ -32,6 +37,7 @@ const adminLogin = async (req, res) => {
       res.status(401).json({ success: false, message: "Invalid admin data" });
     }
   } catch (error) {
+
     res.status(500).json({ error: "Server error", error });
   }
 };
@@ -59,7 +65,7 @@ const adminRegister = async (req, res) => {
 
     if (admin) {
       res.status(201).json({
-        success: false,
+        success: true,
         _id: admin._id,
         email: admin.email,
         token: jwt.sign({ _id: admin._id }, process.env.JWT_SECRET, {
@@ -71,6 +77,7 @@ const adminRegister = async (req, res) => {
       throw new Error("Invalid admin data");
     }
   } catch (error) {
+    console.log("Error: ", error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
