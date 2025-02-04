@@ -45,8 +45,7 @@ const EvolvingHorizons = () => {
           Evolving Horizons
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Dive into the world of science with articles on space, medical
-          advancements, physics discoveries, and cutting-edge technology.
+        Highlight progress, milestones, and key projects in the environment, agriculture, and related fields.
         </p>
         <div className="mt-16">
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">

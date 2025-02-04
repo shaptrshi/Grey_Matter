@@ -153,7 +153,7 @@ const Home = () => {
   };
 
   return (
-    <div className="container mx-auto px-6 md:px-10 lg:px-20 py-8 mt-2 bg-gray-100">
+    <div className="container mx-auto px-6 md:px-10 lg:px-20 py-8 mt-2 bg-gray-100 dark:bg-black">
       {/* Banner Section Top*/}
       <div className="w-full -mt-5 mb-5">
         <img
@@ -164,8 +164,8 @@ const Home = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-11 gap-5">
         {/* Trending News Section (left section) */}
-        <div className="md:col-span-3 bg-white rounded-2xl shadow-md p-6 hidden md:block">
-          <h2 className="text-lg font-semibold text-gray-800 -mt-2 mb-5">
+        <div className="md:col-span-3 bg-white dark:bg-black rounded-2xl shadow-md p-6 hidden md:block">
+          <h2 className="text-lg font-semibold text-gray-800 -mt-2 mb-5 dark:text-gray-100">
             Trending
           </h2>
           <ul className="space-y-6">

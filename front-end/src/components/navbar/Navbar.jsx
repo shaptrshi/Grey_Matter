@@ -72,7 +72,6 @@ const Navbar = () => {
         { name: "Weather", link: "/weather" },
         { name: "Agriculture", link: "/agriculture" },
         { name: "Forest", link: "/forest" },
-        { name: "Sustainable Living", link: "/sustainable-living" },
       ],
     },
     {
@@ -87,6 +86,7 @@ const Navbar = () => {
           name: "Technology And Advancement",
           link: "/technology-and-advancement",
         },
+        { name: "Sustainable Living", link: "/sustainable-living" },
       ],
     },
     {

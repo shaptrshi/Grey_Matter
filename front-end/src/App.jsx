@@ -16,7 +16,7 @@ import Environment from "./Pages/Nature/Environment";
 import Weather from "./Pages/Nature/Weather";
 import Agriculture from "./Pages/Nature/Agriculture";
 import Forest from "./Pages/Nature/Forest";
-import SustainableLiving from "./Pages/Nature/SustainableLiving";
+import SustainableLiving from "./Pages/Innovation/SustainableLiving";
 import EvolvingHorizons from "./Pages/Focus/EvolvingHorizons";
 import Interviews from "./Pages/Focus/Interviews";
 import Spotlight from "./Pages/Focus/Spotlight";
@@ -82,7 +82,10 @@ function App() {
                 <Route path="/terms-of-use" element={<Terms />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/article" element={<Article />} />
-                <Route path="/public-profile" element={<AuthorPublicProfilePage/>} />
+                <Route
+                  path="/public-profile"
+                  element={<AuthorPublicProfilePage />}
+                />
               </Routes>
               <Footer />
             </>

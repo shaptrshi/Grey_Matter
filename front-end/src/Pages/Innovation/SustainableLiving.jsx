@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 
-const Agriculture = () => {
+const SustainableLiving = () => {
   const articles = [
     {
       id: 1,
@@ -42,10 +42,10 @@ const Agriculture = () => {
     <div className="bg-background min-h-screen py-10">
       <div className="container mx-auto px-9">
         <h1 className="text-4xl font-extrabold tracking-tight text-center mb-10">
-        Agriculture
+        Sustainable Living
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-        Focus on farming practices, policies, and sustainability in agriculture.
+        Guide readers on eco-friendly lifestyles and sustainable living.
         </p>
         <div className="mt-16">
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
@@ -87,4 +87,4 @@ const Agriculture = () => {
   );
 };
 
-export default Agriculture;
+export default SustainableLiving;
