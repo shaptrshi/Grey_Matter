@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipProvider } from "@/components/ui/tooltip";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -10,47 +10,44 @@ const AuthorPage = () => {
   const [author, setAuthor] = useState({
     name: "John Doe",
     profilePicture: "./pic.jpg",
+    articles: [
+      { id: 1, title: "First Article", bannerImage: "./pic.jpg", link: "/article/1" },
+      { id: 2, title: "Second Article", bannerImage: "./pic.jpg", link: "/article/2" },
+      { id: 3, title: "Third Article", bannerImage: "./pic.jpg", link: "/article/3" },
+      { id: 4, title: "Fourth Article", bannerImage: "./pic.jpg", link: "/article/4" },
+    ],
   });
-
-  const [articles, setArticles] = useState([
-    { id: 1, title: "First Article", content: "This is the first article", bannerImage: "./pic.jpg" },
-    { id: 2, title: "Second Article", content: "This is the second article", bannerImage: "./pic.jpg" },
-    { id: 3, title: "Third Article", content: "This is the third article", bannerImage: "./pic.jpg" },
-    { id: 4, title: "Fourth Article", content: "This is the fourth article", bannerImage: "./pic.jpg" },
-  ]);
 
   const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
-
-  const handleDelete = (id) => setArticles(articles.filter((a) => a.id !== id));
+  const handleDelete = (id) => setAuthor((prev) => ({
+    ...prev,
+    articles: prev.articles.filter((article) => article.id !== id),
+  }));
   const handleEdit = (id) => navigate(`/edit-article/${id}`);
   const handleCreateArticle = () => navigate("/create-article");
   const handleProfile = () => navigate("/profile");
   const handleLogout = () => navigate("/signup");
   const handleGoToHomePage = () => navigate("/");
 
-  const filteredArticles = articles.filter((article) =>
+  const filteredArticles = author.articles.filter((article) =>
     article.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div>
-      {/* Top Section */}
+      {/* Top Navigation Bar */}
       <nav className="sticky top-0 z-50 flex justify-between items-center px-4 py-3 mb-6 shadow-md bg-gray-100">
-        <div className="flex-shrink-0 pl-4">
-            <a href="/">
-              <img
-                src="./logo2.png"
-                alt="Logo"
-                className="h-8 md:h-12 w-auto transition-transform hover:scale-105"
-              />
-            </a>
+        <div className="pl-4">
+          <a href="/">
+            <img src="./logo2.png" alt="Logo" className="h-8 md:h-12 w-auto hover:scale-105 transition-transform" />
+          </a>
         </div>
         <div className="flex items-center space-x-4">
           {/* Search Bar */}
           <div className="hidden sm:flex items-center max-w-xs flex-1 ml-4">
-            <div className="w-full flex items-center bg-gray-100 rounded-lg hover:bg-custom-green-1 transition-colors duration-200">
+            <div className="w-full flex items-center bg-gray-100 rounded-lg hover:bg-custom-green-1 transition-colors">
               <input
                 type="text"
                 placeholder="Search"
@@ -64,29 +61,20 @@ const AuthorPage = () => {
             </div>
           </div>
 
-          {/* Buttons with Icons */}
+          {/* Navigation Buttons */}
           <TooltipProvider>
             <Tooltip content="Go to Home">
-              <Button
-                onClick={handleGoToHomePage}
-                className="bg-gray-100 text-black py-2 px-3 rounded-lg transition-transform hover:scale-105 hover:bg-blue-500"
-              >
+              <Button onClick={handleGoToHomePage} className="bg-gray-100 text-black py-2 px-3 rounded-lg hover:scale-105 hover:bg-blue-500">
                 <FaHome size={24} />
               </Button>
             </Tooltip>
             <Tooltip content="View Profile">
-              <Button
-                onClick={handleProfile}
-                className="bg-gray-100 text-black py-1 px-3 rounded-lg transition-transform hover:scale-105 hover:bg-gray-400"
-              >
+              <Button onClick={handleProfile} className="bg-gray-100 text-black py-1 px-3 rounded-lg hover:scale-105 hover:bg-gray-400">
                 <FaUser size={24} />
               </Button>
             </Tooltip>
             <Tooltip content="Log Out">
-              <Button
-                onClick={handleLogout}
-                className="bg-gray-100 text-red-700 py-2 px-3 rounded-lg transition-transform hover:scale-105 hover:bg-red-300"
-              >
+              <Button onClick={handleLogout} className="bg-gray-100 text-red-700 py-2 px-3 rounded-lg hover:scale-105 hover:bg-red-300">
                 <FaSignOutAlt size={24} />
               </Button>
             </Tooltip>
@@ -99,11 +87,7 @@ const AuthorPage = () => {
         {/* Profile Section */}
         <div className="flex items-center mb-6 space-y-4 relative">
           <div className="bg-gray-100 p-4 w-full max-w-3xl rounded-lg flex items-center">
-            <img
-              src={author.profilePicture}
-              alt="Author Profile"
-              className="w-32 h-32 rounded-full object-cover mr-6"
-            />
+            <img src={author.profilePicture} alt="Author Profile" className="w-32 h-32 rounded-full object-cover mr-6" />
             <div>
               <h2 className="text-3xl font-semibold">{author.name}</h2>
             </div>
@@ -114,10 +98,7 @@ const AuthorPage = () => {
               <div className="hidden md:block absolute top-4 right-4">
                 <TooltipProvider>
                   <Tooltip content="Create Article">
-                    <Button
-                      onClick={handleCreateArticle}
-                      className="bg-gray-100 text-black py-1 px-3 rounded-lg transition-transform hover:scale-110 hover:bg-blue-400 border-2 border-gray-300 hover:border-blue-400 hover:shadow-md"
-                    >
+                    <Button onClick={handleCreateArticle} className="bg-gray-100 text-black py-1 px-3 rounded-lg hover:scale-110 hover:bg-blue-400">
                       Create Article <FaPlusCircle size={100} />
                     </Button>
                   </Tooltip>
@@ -128,10 +109,7 @@ const AuthorPage = () => {
               <div className="md:hidden fixed bottom-6 right-6 z-50">
                 <TooltipProvider>
                   <Tooltip content="Create Article">
-                    <button
-                      onClick={handleCreateArticle}
-                      className="bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-transform hover:scale-110"
-                    >
+                    <button onClick={handleCreateArticle} className="bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 hover:scale-110">
                       <FaPlus size={24} />
                     </button>
                   </Tooltip>
@@ -143,54 +121,28 @@ const AuthorPage = () => {
 
         {/* Articles Section */}
         <TooltipProvider>
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
             {filteredArticles.map((article) => (
-              <Card
-                key={article.id}
-                className="shadow-md hover:shadow-lg transition-transform hover:scale-105 border border-gray-200"
-              >
-                {/* Banner Image */}
-                <CardHeader className="p-0">
-                  <img
-                    src={article.bannerImage}
-                    alt={`${article.title} Banner`}
-                    className="w-full h-40 object-cover rounded-t-md"
-                  />
-                </CardHeader>
-
-                {/* Article Content */}
-                <CardContent className="p-4">
-                  <CardTitle className="text-lg font-semibold mb-2">{article.title}</CardTitle>
-                  <p className="text-gray-600 text-sm line-clamp-2">
-                    {article.content.slice(0, 100)}
-                  </p>
-                </CardContent>
-
-                {/* Edit & Delete Buttons */}
-                <CardFooter className="flex justify-between items-center p-4 pt-0">
-                  {/* Edit Button */}
-                  <Tooltip content="Edit Article">
-                    <Button
-                      onClick={() => handleEdit(article.id)}
-                      variant="ghost"
-                      className="text-blue-500 hover:bg-blue-400 text-sm"
-                    >
+              <Link to={article.link} key={article.id} className="block">
+                <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2">
+                  <CardHeader className="p-0">
+                    <img src={article.bannerImage} alt={article.title} className="w-full h-40 object-cover rounded-t-md" />
+                  </CardHeader>
+                  <CardContent className="p-3">
+                    <CardTitle className="text-lg font-semibold mb-2 text-gray-800 hover:underline">
+                      {article.title}
+                    </CardTitle>
+                  </CardContent>
+                  <CardFooter className="flex justify-between p-4">
+                    <Button onClick={() => handleEdit(article.id)} variant="ghost" className="text-blue-500 hover:bg-blue-400 hover:text-gray-800">
                       Edit
                     </Button>
-                  </Tooltip>
-
-                  {/* Delete Button */}
-                  <Tooltip content="Delete Article">
-                    <Button
-                      onClick={() => handleDelete(article.id)}
-                      variant="ghost"
-                      className="text-red-500 hover:bg-red-400 text-sm"
-                    >
+                    <Button onClick={() => handleDelete(article.id)} variant="ghost" className="text-red-500 hover:bg-red-400 hover:text-gray-800">
                       Delete
                     </Button>
-                  </Tooltip>
-                </CardFooter>
-              </Card>
+                  </CardFooter>
+                </Card>
+              </Link>
             ))}
           </div>
         </TooltipProvider>

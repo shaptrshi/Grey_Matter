@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Menu, X, Search, ChevronDown } from "lucide-react";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import { Menu, X, Search, ChevronDown, Moon, Sun } from "lucide-react";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const Dropdown = ({ label, items, isDesktop }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -58,6 +59,7 @@ const Dropdown = ({ label, items, isDesktop }) => {
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   const navItems = [
     { name: "Home", link: "/" },
@@ -123,7 +125,7 @@ const Navbar = () => {
           </div>
 
           {/* Navigation Items (Desktop) */}
-          <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
+          <div className="hidden md:flex items-center justify-center flex-grow space-x-6 lg:space-x-8">
             {navItems.map((item) =>
               item.dropdown ? (
                 <Dropdown
@@ -145,7 +147,7 @@ const Navbar = () => {
           </div>
 
           {/* Search Bar */}
-          <div className="hidden sm:flex items-center max-w-xs flex-1 ml-4">
+          <div className="hidden sm:flex items-center max-w-xs flex-1 ml-auto">
             <div className="w-full flex items-center bg-gray-100 rounded-lg hover:bg-custom-green-1 transition-colors duration-200">
               <input
                 type="text"
@@ -157,6 +159,13 @@ const Navbar = () => {
               </button>
             </div>
           </div>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-md text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300 ml-2"
+            aria-label="Toggle Dark Mode"
+          >
+            {theme === "light" ? <Moon size={24} /> : <Sun size={24} />}
+          </button>
         </div>
       </div>
 

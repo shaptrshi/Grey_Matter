@@ -110,7 +110,7 @@ const Admin = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="container mx-auto px-10 py-5 bg-gray-100">
+      <div className="container mx-auto px-10 py-2 bg-gray-100">
         {/* Authors & Articles */}
         {authors
           .filter(
