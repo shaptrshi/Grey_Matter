@@ -88,20 +88,20 @@ const Admin = () => {
           {/* Navbar Buttons */}
           <TooltipProvider>
             <Tooltip content="Go to Home">
-              <Button onClick={handleGoToHomePage} className="bg-gray-100 text-black py-2 px-3 rounded-lg hover:scale-105 hover:bg-blue-500">
+              <Button onClick={handleGoToHomePage} className="bg-gray-100 text-black py-2 px-3 rounded-lg hover:scale-105 hover:bg-blue-500 shadow-none">
                 <FaHome size={24} />
               </Button>
             </Tooltip>
             <Tooltip content="Go to Admin Page">
               <Button
                 onClick={handleGoToAuthorPage}
-                className="bg-blue-400 text-gray-800 py-2 px-3 rounded-lg hover:scale-105 hover:bg-blue-500"
+                className="bg-blue-400 text-gray-800 py-2 px-3 rounded-lg hover:scale-105 hover:bg-blue-500 shadow-none"
               >
                 Admin Page
               </Button>
             </Tooltip>
             <Tooltip content="Log Out">
-              <Button onClick={handleLogout} className="bg-gray-100 text-red-700 py-2 px-3 rounded-lg hover:scale-105 hover:bg-red-300">
+              <Button onClick={handleLogout} className="bg-gray-100 text-red-700 py-2 px-3 rounded-lg hover:scale-105 hover:bg-red-300 shadow-none">
                 <FaSignOutAlt size={24} />
               </Button>
             </Tooltip>
@@ -128,14 +128,14 @@ const Admin = () => {
                 <div className="ml-auto space-x-3">
                 <Button
                     onClick={() => handleGoToProfilePage(author.id)}
-                    className="text-gray-800 py-1 bg-gray-100 px-3 rounded-lg hover:bg-blue-400"
+                    className="text-gray-800 py-1 bg-gray-100 px-3 rounded-lg hover:bg-blue-400 shadow-none"
                   >
-                    <FaUser size={18} />
+                    <FaUser size={24} />
                   </Button>
 
                   <Button
                     onClick={() => handleDeleteAuthor(author.id)}
-                    className="text-red-500 py-1 bg-gray-100 px-3 rounded-lg hover:bg-red-300"
+                    className="text-red-500 py-1 bg-gray-100 px-3 rounded-lg hover:bg-red-400 hover:text-gray-800 shadow-none"
                   >
                     Delete
                   </Button>
@@ -157,10 +157,10 @@ const Admin = () => {
                         </CardTitle>
                       </CardContent>
                       <CardFooter className="flex justify-between p-4">
-                        <Button onClick={() => handleEdit(article.id)} variant="ghost" className="text-blue-500">
+                        <Button onClick={() => handleEdit(article.id)} variant="ghost" className="text-blue-500 hover:bg-blue-400 hover:text-gray-800">
                           Edit
                         </Button>
-                        <Button onClick={() => handleDelete(author.id, article.id)} variant="ghost" className="text-red-500">
+                        <Button onClick={() => handleDelete(author.id, article.id)} variant="ghost" className="text-red-500 hover:bg-red-400 hover:text-gray-800">
                           Delete
                         </Button>
                       </CardFooter>
