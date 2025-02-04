@@ -1,189 +1,178 @@
-import React, { useState } from "react";
-import {
-  FiChevronDown,
-  FiChevronsRight,
-  FiHome,
-  FiLogOut,
-} from "react-icons/fi";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipProvider } from "@/components/ui/tooltip";
+import { FaHome, FaUser, FaSignOutAlt } from "react-icons/fa"; // Import FaUser icon
+import { Search } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 
-export default function Admin() {
+const Admin = () => {
+  const [authors, setAuthors] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setAuthors([
+      {
+        id: 1,
+        name: "John Doe",
+        profilePicture: "./pic.jpg",
+        isActive: true,
+        articles: [
+          { id: 101, title: "First Article", bannerImage: "./pic.jpg", link: "/articles/101" },
+          { id: 102, title: "Second Article", bannerImage: "./pic.jpg", link: "/articles/102" },
+        ],
+      },
+      {
+        id: 2,
+        name: "Jane Smith",
+        profilePicture: "./pic.jpg",
+        isActive: true,
+        articles: [
+          { id: 201, title: "Jane's Article", bannerImage: "./pic.jpg", link: "/articles/201" },
+        ],
+      },
+    ]);
+  }, []);
+
+  const handleDeleteAuthor = (authorId) => {
+    setAuthors((prevAuthors) => prevAuthors.filter((author) => author.id !== authorId));
+  };
+
+  const handleDelete = (authorId, articleId) => {
+    setAuthors((prevAuthors) =>
+      prevAuthors.map((author) =>
+        author.id === authorId
+          ? { ...author, articles: author.articles.filter((article) => article.id !== articleId) }
+          : author
+      )
+    );
+  };
+
+  const handleEdit = (id) => navigate(`/edit-article/${id}`);
+  const handleGoToAuthorPage = () => navigate("/author-page");
+  const handleLogout = () => navigate("/signup");
+  const handleGoToHomePage = () => navigate("/");
+
+  const handleGoToProfilePage = (authorId) => {
+    navigate(`/profile/${authorId}`);
+  };
+
   return (
-    <div className="flex bg-indigo-50">
-      <Sidebar />
-      <ExampleContent />
-    </div>
-  );
-}
-
-const Sidebar = () => {
-  const [open, setOpen] = useState(true);
-  const [selected, setSelected] = useState("Dashboard");
-
-  return (
-    <motion.nav
-      layout
-      className="sticky top-0 h-screen shrink-0 border-r border-slate-300 bg-white p-2"
-      style={{
-        width: open ? "225px" : "fit-content",
-      }}
-    >
-      <TitleSection open={open} />
-
-      <div className="space-y-1">
-        <Option
-          Icon={FiHome}
-          title="Dashboard"
-          selected={selected}
-          setSelected={setSelected}
-          open={open}
-        />
-        <Option
-          Icon={FiLogOut}
-          title="Log Out"
-          selected={selected}
-          setSelected={setSelected}
-          open={open}
-        />
-      </div>
-
-      <ToggleClose open={open} setOpen={setOpen} />
-    </motion.nav>
-  );
-};
-
-const Option = ({ Icon, title, selected, setSelected, open, notifs }) => {
-  return (
-    <motion.button
-      layout
-      onClick={() => setSelected(title)}
-      className={`relative flex h-10 w-full items-center rounded-md transition-colors ${
-        selected === title
-          ? "bg-indigo-100 text-indigo-800"
-          : "text-slate-500 hover:bg-slate-100"
-      }`}
-    >
-      <motion.div
-        layout
-        className="grid h-full w-10 place-content-center text-lg"
-      >
-        <Icon />
-      </motion.div>
-      {open && (
-        <motion.span
-          layout
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.125 }}
-          className="text-xs font-medium"
-        >
-          {title}
-        </motion.span>
-      )}
-
-      {notifs && open && (
-        <motion.span
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{
-            opacity: 1,
-            scale: 1,
-          }}
-          style={{ y: "-50%" }}
-          transition={{ delay: 0.5 }}
-          className="absolute right-2 top-1/2 size-4 rounded bg-indigo-500 text-xs text-white"
-        >
-          {notifs}
-        </motion.span>
-      )}
-    </motion.button>
-  );
-};
-
-const TitleSection = ({ open }) => {
-  return (
-    <div className="mb-3 border-b border-slate-300 pb-3">
-      <div className="flex cursor-pointer items-center justify-between rounded-md transition-colors hover:bg-slate-100">
-        <div className="flex items-center gap-2">
-          <Logo />
-          {open && (
-            <motion.div
-              layout
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.125 }}
-            >
-              <span className="block text-xs font-semibold">Admin Panel</span>
-            </motion.div>
-          )}
+    <div>
+      {/* Navbar */}
+      <nav className="sticky top-0 z-50 flex justify-between items-center px-4 py-3 mb-6 shadow-md bg-gray-100">
+        <div className="flex-shrink-0 pl-4">
+          <a href="/">
+            <img src="./logo2.png" alt="Logo" className="h-8 md:h-12 w-auto transition-transform hover:scale-105" />
+          </a>
         </div>
-        {open && <FiChevronDown className="mr-2" />}
+        <div className="flex items-center space-x-4">
+          {/* Search Bar */}
+          <div className="hidden sm:flex items-center max-w-xs flex-1 ml-4">
+            <div className="w-full flex items-center bg-gray-100 rounded-lg hover:bg-custom-green-1 transition-colors duration-200">
+              <input
+                type="text"
+                placeholder="Search articles or authors"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-transparent py-2 px-4 text-sm text-gray-900 placeholder-gray-500 focus:outline-none"
+              />
+              <button className="p-2 text-gray-600 hover:text-gray-900">
+                <Search size={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* Navbar Buttons */}
+          <TooltipProvider>
+            <Tooltip content="Go to Home">
+              <Button onClick={handleGoToHomePage} className="bg-gray-100 text-black py-2 px-3 rounded-lg hover:scale-105 hover:bg-blue-500">
+                <FaHome size={24} />
+              </Button>
+            </Tooltip>
+            <Tooltip content="Go to Admin Page">
+              <Button
+                onClick={handleGoToAuthorPage}
+                className="bg-blue-400 text-gray-800 py-2 px-3 rounded-lg hover:scale-105 hover:bg-blue-500"
+              >
+                Admin Page
+              </Button>
+            </Tooltip>
+            <Tooltip content="Log Out">
+              <Button onClick={handleLogout} className="bg-gray-100 text-red-700 py-2 px-3 rounded-lg hover:scale-105 hover:bg-red-300">
+                <FaSignOutAlt size={24} />
+              </Button>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-10 py-5 bg-gray-100">
+        {/* Authors & Articles */}
+        {authors
+          .filter(
+            (author) =>
+              author.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              author.articles.some((article) => article.title.toLowerCase().includes(searchTerm.toLowerCase()))
+          )
+          .map((author) => (
+            <div key={author.id} className="mb-10">
+              <div className="flex items-center space-x-4">
+                <img src={author.profilePicture} alt={author.name} className="w-16 h-16 rounded-full" />
+                <h2 className="text-xl font-semibold">{author.name}</h2>
+
+                {/* Author Actions */}
+                <div className="ml-auto space-x-3">
+                <Button
+                    onClick={() => handleGoToProfilePage(author.id)}
+                    className="text-gray-800 py-1 bg-gray-100 px-3 rounded-lg hover:bg-blue-400"
+                  >
+                    <FaUser size={18} />
+                  </Button>
+
+                  <Button
+                    onClick={() => handleDeleteAuthor(author.id)}
+                    className="text-red-500 py-1 bg-gray-100 px-3 rounded-lg hover:bg-red-300"
+                  >
+                    Delete
+                  </Button>
+
+                </div>
+              </div>
+
+              {/* Articles */}
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+                {author.articles.map((article) => (
+                  <Link to={article.link} key={article.id} className="block">
+                    <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2">
+                      <CardHeader className="p-0">
+                        <img src={article.bannerImage} alt={article.title} className="w-full h-40 object-cover rounded-t-md" />
+                      </CardHeader>
+                      <CardContent className="p-3">
+                        <CardTitle className="text-lg font-semibold mb-2 text-gray-800 hover:underline ">
+                          {article.title}
+                        </CardTitle>
+                      </CardContent>
+                      <CardFooter className="flex justify-between p-4">
+                        <Button onClick={() => handleEdit(article.id)} variant="ghost" className="text-blue-500">
+                          Edit
+                        </Button>
+                        <Button onClick={() => handleDelete(author.id, article.id)} variant="ghost" className="text-red-500">
+                          Delete
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
       </div>
     </div>
   );
 };
 
-const Logo = () => {
-  // Temp logo from https://logoipsum.com/
-  return (
-    <motion.div
-      layout
-      className="grid size-10 shrink-0 place-content-center rounded-md bg-indigo-600"
-    >
-      <svg
-        width="24"
-        height="auto"
-        viewBox="0 0 50 39"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="fill-slate-50"
-      >
-        <path
-          d="M16.4992 2H37.5808L22.0816 24.9729H1L16.4992 2Z"
-          stopColor="#000000"
-        ></path>
-        <path
-          d="M17.4224 27.102L11.4192 36H33.5008L49 13.0271H32.7024L23.2064 27.102H17.4224Z"
-          stopColor="#000000"
-        ></path>
-      </svg>
-    </motion.div>
-  );
-};
-
-const ToggleClose = ({ open, setOpen }) => {
-  return (
-    <motion.button
-      layout
-      onClick={() => setOpen((pv) => !pv)}
-      className="absolute bottom-0 left-0 right-0 border-t border-slate-300 transition-colors hover:bg-slate-100"
-    >
-      <div className="flex items-center p-2">
-        <motion.div
-          layout
-          className="grid size-10 place-content-center text-lg"
-        >
-          <FiChevronsRight
-            className={`transition-transform ${open && "rotate-180"}`}
-          />
-        </motion.div>
-        {open && (
-          <motion.span
-            layout
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.125 }}
-            className="text-xs font-medium"
-          >
-            Hide
-          </motion.span>
-        )}
-      </div>
-    </motion.button>
-  );
-};
-
-const ExampleContent = () => (
-  <div className="h-[100vh] w-full">
-    <div>Admin</div>
-  </div>
-);
+export default Admin;
