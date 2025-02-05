@@ -153,7 +153,7 @@ const Home = () => {
   };
 
   return (
-    <div className="container mx-auto px-6 md:px-10 lg:px-20 py-8 mt-2 bg-gray-100 dark:bg-black">
+    <div className="container mx-auto px-6 md:px-10 lg:px-20 py-8 mt-2 bg-gray-100 dark:bg-custom-dark">
       {/* Banner Section Top*/}
       <div className="w-full -mt-5 mb-5">
         <img
@@ -164,16 +164,16 @@ const Home = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-11 gap-5">
         {/* Trending News Section (left section) */}
-        <div className="md:col-span-3 bg-white dark:bg-black rounded-2xl shadow-md p-6 hidden md:block">
+        <div className="md:col-span-3 bg-white dark:bg-custom-dark rounded-2xl shadow-md p-6 hidden md:block">
           <h2 className="text-lg font-semibold text-gray-800 -mt-2 mb-5 dark:text-gray-100">
             Trending
           </h2>
           <ul className="space-y-6">
             {trendingArticles.slice(0, 6).map((trendingArticles, index) => (
               <Link to={trendingArticles.link} key={index} className="block">
-                <Card className="hover:shadow-lg max-w-full transition-transform transform hover:scale-105 hover:bg-custom-green-1">
+                <Card className="hover:shadow-lg max-w-full transition-transform transform dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black hover:scale-105 hover:bg-custom-green-1">
                   <CardHeader>
-                    <CardTitle className="text-lg font-semibold text-gray-800 hover:underline">
+                    <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100 hover:underline">
                       {trendingArticles.title}
                     </CardTitle>
                   </CardHeader>
@@ -225,13 +225,13 @@ const Home = () => {
 
           {/* Latest News Section */}
           <div className="mt-5">
-            <h2 className="text-lg font-semibold text-gray-800 mb-1">
-              Latest News
+            <h2 className="text-lg font-semibold text-gray-800 mb-1 dark:text-gray-100">
+              Latest Articles
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
               {latestArticles.slice(0, 4).map((latestArticles, index) => (
                 <Link to={latestArticles.link} key={index} className="block">
-                  <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+                  <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
                     {" "}
                     {/* Fixed card height */}
                     <div className="relative h-[150px]">
@@ -244,7 +244,7 @@ const Home = () => {
                       />
                     </div>
                     <CardHeader className="mt-1">
-                      <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                      <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
                         {" "}
                         {/* Line clamping for titles */}
                         {latestArticles.title}
@@ -269,17 +269,17 @@ const Home = () => {
 
         {/* Contact Us Section (right section) */}
         <div className="md:col-span-2 space-y-6">
-          <div className="rounded-2xl shadow-md p-6 h-[300px] md:h-[400px] bg-custom-green-1">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          <div className="rounded-2xl shadow-md p-6 h-[300px] md:h-[400px] bg-custom-green-1 dark:bg-custom-dark dark:border-2">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 dark:text-gray-100">
               Contact Us
             </h2>
-            <p className="text-gray-800 mb-4">
+            <p className="text-gray-800 mb-4 dark:text-gray-100">
               Got a story or suggestion? <br /> We'd love to hear from you!
             </p>
             <Link to="/contact">
               <Button
                 variant="primary"
-                className="w-full rounded-full bg-custom-green text-custom-green-1 transition-transform transform hover:scale-105 mt-10 md:mt-36 font-bold"
+                className="w-full rounded-full bg-custom-green text-custom-green-1 transition-transform transform hover:scale-105 mt-10 md:mt-36 font-bold  dark:text-gray-800"
               >
                 Contact Us
                 <MdNavigateNext size={24} className="ml-2" />
@@ -287,7 +287,7 @@ const Home = () => {
             </Link>
           </div>
           {/* RSS Feed Subscription Section */}
-          <div className="rounded-2xl shadow-md p-6 h-[300px] md:h-[300px] bg-custom-green">
+          <div className="rounded-2xl shadow-md p-6 h-[300px] md:h-[300px] bg-custom-green dark:bg-custom-green">
             <h2 className="text-2xl font-bold text-gray-200 mb-4">Subscribe</h2>
             <p className="text-gray-200 mb-4">
               Stay updated with our latest articles. <br /> Subscribe to our RSS
@@ -296,7 +296,7 @@ const Home = () => {
             <a href="https://rss.com/" target="_blank" rel="noreferrer">
               <Button
                 variant="primary"
-                className="w-full rounded-full bg-custom-accent-green text-custom-green transition-transform transform hover:scale-105 mt-10 md:mt-31 font-bold"
+                className="w-full rounded-full bg-custom-accent-green text-custom-green transition-transform transform hover:scale-105 mt-10 md:mt-31 font-bold dark:text-gray-800"
               >
                 Subscribe <MdRssFeed size={24} className="ml-2" />
               </Button>
@@ -316,17 +316,17 @@ const Home = () => {
 
       {/* More Articles Section */}
       <div className="flex justify-center items-center">
-        <h1 className="text-3xl mt-10 font-semibold text-gray-800">
+        <h1 className="text-3xl mt-10 font-semibold text-gray-800 dark:text-gray-100">
           More Articles You’ll Love
         </h1>
       </div>
       {/* Spotlight Articles Section */}
       <div className="mt-10">
-        <h2 className="text-xl font-semibold text-gray-800 mb-5">Spotlight</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-5 dark:text-gray-100">Spotlight</h2>
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
-              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
                 {" "}
                 {/* Fixed card height */}
                 <div className="relative h-[150px]">
@@ -339,7 +339,7 @@ const Home = () => {
                   />
                 </div>
                 <CardHeader className="mt-1">
-                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
                     {" "}
                     {/* Line clamping for titles */}
                     {NatureArticles.title}
@@ -362,13 +362,13 @@ const Home = () => {
       </div>
 
       <div className="mt-10">
-        <h2 className="text-xl font-semibold text-gray-800 mb-5">
+        <h2 className="text-xl font-semibold text-gray-800 mb-5 dark:text-gray-100">
           Environment
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
-              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
                 {" "}
                 {/* Fixed card height */}
                 <div className="relative h-[150px]">
@@ -381,7 +381,7 @@ const Home = () => {
                   />
                 </div>
                 <CardHeader className="mt-1">
-                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
                     {" "}
                     {/* Line clamping for titles */}
                     {NatureArticles.title}
@@ -404,13 +404,13 @@ const Home = () => {
       </div>
 
       <div className="mt-10">
-        <h2 className="text-xl font-semibold text-gray-800 mb-5">
+        <h2 className="text-xl font-semibold text-gray-800 mb-5 dark:text-gray-100">
           Sustainable Living
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
-              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
                 {" "}
                 {/* Fixed card height */}
                 <div className="relative h-[150px]">
@@ -423,7 +423,7 @@ const Home = () => {
                   />
                 </div>
                 <CardHeader className="mt-1">
-                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
                     {" "}
                     {/* Line clamping for titles */}
                     {NatureArticles.title}
@@ -446,13 +446,13 @@ const Home = () => {
       </div>
 
       <div className="mt-10">
-        <h2 className="text-xl font-semibold text-gray-800 mb-5">
+        <h2 className="text-xl font-semibold text-gray-800 mb-5 dark:text-gray-100">
           Interviews
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
-              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
                 {" "}
                 {/* Fixed card height */}
                 <div className="relative h-[150px]">
@@ -465,7 +465,7 @@ const Home = () => {
                   />
                 </div>
                 <CardHeader className="mt-1">
-                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
                     {" "}
                     {/* Line clamping for titles */}
                     {NatureArticles.title}
