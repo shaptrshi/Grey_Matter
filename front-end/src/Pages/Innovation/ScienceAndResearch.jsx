@@ -51,7 +51,7 @@ const ScienceAndResearch = () => {
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
             {articles.map((article, index) => (
               <Link to={article.link} key={index} className="block">
-                <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+                <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:border-none dark:bg-custom-dark dark:shadow-sm dark:shadow-black">
                   {/* Fixed card height */}
                   <div className="relative h-[150px]">
                     {/* Fixed image height */}
@@ -62,13 +62,13 @@ const ScienceAndResearch = () => {
                     />
                   </div>
                   <CardHeader className="mt-1">
-                    <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                    <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
                       {/* Line clamping for titles */}
                       {article.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex justify-between items-center -mt-3">
-                    <div className="hidden md:flex justify-between w-full">
+                    <div className="md:flex justify-between w-full">
                       <p className="text-sm font-semibold text-teal-700">
                         {article.author}
                       </p>

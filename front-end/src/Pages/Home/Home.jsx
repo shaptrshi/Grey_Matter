@@ -251,7 +251,7 @@ const Home = () => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="flex justify-between items-center -mt-3">
-                      <div className="hidden md:flex justify-between w-full">
+                      <div className="md:flex justify-between w-full">
                         <p className="text-sm font-semibold text-teal-700">
                           {latestArticles.author}
                         </p>
@@ -346,7 +346,7 @@ const Home = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-between items-center -mt-3">
-                  <div className="hidden md:flex justify-between w-full">
+                  <div className="md:flex justify-between w-full">
                     <p className="text-sm font-semibold text-teal-700">
                       {NatureArticles.author}
                     </p>
@@ -388,7 +388,7 @@ const Home = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-between items-center -mt-3">
-                  <div className="hidden md:flex justify-between w-full">
+                  <div className="md:flex justify-between w-full">
                     <p className="text-sm font-semibold text-teal-700">
                       {NatureArticles.author}
                     </p>
@@ -430,7 +430,7 @@ const Home = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-between items-center -mt-3">
-                  <div className="hidden md:flex justify-between w-full">
+                  <div className=" md:flex justify-between w-full">
                     <p className="text-sm font-semibold text-teal-700">
                       {NatureArticles.author}
                     </p>
@@ -472,7 +472,7 @@ const Home = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-between items-center -mt-3">
-                  <div className="hidden md:flex justify-between w-full">
+                  <div className=" md:flex justify-between w-full">
                     <p className="text-sm font-semibold text-teal-700">
                       {NatureArticles.author}
                     </p>
