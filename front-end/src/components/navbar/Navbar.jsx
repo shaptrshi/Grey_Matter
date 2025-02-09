@@ -210,7 +210,7 @@ const Navbar = () => {
                   <a
                     key={item.name}
                     href={item.link}
-                    className=" text-gray-900 hover:text-custom-green transition-colors duration-300"
+                    className=" text-gray-900 hover:text-custom-green transition-colors duration-300 font-semibold"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}

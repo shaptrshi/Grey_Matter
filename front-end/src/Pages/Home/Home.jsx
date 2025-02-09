@@ -44,6 +44,12 @@ const Home = () => {
       author: "David Black",
       date: "January 14, 2024",
     },
+    {
+      title: "The Future of Renewable Energy",
+      link: "/article/renewable-energy",
+      author: "David Black",
+      date: "January 14, 2024",
+    },
   ];
 
   const featuredArticles = [
@@ -153,28 +159,36 @@ const Home = () => {
   };
 
   return (
-    <div className="mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 bg-gray-100 dark:bg-black">
+    <div className="container mx-auto px-4 sm:px-10 lg:px-8 py-4 sm:py-6 lg:py-8 min-h-screen  bg-gray-100 dark:bg-custom-dark dark:text-gray-100\">
       {/* Banner Section Top */}
       <div className="w-full -mt-2 sm:-mt-3 lg:-mt-5 mb-4 sm:mb-5  ">
+        {/* Light Mode Image */}
         <img
           src="./whitegreen.png"
-          alt="Promotional Banner"
-          className="w-full h-20 max-sm:h-24 max-sm:object-cover max-md:h-24 lg:h-32 max-md:object-cover rounded-xl sm:rounded-2xl shadow-sm"
+          alt="Light Mode Banner"
+          className="w-full h-auto max-h-32 sm:max-h-40 md:max-h-48 lg:max-h-56 object-cover rounded-xl sm:rounded-2xl shadow-sm transition-all duration-300 dark:hidden"
+        />
+
+        {/* Dark Mode Image */}
+        <img
+          src="./dark.png"
+          alt="Dark Mode Banner"
+          className="w-full h-auto max-h-32 sm:max-h-40 md:max-h-48 lg:max-h-56 object-cover rounded-xl sm:rounded-2xl shadow-sm transition-all duration-300 hidden dark:block"
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-11 gap-4 sm:gap-5">
         {/* Trending News Section */}
-        <div className="lg:col-span-3 bg-white dark:bg-black rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 hidden lg:block">
-          <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4 dark:text-gray-100">
+        <div className="lg:col-span-3 bg-white dark:bg-custom-dark p-4 sm:p-6 hidden lg:block border:none">
+          <h2 className="text-xl sm:text-lg font-semibold text-gray-800 mb-4 dark:text-gray-100 -mt-5">
             Trending
           </h2>
           <ul className="flex flex-col gap-8">
-            {trendingArticles.slice(0, 6).map((article, index) => (
+            {trendingArticles.slice(0, 7).map((article, index) => (
               <Link to={article.link} key={index} className="gap-8">
-                <Card className="hover:shadow-lg transition-transform hover:scale-105 hover:bg-custom-green-1 ">
+                <Card className="hover:shadow-lg transition-transform hover:scale-105 hover:bg-custom-green-1 dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
                   <CardHeader className="p-3 sm:p-4">
-                    <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 hover:underline line-clamp-2">
+                    <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 hover:underline line-clamp-2 dark:text-gray-100">
                       {article.title}
                     </CardTitle>
                   </CardHeader>
@@ -230,14 +244,14 @@ const Home = () => {
 
           {/* Latest News Grid */}
           <div className="mt-4 sm:mt-5">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-3">
+            <h2 className="text-xl sm:text-lg font-semibold text-gray-800 mb-3 dark:text-gray-100 pb-1 pt-1">
               Latest News
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {latestArticles.slice(0, 4).map((article, index) => (
                 <Link to={article.link} key={index}>
-                  <Card className="hover:shadow-md transition-transform hover:scale-105 h-[280px] sm:h-[300px]">
-                    <div className="relative h-[140px] sm:h-[150px]">
+                  <Card className="hover:shadow-md transition-transform hover:scale-105 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
+                    <div className="relative h-[150px] sm:h-[150px]">
                       <img
                         src={article.image}
                         alt={article.title}
@@ -245,16 +259,16 @@ const Home = () => {
                       />
                     </div>
                     <CardHeader className="p-3 sm:p-4">
-                      <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 line-clamp-2 hover:underline">
+                      <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2 hover:underline dark:text-gray-100">
                         {article.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-3 sm:p-4 pt-0">
+                    <CardContent className="p-5 sm:p-4 pt-">
                       <div className="flex justify-between items-center text-xs sm:text-sm">
-                        <p className="font-semibold text-teal-700">
+                        <p className="text-sm font-semibold text-teal-700">
                           {article.author}
                         </p>
-                        <p className="font-semibold text-teal-700">
+                        <p className="text-sm font-semibold text-teal-700">
                           {article.date}
                         </p>
                       </div>
@@ -273,7 +287,7 @@ const Home = () => {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
               Contact Us
             </h2>
-            <p className="text-gray-800 mb-4 dark:text-gray-100">
+            <p className="text-gray-800 mb-10 dark:text-gray-800">
               Got a story or suggestion? <br /> We'd love to hear from you!
             </p>
             <Link to="/contact">
@@ -292,7 +306,7 @@ const Home = () => {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-200 mb-3">
               Subscribe
             </h2>
-            <p className="text-gray-200 mb-4">
+            <p className="text-gray-200 mb-10">
               Stay updated with our latest articles. <br /> Subscribe to our RSS
               feed now!
             </p>
@@ -329,7 +343,9 @@ const Home = () => {
       </div>
       {/* Spotlight Articles Section */}
       <div className="mt-10">
-        <h2 className="text-xl font-semibold text-gray-800 mb-5">Spotlight</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-5 dark:text-gray-100">
+          Spotlight
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
@@ -453,7 +469,9 @@ const Home = () => {
       </div>
 
       <div className="mt-10">
-        <h2 className="text-xl font-semibold text-gray-800 mb-5">Interviews</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-5 dark:text-gray-100">
+          Interviews
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">

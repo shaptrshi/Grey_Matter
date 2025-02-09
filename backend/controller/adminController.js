@@ -1,6 +1,5 @@
 const Admin = require("../models/adminModel");
 const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
 dotenv.config();
