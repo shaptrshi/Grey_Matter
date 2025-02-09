@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
 import Home from "./Pages/Home/Home";
-import News from "./Pages/News/News";
 import Footer from "./components/footer/Footer";
 import Admin from "./Pages/Admin/Admin";
 import PrivacyPolicy from "./Pages/Privacy/PrivacyPolicy";
@@ -50,7 +49,6 @@ function App() {
                 <Route path="/weather" element={<Weather />} />
                 <Route path="/agriculture" element={<Agriculture />} />
                 <Route path="/forest" element={<Forest />} />
-                <Route path="/news" element={<News />} />
                 <Route
                   path="/evolving-horizons"
                   element={<EvolvingHorizons />}

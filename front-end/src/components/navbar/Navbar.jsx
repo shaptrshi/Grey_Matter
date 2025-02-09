@@ -23,7 +23,7 @@ const Dropdown = ({ label, items, isDesktop }) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center text-base font-semibold lg:text-lg text-gray-900 hover:text-custom-green transition-colors duration-300"
+        className="flex items-center text-base font-semibold lg:text-lg text-gray-900 dark:text-gray-100 hover:text-custom-green dark:hover:text-custom-green transition-colors duration-300 rounded-md"
       >
         {label}
         <ChevronDown
@@ -35,7 +35,7 @@ const Dropdown = ({ label, items, isDesktop }) => {
         <div
           className={`${
             isDesktop
-              ? "absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-md border border-gray-200 z-50"
+              ? "absolute left-0 mt-2 w-48 bg-white dark:bg-custom-dark shadow-lg rounded-md z-50"
               : "mt-2 space-y-2"
           }`}
         >
@@ -45,7 +45,7 @@ const Dropdown = ({ label, items, isDesktop }) => {
               href={item.link}
               className={`block ${
                 isDesktop ? "px-4 py-2" : "py-2"
-              } text-gray-900 hover:bg-custom-green-1 transition-colors duration-300`}
+              } text-gray-900 hover:bg-custom-green-1 dark:text-gray-100 dark:hover:text-gray-800 transition-colors duration-300`}
               onClick={() => setIsOpen(false)}
             >
               {item.name}
@@ -64,7 +64,6 @@ const Navbar = () => {
   const navItems = [
     { name: "Home", link: "/" },
     { name: "Trending", link: "/trending" },
-    { name: "News", link: "/news" },
     {
       name: "Nature",
       dropdown: [
@@ -107,7 +106,7 @@ const Navbar = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-md text-gray-900 hover:bg-gray-100"
+            className="md:hidden p-2 rounded-md text-gray-900 hover:bg-gray-100 dark:text-gray-100"
             aria-label="Toggle menu"
           >
             <Menu size={24} />
@@ -138,7 +137,7 @@ const Navbar = () => {
                 <a
                   key={item.name}
                   href={item.link}
-                  className="relative text-base font-semibold lg:text-lg text-gray-900 hover:text-custom-green transition-colors duration-300"
+                  className="relative text-base font-bold lg:text-lg text-gray-900 dark:text-gray-100 dark:hover:text-custom-green hover:text-custom-green transition-colors duration-300"
                 >
                   {item.name}
                 </a>
@@ -171,13 +170,13 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-white">
+        <div className="fixed inset-0 z-50 bg-white dark:bg-custom-dark">
           <div className="flex flex-col h-full p-4">
             <div className="flex items-center justify-between">
               <img src="./logo2.png" alt="Logo" className="h-8 w-auto" />
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="p-2 rounded-md text-gray-900 hover:bg-gray-100"
+                className="p-2 rounded-md text-gray-900 hover:bg-gray-100 dark:text-gray-100"
                 aria-label="Close menu"
               >
                 <X size={24} />
@@ -210,7 +209,7 @@ const Navbar = () => {
                   <a
                     key={item.name}
                     href={item.link}
-                    className=" text-gray-900 hover:text-custom-green transition-colors duration-300 font-semibold"
+                    className=" text-gray-900 hover:text-custom-green transition-colors duration-300 font-semibold dark:text-gray-100"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}
