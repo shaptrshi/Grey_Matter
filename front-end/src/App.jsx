@@ -26,6 +26,7 @@ import AuthorPage from "./Pages/Author/AuthorPage";
 import EditArticle from "./Pages/Article/EditArticle";
 import AuthorProfilePage from "./Pages/Author/AuthorProfilePage";
 import AuthorPublicProfilePage from "./Pages/Author/AuthorPublicProfilePage";
+import AboutUs from "./Pages/AboutUs/AboutUs";
 
 function App() {
   return (
@@ -79,6 +80,7 @@ function App() {
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-use" element={<Terms />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/aboutus" element={<AboutUs />} />
                 <Route path="/article" element={<Article />} />
                 <Route
                   path="/public-profile"

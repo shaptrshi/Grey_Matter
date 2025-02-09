@@ -18,21 +18,27 @@ const Footer = () => {
 
         {/* Navigation Links */}
         <nav className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 md:space-x-8">
+        <Link
+            to="/aboutus"
+            className="group relative cursor-pointer transition-colors duration-300 dark:hover:text-custom-green hover:text-custom-green text-gray-700 dark:text-gray-100 text-base sm:text-lg md:text-xl font-medium"
+          >
+            About Us
+          </Link>
           <Link
             to="/privacy-policy"
-            className="group relative cursor-pointer transition-colors duration-300 hover:text-custom-green text-gray-700 dark:text-gray-100 text-base sm:text-lg md:text-xl font-medium"
+            className="group relative cursor-pointer transition-colors duration-300 dark:hover:text-custom-green hover:text-custom-green text-gray-700 dark:text-gray-100 text-base sm:text-lg md:text-xl font-medium"
           >
             Privacy Policy
           </Link>
           <Link
             to="/terms-of-use"
-            className="group relative cursor-pointer transition-colors duration-300 hover:text-custom-green text-gray-700 dark:text-gray-100 text-base sm:text-lg md:text-xl font-medium"
+            className="group relative cursor-pointer transition-colors duration-300 dark:hover:text-custom-green hover:text-custom-green text-gray-700 dark:text-gray-100 text-base sm:text-lg md:text-xl font-medium"
           >
             Terms of Use
           </Link>
           <Link
             to="/contact"
-            className="group relative cursor-pointer transition-colors duration-300 hover:text-custom-green text-gray-700 dark:text-gray-100 text-base sm:text-lg md:text-xl font-medium"
+            className="group relative cursor-pointer transition-colors duration-300 dark:hover:text-custom-green hover:text-custom-green text-gray-700 dark:text-gray-100 text-base sm:text-lg md:text-xl font-medium"
           >
             Contact
           </Link>
