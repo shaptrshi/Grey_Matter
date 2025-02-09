@@ -273,7 +273,7 @@ const Home = () => {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
               Contact Us
             </h2>
-            <p className="text-gray-800 mb-4">
+            <p className="text-gray-800 mb-4 dark:text-gray-100">
               Got a story or suggestion? <br /> We'd love to hear from you!
             </p>
             <Link to="/contact">
@@ -323,7 +323,7 @@ const Home = () => {
 
       {/* More Articles Section */}
       <div className="flex justify-center items-center">
-        <h1 className="text-3xl mt-10 font-semibold text-gray-800">
+        <h1 className="text-3xl mt-10 font-semibold text-gray-800 dark:text-gray-100">
           More Articles You’ll Love
         </h1>
       </div>
@@ -333,7 +333,7 @@ const Home = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
-              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
                 {" "}
                 {/* Fixed card height */}
                 <div className="relative h-[150px]">
@@ -346,14 +346,14 @@ const Home = () => {
                   />
                 </div>
                 <CardHeader className="mt-1">
-                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
                     {" "}
                     {/* Line clamping for titles */}
                     {NatureArticles.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-between items-center -mt-3">
-                  <div className="hidden md:flex justify-between w-full">
+                  <div className="md:flex justify-between w-full">
                     <p className="text-sm font-semibold text-teal-700">
                       {NatureArticles.author}
                     </p>
@@ -369,13 +369,13 @@ const Home = () => {
       </div>
 
       <div className="mt-10">
-        <h2 className="text-xl font-semibold text-gray-800 mb-5">
+        <h2 className="text-xl font-semibold text-gray-800 mb-5 dark:text-gray-100">
           Environment
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
-              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
                 {" "}
                 {/* Fixed card height */}
                 <div className="relative h-[150px]">
@@ -388,14 +388,14 @@ const Home = () => {
                   />
                 </div>
                 <CardHeader className="mt-1">
-                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
                     {" "}
                     {/* Line clamping for titles */}
                     {NatureArticles.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-between items-center -mt-3">
-                  <div className="hidden md:flex justify-between w-full">
+                  <div className="md:flex justify-between w-full">
                     <p className="text-sm font-semibold text-teal-700">
                       {NatureArticles.author}
                     </p>
@@ -411,13 +411,13 @@ const Home = () => {
       </div>
 
       <div className="mt-10">
-        <h2 className="text-xl font-semibold text-gray-800 mb-5">
+        <h2 className="text-xl font-semibold text-gray-800 mb-5 dark:text-gray-100">
           Sustainable Living
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
-              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
                 {" "}
                 {/* Fixed card height */}
                 <div className="relative h-[150px]">
@@ -430,14 +430,14 @@ const Home = () => {
                   />
                 </div>
                 <CardHeader className="mt-1">
-                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
                     {" "}
                     {/* Line clamping for titles */}
                     {NatureArticles.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-between items-center -mt-3">
-                  <div className="hidden md:flex justify-between w-full">
+                  <div className=" md:flex justify-between w-full">
                     <p className="text-sm font-semibold text-teal-700">
                       {NatureArticles.author}
                     </p>
@@ -457,7 +457,7 @@ const Home = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
-              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
+              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
                 {" "}
                 {/* Fixed card height */}
                 <div className="relative h-[150px]">
@@ -470,14 +470,14 @@ const Home = () => {
                   />
                 </div>
                 <CardHeader className="mt-1">
-                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
+                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
                     {" "}
                     {/* Line clamping for titles */}
                     {NatureArticles.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-between items-center -mt-3">
-                  <div className="hidden md:flex justify-between w-full">
+                  <div className=" md:flex justify-between w-full">
                     <p className="text-sm font-semibold text-teal-700">
                       {NatureArticles.author}
                     </p>
