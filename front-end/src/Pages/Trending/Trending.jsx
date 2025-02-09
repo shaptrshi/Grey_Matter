@@ -39,8 +39,8 @@ const Trending = () => {
   ];
 
   return (
-    <div className="bg-background min-h-screen py-10">
-      <div className=" mx-auto px-9">
+    <div className="container mx-auto px-4 sm:px-10 lg:px-8 py-4 sm:py-6 lg:py-8 min-h-screen  bg-gray-100 dark:bg-custom-dark dark:text-gray-100">
+      <div className="mt-8">
         <h1 className="text-4xl font-extrabold tracking-tight text-center mb-10">
           Trending
         </h1>
@@ -48,13 +48,13 @@ const Trending = () => {
           Cover recent events, trending topics, and breaking news relevant to
           your blog’s theme.
         </p>
-        <div className="mt-16">
+        <div className="mt-15">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
             {articles.map((article, index) => (
               <Link to={article.link} key={index} className="block">
-                <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:border-none dark:bg-custom-dark dark:shadow-sm dark:shadow-black">
+                <Card className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
                   {/* Fixed card height */}
-                  <div className="relative h-[150px]">
+                  <div className="relative h-[150px] sm:h-[150px]">
                     {/* Fixed image height */}
                     <img
                       src={article.image}
@@ -62,18 +62,18 @@ const Trending = () => {
                       className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
                     />
                   </div>
-                  <CardHeader className="`">
-                    <CardTitle className="text-lg font-semibold text-gray-800 hover:underline dark:text-gray-100">
+                  <CardHeader className="p-3 sm:p-4 mt-1">
+                    <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2  hover:underline dark:text-gray-100">
                       {/* Line clamping for titles */}
                       {article.title}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="flex justify-between items-center">
-                    <div className="md:flex justify-between w-full">
-                      <p className="text-sm font-semibold text-teal-700">
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="flex justify-between items-center text-xs sm:text-sm">
+                      <p className="font-semibold text-teal-700">
                         {article.author}
                       </p>
-                      <p className="text-sm font-semibold text-teal-700">
+                      <p className="font-semibold text-teal-700">
                         {article.date}
                       </p>
                     </div>

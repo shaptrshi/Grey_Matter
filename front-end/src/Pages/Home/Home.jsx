@@ -159,7 +159,7 @@ const Home = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 sm:px-10 lg:px-8 py-4 sm:py-6 lg:py-8 min-h-screen  bg-gray-100 dark:bg-custom-dark dark:text-gray-100\">
+    <div className="container mx-auto px-4 sm:px-10 lg:px-8 py-4 sm:py-6 lg:py-8 min-h-screen  bg-gray-100 dark:bg-custom-dark dark:text-gray-100">
       {/* Banner Section Top */}
       <div className="w-full -mt-2 sm:-mt-3 lg:-mt-5 mb-4 sm:mb-5  ">
         {/* Light Mode Image */}
@@ -186,7 +186,7 @@ const Home = () => {
           <ul className="flex flex-col gap-8">
             {trendingArticles.slice(0, 7).map((article, index) => (
               <Link to={article.link} key={index} className="gap-8">
-                <Card className="hover:shadow-lg transition-transform hover:scale-105 hover:bg-custom-green-1 dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
+                <Card className="hover:shadow-lg transition-transform hover:scale-105 hover:bg-custom-green-1 dark:hover:bg-custom-accent-green dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
                   <CardHeader className="p-3 sm:p-4">
                     <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 hover:underline line-clamp-2 dark:text-gray-100">
                       {article.title}
@@ -263,12 +263,12 @@ const Home = () => {
                         {article.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-5 sm:p-4 pt-">
+                    <CardContent className="p-3 sm:p-4 pt-0">
                       <div className="flex justify-between items-center text-xs sm:text-sm">
-                        <p className="text-sm font-semibold text-teal-700">
+                        <p className="font-semibold text-teal-700">
                           {article.author}
                         </p>
-                        <p className="text-sm font-semibold text-teal-700">
+                        <p className="font-semibold text-teal-700">
                           {article.date}
                         </p>
                       </div>
@@ -342,17 +342,17 @@ const Home = () => {
         </h1>
       </div>
       {/* Spotlight Articles Section */}
-      <div className="mt-10">
+      <div className="mt-10 sm:mt-11">
         <h2 className="text-xl font-semibold text-gray-800 mb-5 dark:text-gray-100">
           Spotlight
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
-            <Link to={NatureArticles.link} key={index} className="block">
-              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
+            <Link to={NatureArticles.link} key={index}>
+              <Card className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
                 {" "}
                 {/* Fixed card height */}
-                <div className="relative h-[150px]">
+                <div className="relative h-[150px] sm:h-[150px]">
                   {" "}
                   {/* Fixed image height */}
                   <img
@@ -361,19 +361,19 @@ const Home = () => {
                     className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
                   />
                 </div>
-                <CardHeader className="mt-1">
-                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
+                <CardHeader className="p-3 sm:p-4 pt-0">
+                  <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2  hover:underline dark:text-gray-100">
                     {" "}
                     {/* Line clamping for titles */}
                     {NatureArticles.title}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="flex justify-between items-center -mt-3">
-                  <div className="md:flex justify-between w-full">
-                    <p className="text-sm font-semibold text-teal-700">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex justify-between items-center text-xs sm:text-sm">
+                    <p className="font-semibold text-teal-700">
                       {NatureArticles.author}
                     </p>
-                    <p className="text-sm font-semibold text-teal-700">
+                    <p className="font-semibold text-teal-700">
                       {NatureArticles.date}
                     </p>
                   </div>
@@ -384,17 +384,17 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="mt-10">
+      <div className="mt-10 sm:mt-11">
         <h2 className="text-xl font-semibold text-gray-800 mb-5 dark:text-gray-100">
           Environment
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
-              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
+              <Card className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
                 {" "}
                 {/* Fixed card height */}
-                <div className="relative h-[150px]">
+                <div className="relative h-[150px] sm:h-[150px]">
                   {" "}
                   {/* Fixed image height */}
                   <img
@@ -403,19 +403,19 @@ const Home = () => {
                     className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
                   />
                 </div>
-                <CardHeader className="mt-1">
-                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
+                <CardHeader className="p-3 sm:p-4 pt-0">
+                  <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2  hover:underline dark:text-gray-100">
                     {" "}
                     {/* Line clamping for titles */}
                     {NatureArticles.title}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="flex justify-between items-center -mt-3">
-                  <div className="md:flex justify-between w-full">
-                    <p className="text-sm font-semibold text-teal-700">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex justify-between items-center text-xs sm:text-sm">
+                    <p className="font-semibold text-teal-700">
                       {NatureArticles.author}
                     </p>
-                    <p className="text-sm font-semibold text-teal-700">
+                    <p className="font-semibold text-teal-700">
                       {NatureArticles.date}
                     </p>
                   </div>
@@ -426,17 +426,17 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="mt-10">
+      <div className="mt-10 sm:mt-11">
         <h2 className="text-xl font-semibold text-gray-800 mb-5 dark:text-gray-100">
           Sustainable Living
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
-              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
+              <Card className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
                 {" "}
                 {/* Fixed card height */}
-                <div className="relative h-[150px]">
+                <div className="relative h-[150px] sm:h-[150px]">
                   {" "}
                   {/* Fixed image height */}
                   <img
@@ -445,19 +445,19 @@ const Home = () => {
                     className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
                   />
                 </div>
-                <CardHeader className="mt-1">
-                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
+                <CardHeader className="p-3 sm:p-4 pt-0">
+                  <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2  hover:underline dark:text-gray-100">
                     {" "}
                     {/* Line clamping for titles */}
                     {NatureArticles.title}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="flex justify-between items-center -mt-3">
-                  <div className=" md:flex justify-between w-full">
-                    <p className="text-sm font-semibold text-teal-700">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex justify-between items-center text-xs sm:text-sm">
+                    <p className="font-semibold text-teal-700">
                       {NatureArticles.author}
                     </p>
-                    <p className="text-sm font-semibold text-teal-700">
+                    <p className="font-semibold text-teal-700">
                       {NatureArticles.date}
                     </p>
                   </div>
@@ -468,17 +468,17 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="mt-10">
+      <div className="mt-10 sm:mt-11">
         <h2 className="text-xl font-semibold text-gray-800 mb-5 dark:text-gray-100">
           Interviews
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
-              <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black ">
+              <Card className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
                 {" "}
                 {/* Fixed card height */}
-                <div className="relative h-[150px]">
+                <div className="relative h-[150px] sm:h-[150px]">
                   {" "}
                   {/* Fixed image height */}
                   <img
@@ -487,19 +487,19 @@ const Home = () => {
                     className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
                   />
                 </div>
-                <CardHeader className="mt-1">
-                  <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline dark:text-gray-100">
+                <CardHeader className="p-3 sm:p-4 pt-0">
+                  <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2  hover:underline dark:text-gray-100">
                     {" "}
                     {/* Line clamping for titles */}
                     {NatureArticles.title}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="flex justify-between items-center -mt-3">
-                  <div className=" md:flex justify-between w-full">
-                    <p className="text-sm font-semibold text-teal-700">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex justify-between items-center text-xs sm:text-sm">
+                    <p className="font-semibold text-teal-700">
                       {NatureArticles.author}
                     </p>
-                    <p className="text-sm font-semibold text-teal-700">
+                    <p className="font-semibold text-teal-700">
                       {NatureArticles.date}
                     </p>
                   </div>
