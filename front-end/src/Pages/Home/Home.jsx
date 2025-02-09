@@ -153,36 +153,37 @@ const Home = () => {
   };
 
   return (
-    <div className="container mx-auto px-6 md:px-10 lg:px-20 py-8 mt-2 bg-gray-100 dark:bg-black">
-      {/* Banner Section Top*/}
-      <div className="w-full -mt-5 mb-5">
+    <div className="mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 bg-gray-100 dark:bg-black">
+      {/* Banner Section Top */}
+      <div className="w-full -mt-2 sm:-mt-3 lg:-mt-5 mb-4 sm:mb-5  ">
         <img
           src="./whitegreen.png"
           alt="Promotional Banner"
-          className="w-full h-auto md:h-32  object-cover rounded-2xl shadow-sm"
+          className="w-full h-20 max-sm:h-24 max-sm:object-cover max-md:h-24 lg:h-32 max-md:object-cover rounded-xl sm:rounded-2xl shadow-sm"
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-11 gap-5">
-        {/* Trending News Section (left section) */}
-        <div className="md:col-span-3 bg-white dark:bg-black rounded-2xl shadow-md p-6 hidden md:block">
-          <h2 className="text-lg font-semibold text-gray-800 -mt-2 mb-5 dark:text-gray-100">
+
+      <div className="grid grid-cols-1 lg:grid-cols-11 gap-4 sm:gap-5">
+        {/* Trending News Section */}
+        <div className="lg:col-span-3 bg-white dark:bg-black rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 hidden lg:block">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4 dark:text-gray-100">
             Trending
           </h2>
-          <ul className="space-y-6">
-            {trendingArticles.slice(0, 6).map((trendingArticles, index) => (
-              <Link to={trendingArticles.link} key={index} className="block">
-                <Card className="hover:shadow-lg max-w-full transition-transform transform hover:scale-105 hover:bg-custom-green-1">
-                  <CardHeader>
-                    <CardTitle className="text-lg font-semibold text-gray-800 hover:underline">
-                      {trendingArticles.title}
+          <ul className="flex flex-col gap-8">
+            {trendingArticles.slice(0, 6).map((article, index) => (
+              <Link to={article.link} key={index} className="gap-8">
+                <Card className="hover:shadow-lg transition-transform hover:scale-105 hover:bg-custom-green-1 ">
+                  <CardHeader className="p-3 sm:p-4">
+                    <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 hover:underline line-clamp-2">
+                      {article.title}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="flex justify-between items-center">
-                    <p className="text-sm font-semibold text-teal-700">
-                      {trendingArticles.author}
+                  <CardContent className="p-3 sm:p-4 pt-0 flex justify-between items-center">
+                    <p className="text-xs sm:text-sm font-semibold text-teal-700">
+                      {article.author}
                     </p>
-                    <p className="text-sm font-semibold text-teal-700">
-                      {trendingArticles.date}
+                    <p className="text-xs sm:text-sm font-semibold text-teal-700">
+                      {article.date}
                     </p>
                   </CardContent>
                 </Card>
@@ -191,72 +192,70 @@ const Home = () => {
           </ul>
         </div>
 
-        {/* Middle Section (Featured + Latest News) */}
-        <div className="md:col-span-6">
+        {/* Middle Section */}
+        <div className="lg:col-span-6">
           {/* Featured News Section */}
-          <div className="bg-white rounded-2xl shadow-md overflow-hidden relative h-[300px] md:h-[400px]">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-md overflow-hidden relative h-[250px] sm:h-[300px] lg:h-[400px]">
             <img
               src={featuredArticles[activeArticle].image}
               alt={featuredArticles[activeArticle].title}
-              className="w-full h-full object-cover absolute top-0 left-0 rounded-t-2xl transition-all duration-1000 ease-in-out"
+              className="w-full h-full object-cover transition-all duration-1000 ease-in-out"
             />
-            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black opacity-50"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-50"></div>
             <Link to={featuredArticles[activeArticle].link}>
-              <div className="absolute bottom-0 left-0 w-full text-white p-4 mb-2 ml-4 text-left text-xl md:text-3xl font-semibold z-10 hover:underline">
-                {featuredArticles[activeArticle].title}
+              <div className="absolute bottom-0 left-0 w-full p-3 sm:p-4 mb-2 text-white">
+                <h3 className="text-lg sm:text-xl lg:text-3xl font-semibold hover:underline">
+                  {featuredArticles[activeArticle].title}
+                </h3>
               </div>
             </Link>
 
-            <div className="absolute top-1/2 left-0 right-0 flex justify-between px-4 md:px-6 transform -translate-y-1/2 z-10">
-              <div
+            <div className="absolute top-1/2 left-0 right-0 flex justify-between px-2 sm:px-4 -translate-y-1/2">
+              <button
                 onClick={handlePrev}
-                className="text-white cursor-pointer hover:text-custom-green flex items-center justify-center"
+                className="text-white hover:text-custom-green p-2"
+                aria-label="Previous article"
               >
-                <MdNavigateBefore size={32} />
-              </div>
-              <div
+                <MdNavigateBefore size={28} />
+              </button>
+              <button
                 onClick={handleNext}
-                className="text-white cursor-pointer hover:text-custom-green flex items-center justify-center"
+                className="text-white hover:text-custom-green p-2"
+                aria-label="Next article"
               >
-                <MdNavigateNext size={32} />
-              </div>
+                <MdNavigateNext size={28} />
+              </button>
             </div>
           </div>
 
-          {/* Latest News Section */}
-          <div className="mt-5">
-            <h2 className="text-lg font-semibold text-gray-800 mb-1">
+          {/* Latest News Grid */}
+          <div className="mt-4 sm:mt-5">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-3">
               Latest News
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-              {latestArticles.slice(0, 4).map((latestArticles, index) => (
-                <Link to={latestArticles.link} key={index} className="block">
-                  <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
-                    {" "}
-                    {/* Fixed card height */}
-                    <div className="relative h-[150px]">
-                      {" "}
-                      {/* Fixed image height */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {latestArticles.slice(0, 4).map((article, index) => (
+                <Link to={article.link} key={index}>
+                  <Card className="hover:shadow-md transition-transform hover:scale-105 h-[280px] sm:h-[300px]">
+                    <div className="relative h-[140px] sm:h-[150px]">
                       <img
-                        src={latestArticles.image}
-                        alt={latestArticles.title}
+                        src={article.image}
+                        alt={article.title}
                         className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
                       />
                     </div>
-                    <CardHeader className="mt-1">
-                      <CardTitle className="text-lg font-semibold text-gray-800 sm:line-clamp-none md:line-clamp-3 h-[60px] hover:underline">
-                        {" "}
-                        {/* Line clamping for titles */}
-                        {latestArticles.title}
+                    <CardHeader className="p-3 sm:p-4">
+                      <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 line-clamp-2 hover:underline">
+                        {article.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="flex justify-between items-center -mt-3">
-                      <div className="hidden md:flex justify-between w-full">
-                        <p className="text-sm font-semibold text-teal-700">
-                          {latestArticles.author}
+                    <CardContent className="p-3 sm:p-4 pt-0">
+                      <div className="flex justify-between items-center text-xs sm:text-sm">
+                        <p className="font-semibold text-teal-700">
+                          {article.author}
                         </p>
-                        <p className="text-sm font-semibold text-teal-700">
-                          {latestArticles.date}
+                        <p className="font-semibold text-teal-700">
+                          {article.date}
                         </p>
                       </div>
                     </CardContent>
@@ -267,10 +266,11 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Contact Us Section (right section) */}
-        <div className="md:col-span-2 space-y-6">
-          <div className="rounded-2xl shadow-md p-6 h-[300px] md:h-[400px] bg-custom-green-1">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+        {/* Right Section */}
+        <div className="lg:col-span-2 space-y-4 sm:space-y-5">
+          {/* Contact Us Card */}
+          <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] lg:h-[400px] bg-custom-green-1">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
               Contact Us
             </h2>
             <p className="text-gray-800 mb-4">
@@ -279,24 +279,32 @@ const Home = () => {
             <Link to="/contact">
               <Button
                 variant="primary"
-                className="w-full rounded-full bg-custom-green text-custom-green-1 transition-transform transform hover:scale-105 mt-10 md:mt-36 font-bold"
+                className="w-full rounded-full bg-custom-green text-custom-green-1 hover:scale-105 mt-6 lg:mt-36 font-bold"
               >
                 Contact Us
                 <MdNavigateNext size={24} className="ml-2" />
               </Button>
             </Link>
           </div>
-          {/* RSS Feed Subscription Section */}
-          <div className="rounded-2xl shadow-md p-6 h-[300px] md:h-[300px] bg-custom-green">
-            <h2 className="text-2xl font-bold text-gray-200 mb-4">Subscribe</h2>
+
+          {/* Subscribe Card */}
+          <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] bg-custom-green">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-200 mb-3">
+              Subscribe
+            </h2>
             <p className="text-gray-200 mb-4">
               Stay updated with our latest articles. <br /> Subscribe to our RSS
               feed now!
             </p>
-            <a href="https://rss.com/" target="_blank" rel="noreferrer">
+            <a
+              href="https://rss.com/"
+              target="_blank"
+              rel="noreferrer"
+              className="block mt-6"
+            >
               <Button
                 variant="primary"
-                className="w-full rounded-full bg-custom-accent-green text-custom-green transition-transform transform hover:scale-105 mt-10 md:mt-31 font-bold"
+                className="w-full rounded-full bg-custom-accent-green text-custom-green hover:scale-105 font-bold"
               >
                 Subscribe <MdRssFeed size={24} className="ml-2" />
               </Button>
@@ -305,7 +313,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Banner Section */}
       <div className="w-full mt-10">
         <img
           src="./Grey Matter.png"
@@ -323,7 +330,7 @@ const Home = () => {
       {/* Spotlight Articles Section */}
       <div className="mt-10">
         <h2 className="text-xl font-semibold text-gray-800 mb-5">Spotlight</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
               <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
@@ -365,7 +372,7 @@ const Home = () => {
         <h2 className="text-xl font-semibold text-gray-800 mb-5">
           Environment
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
               <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
@@ -407,7 +414,7 @@ const Home = () => {
         <h2 className="text-xl font-semibold text-gray-800 mb-5">
           Sustainable Living
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
               <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
@@ -446,10 +453,8 @@ const Home = () => {
       </div>
 
       <div className="mt-10">
-        <h2 className="text-xl font-semibold text-gray-800 mb-5">
-          Interviews
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+        <h2 className="text-xl font-semibold text-gray-800 mb-5">Interviews</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {NatureArticles.slice(0, 4).map((NatureArticles, index) => (
             <Link to={NatureArticles.link} key={index} className="block">
               <Card className="hover:shadow-md max-w-full transition-transform transform hover:scale-105 p-2 h-[300px]">
