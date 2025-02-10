@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import {
-  FaFacebookF,
   FaLinkedinIn,
   FaLink,
-  FaWhatsapp,
 } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 
@@ -57,7 +55,7 @@ const Article = () => {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="container mx-auto px-8 py-10 max-w-screen-xl">
+      <div className="container mx-auto px-5 py-8 max-w-screen-xl">
         <div className="relative w-70 h-60 md:h-[25rem] lg:h-[30rem] overflow-hidden mb-8 flex items-center justify-center text-center">
           {/* Banner Text */}
           <div className="absolute z-20 text-white px-5 md:px-10 lg:px-20">
@@ -94,7 +92,7 @@ const Article = () => {
           </div>
         </div>
 
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden dark:bg-custom-dark">
           <CardContent className="p-6">
             <div className="prose prose-invert max-w-none text-lg leading-relaxed">
               <p>
@@ -131,9 +129,6 @@ const Article = () => {
                   alt="Forest Conservation"
                   className="w-1/2 h-auto mx-auto rounded-md shadow-lg transition-transform transform hover:scale-105"
                 />
-                <p className="mt-4 text-center text-gray-600">
-                  Forest Conservation Efforts
-                </p>
               </div>
 
               <h2 className="text-2xl font-semibold text-foreground my-4">
@@ -217,26 +212,21 @@ const Article = () => {
             Share this article
           </h2>
           <div className="flex space-x-4">
-            {["facebook", "linkedin", "whatsapp", "email", "link"].map((platform, index) => (
+            {["linkedin", "email", "link"].map((platform, index) => (
               <Button
                 key={index}
                 variant="outline"
                 onClick={() => shareArticle(platform)}
-                className={`bg-white text-black p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 hover:shadow-sm border-none hover:shadow-gray-400 ${
-                  platform === "facebook" && "text-blue-600 hover:bg-blue-400"
+                className={`bg-white dark:bg-custom-dark text-black p-5 text-xl rounded-md shadow-sm dark:shadow-sm dark:shadow-black transition-transform transform hover:scale-110 border-none hover:shadow-gray-400 
+                ${
+                  platform === "linkedin" && "text-blue-900 hover:bg-blue-700 dark:text-blue-700 dark:hover:bg-blue-800"
                 } ${
-                  platform === "linkedin" && "text-blue-900 hover:bg-blue-700"
+                  platform === "email" && "text-red-600 hover:bg-red-400 dark:text-red-700 dark:hover:bg-red-500"
                 } ${
-                  platform === "whatsapp" && "text-green-600 hover:bg-green-400"
-                } ${
-                  platform === "email" && "text-red-600 hover:bg-red-400"
-                } ${
-                  platform === "link" && "text-gray-600 hover:bg-gray-500"
+                  platform === "link" && "text-gray-600 hover:bg-gray-500 dark:text-gray-600 dark:hover:bg-gray-600"
                 }`}
               >
-                {platform === "facebook" && <FaFacebookF />}
                 {platform === "linkedin" && <FaLinkedinIn />}
-                {platform === "whatsapp" && <FaWhatsapp />}
                 {platform === "email" && <MdEmail />}
                 {platform === "link" && <FaLink />}
               </Button>
@@ -255,7 +245,7 @@ const Article = () => {
               (window.location.href =
                 "mailto:shaptrshik@gmail.com?subject=Feedback on Article&body=Your message here.")
             }
-            className="rounded-lg border-2 border-black bg-white px-6 py-3 font-semibold uppercase text-black transition-all duration-300 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:rounded-md hover:shadow-[4px_4px_0px_black] active:translate-x-[0px] active:translate-y-[0px] active:rounded-2xl active:shadow-none"
+            className="rounded-lg border-2 border-black dark:text-gray-100 dark:bg-custom-dark bg-white px-6 py-3 font-semibold uppercase text-black transition-all duration-300 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:rounded-md hover:shadow-[4px_4px_0px_black] active:translate-x-[0px] active:translate-y-[0px] active:rounded-2xl active:shadow-none"
           >
             Send Feedback
           </Button>
@@ -263,26 +253,42 @@ const Article = () => {
 
         <div className="mt-12">
             <h2 className="text-2xl font-semibold text-foreground mb-6">You May Enjoy</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
               {[
-                { title: "The Future of Renewable Energy", img: "/pic.jpg", link: "#" },
-                { title: "Conservation Strategies for Wildlife", img: "/wildlife.jpg", link: "#" },
-                { title: "Sustainable Living Practices", img: "/sustainable.jpg", link: "#" },
-                { title: "The Role of Solar Energy", img: "/solar.jpg", link: "#" },
+                { title: "The Future of Renewable Energy", img: "/pic.jpg", link: "#", author: "Michael Green", date: "January 18, 2024"},
+                { title: "Conservation Strategies for Wildlife", img: "/wildlife.jpg", link: "#", author: "Michael Green", date: "January 18, 2024"},
+                { title: "Sustainable Living Practices", img: "/sustainable.jpg", link: "#", author: "Michael Green", date: "January 18, 2024" },
+                { title: "The Role of Solar Energy", img: "/solar.jpg", link: "#", author: "Michael Green", date: "January 18, 2024", },
               ].map((article, index) => (
                 <Card
                   key={index}
-                  className="hover:shadow-sm cursor-pointer hover:shadow-custom-green transition-transform transform hover:scale-105"
+                  className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black "
                   onClick={() => navigate(article.link)}
                 >
+                  <div className="relative h-[150px] sm:h-[150px]">
                   <img
                     src={article.img}
                     alt={article.title}
-                    className="rounded-t-lg w-full h-48 object-cover"
+                    className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
                   />
-                  <div className="p-4">
-                    <h3 className="text-lg font-medium">{article.title}</h3>
                   </div>
+                  <CardHeader className="p-3 sm:p-4 pt-0">
+                  <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2  hover:underline dark:text-gray-100">
+                  {" "}
+                  {/* Line clamping for titles */}
+                  {article.title}
+                  </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="flex justify-between items-center text-xs sm:text-sm">
+                      <p className="font-semibold text-teal-700">
+                      {article.author}
+                      </p>
+                      <p className="font-semibold text-teal-700">
+                      {article.date}
+                      </p>
+                    </div>
+                  </CardContent>
                 </Card>
               ))}
             </div>
