@@ -42,10 +42,11 @@ const adminLogin = async (req, res) => {
 };
 
 const adminRegister = async (req, res) => {
-  const { email, password, confirmPassword } = req.body;
+  const {name,email, password, confirmPassword } = req.body;
+
 
   try {
-    if (!email || !password || !confirmPassword) {
+    if (!email || !password || !confirmPassword || !name) {
       return res
         .status(400)
         .json({ success: false, message: "All fields required" });
@@ -65,7 +66,7 @@ const adminRegister = async (req, res) => {
         .json({ success: false, message: "Admin already exists" });
     }
 
-    const admin = new Admin({ email, password });
+    const admin = new Admin({ name,email, password });
     await admin.save();
 
     if (admin) {
