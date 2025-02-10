@@ -1,15 +1,17 @@
 import { useState } from "react";
+import axios from 'axios'
+import { data } from "react-router-dom";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
   const [errors, setErrors] = useState({
-    fullName: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -29,11 +31,23 @@ const AuthPage = () => {
     return passwordRegex.test(password);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log("Form submitted successfully!");
-    }
+    
+      if (isLogin) {
+        const res=axios.post('http://localhost:5000/api/admin/login',formData).then((res)=>{
+          console.log(res)
+          alert('User Logged In')
+        })
+        
+      }
+      else{
+        axios.post('http://localhost:5000/api/admin/register',formData).then((res)=>{
+          console.log(res)
+          alert('User Registered')
+        })
+      }
+    
   };
 
   const handleChange = (e) => {
@@ -76,16 +90,16 @@ const AuthPage = () => {
           {!isLogin && (
             <div>
               <label
-                htmlFor="fullName"
+                htmlFor="name"
                 className="block text-sm font-medium text-gray-700"
               >
                 Full Name
               </label>
               <input
                 type="text"
-                id="fullName"
-                name="fullName"
-                value={formData.fullName}
+                id="name"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
                 placeholder="Enter your full name"
