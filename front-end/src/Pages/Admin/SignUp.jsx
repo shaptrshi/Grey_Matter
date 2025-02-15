@@ -1,9 +1,10 @@
 import { useState } from "react";
-import axios from 'axios'
-import { data } from "react-router-dom";
+import axios from "axios";
 
-const AuthPage = () => {
+const SignUp = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState(""); // For error messages
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,177 +20,220 @@ const AuthPage = () => {
 
   const toggleAuthMode = () => {
     setIsLogin((prev) => !prev);
+    setServerError(""); // Clear error when switching modes
   };
 
   const validateEmail = (email) => {
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zAZ0-9.-]+\.[a-zA-Z]{2,6}$/;
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     return emailRegex.test(email);
   };
 
   const validatePassword = (password) => {
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return passwordRegex.test(password);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-      if (isLogin) {
-        const res=axios.post('http://localhost:5000/api/admin/login',formData).then((res)=>{
-          console.log(res)
-          alert('User Logged In')
-        })
-        
+    setServerError(""); // Reset error on new attempt
+    setLoading(true);
+
+    // Trim input values
+    const trimmedData = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      password: formData.password.trim(),
+      confirmPassword: formData.confirmPassword.trim(),
+    };
+
+    // Validation before sending request
+    if (!validateEmail(trimmedData.email)) {
+      setErrors((prev) => ({ ...prev, email: "Invalid email format" }));
+      setLoading(false);
+      return;
+    }
+
+    if (!validatePassword(trimmedData.password)) {
+      setErrors((prev) => ({
+        ...prev,
+        password:
+          "Password must be at least 8 characters, include a number, and a special character.",
+      }));
+      setLoading(false);
+      return;
+    }
+
+    if (!isLogin && trimmedData.password !== trimmedData.confirmPassword) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: "Passwords do not match",
+      }));
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const endpoint = isLogin ? "login" : "register";
+      const res = await axios.post(
+        `http://localhost:5000/api/admin/${endpoint}`,
+        trimmedData
+      );
+      console.log(res.data);
+      alert(isLogin ? "User Logged In" : "User Registered");
+    } catch (error) {
+      if (error.response && error.response.data) {
+        setServerError(error.response.data.message || "Something went wrong");
+      } else {
+        setServerError("Server is unreachable. Please try again later.");
       }
-      else{
-        axios.post('http://localhost:5000/api/admin/register',formData).then((res)=>{
-          console.log(res)
-          alert('User Registered')
-        })
-      }
-    
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Live feedback for email
     if (name === "email") {
-      if (!validateEmail(value)) {
-        setErrors((prev) => ({
-          ...prev,
-          email: "Please enter a valid email.",
-        }));
-      } else {
-        setErrors((prev) => ({ ...prev, email: "" }));
-      }
+      setErrors((prev) => ({
+        ...prev,
+        email: validateEmail(value) ? "" : "Please enter a valid email.",
+      }));
     }
 
-    // Live feedback for password
     if (name === "password") {
-      if (!validatePassword(value)) {
-        setErrors((prev) => ({
-          ...prev,
-          password:
-            "Password must be at least 8 characters long and contain at least one number.",
-        }));
-      } else {
-        setErrors((prev) => ({ ...prev, password: "" }));
-      }
+      setErrors((prev) => ({
+        ...prev,
+        password: validatePassword(value)
+          ? ""
+          : "Password must be at least 8 characters, include a number, and a special character.",
+      }));
+    }
+
+    if (name === "confirmPassword") {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword:
+          value === formData.password ? "" : "Passwords do not match.",
+      }));
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-          {isLogin ? "Login" : "Sign Up"}
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
+    <>
+      <nav className="sticky top-0 z-50 bg-white dark:bg-custom-dark shadow-md dark:shadow-sm dark:shadow-black p-4">
+        <div className="mx-auto flex justify-center items-center">
+          <img src="/logo2.png" alt="Logo" className="h-8 md:h-12 w-auto transition-transform hover:scale-105" />
+        </div>
+      </nav>
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-custom-dark -mt-16">
+        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg dark:bg-custom-dark">
+          <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">
+            {isLogin ? "Admin Login" : "Admin Sign Up"}
+          </h2>
+
+          {/* Server Error Message */}
+          {serverError && (
+            <p className="text-red-500 text-sm text-center mb-4">
+              {serverError}
+            </p>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
+                  placeholder="Enter your full name"
+                />
+              </div>
+            )}
             <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Full Name
+              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+                Email
               </label>
               <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
+                type="email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                placeholder="Enter your full name"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
+                placeholder="Enter your email"
               />
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email}</p>
+              )}
             </div>
-          )}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-              placeholder="Enter your email"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email}</p>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-              placeholder="Enter your password"
-            />
-            {errors.password && (
-              <p className="text-red-500 text-sm">{errors.password}</p>
-            )}
-          </div>
-          {!isLogin && (
             <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Confirm Password
+              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+                Password
               </label>
               <input
                 type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
+                name="password"
+                value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                placeholder="Confirm your password"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
+                placeholder="Enter your password"
               />
-              {formData.password !== formData.confirmPassword &&
-                formData.confirmPassword && (
+              {errors.password && (
+                <p className="text-red-500 text-sm">{errors.password}</p>
+              )}
+            </div>
+            {!isLogin && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
+                  placeholder="Confirm your password"
+                />
+                {errors.confirmPassword && (
                   <p className="text-red-500 text-sm">
-                    Passwords do not match.
+                    {errors.confirmPassword}
                   </p>
                 )}
-            </div>
-          )}
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
-          >
-            {isLogin ? "Login" : "Sign Up"}
-          </button>
-        </form>
-        <p className="mt-4 text-sm text-center text-gray-600">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <button
-            onClick={toggleAuthMode}
-            className="text-blue-500 hover:underline"
-          >
-            {isLogin ? "Sign Up" : "Login"}
-          </button>
-        </p>
+              </div>
+            )}
+            <button
+              type="submit"
+              className={`w-full py-2 rounded-lg text-white transition ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }`}
+              disabled={loading}
+            >
+              {loading ? "Processing..." : isLogin ? "Login" : "Sign Up"}
+            </button>
+          </form>
+          <p className="mt-4 text-sm text-center text-gray-600">
+            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+            <button
+              onClick={toggleAuthMode}
+              className="text-blue-500 hover:underline"
+            >
+              {isLogin ? "Sign Up" : "Login"}
+            </button>
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default AuthPage;
+export default SignUp;

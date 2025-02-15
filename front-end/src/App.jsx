@@ -27,13 +27,15 @@ import EditArticle from "./Pages/Article/EditArticle";
 import AuthorProfilePage from "./Pages/Author/AuthorProfilePage";
 import AuthorPublicProfilePage from "./Pages/Author/AuthorPublicProfilePage";
 import AboutUs from "./Pages/AboutUs/AboutUs";
+import AuthorSignUp from "./Pages/Author/AuthorSignUp";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/admin" element={<Admin />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/admin/signup" element={<SignUp />} />
+        <Route path="/author/signup" element={<AuthorSignUp />} />
         <Route path="/author-page" element={<AuthorPage />} />
         <Route path="/profile" element={<AuthorProfilePage />} />
         <Route path="/create-article" element={<CreateArticle />} />
