@@ -12,7 +12,7 @@ const AuthorSignUp = () => {
     password: "",
     confirmPassword: "",
     bio: "",
-    profilePicture: null,
+    profilePhoto: null,
   });
 
   const [errors, setErrors] = useState({
@@ -33,7 +33,7 @@ const AuthorSignUp = () => {
       password: "",
       confirmPassword: "",
       bio: "",
-      profilephoto: null,
+      profilePhoto: null,
     });
   };
 
@@ -41,9 +41,7 @@ const AuthorSignUp = () => {
     /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email);
 
   const validatePassword = (password) =>
-    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-      password
-    );
+    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,14 +53,15 @@ const AuthorSignUp = () => {
     formDataToSend.append("email", formData.email.trim());
     formDataToSend.append("password", formData.password.trim());
 
+    // For registration, append additional fields.
     if (!isLogin) {
-      // For registration, append additional fields.
       formDataToSend.append("name", formData.name.trim());
-      // Append bio even if it's an empty string.
       formDataToSend.append("bio", formData.bio.trim() || "");
-      if (formData.profilephoto) {
-        formDataToSend.append("profilePicture", formData.profilephoto);
+      if (formData.profilePhoto) {
+        formDataToSend.append("profilePhoto", formData.profilePhoto);
       }
+      formDataToSend.append("confirmPassword", formData.confirmPassword.trim());
+
       // Check if passwords match
       if (formData.password !== formData.confirmPassword) {
         setErrors((prev) => ({
@@ -73,8 +72,7 @@ const AuthorSignUp = () => {
         return;
       }
     }
-    console.log("FormData:", formDataToSend);
-    console.log(formData)
+
     // Debug: Log FormData entries
     for (let pair of formDataToSend.entries()) {
       console.log(pair[0] + ": " + pair[1]);
@@ -82,7 +80,7 @@ const AuthorSignUp = () => {
 
     try {
       const endpoint = isLogin ? "login" : "register";
-      console.log("url",`http://localhost:5000/api/author/${endpoint}`);
+      console.log("url", `http://localhost:5000/api/author/${endpoint}`);
       const res = await axios.post(
         `http://localhost:5000/api/author/${endpoint}`,
         formDataToSend,
@@ -133,7 +131,7 @@ const AuthorSignUp = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData((prev) => ({ ...prev, profilephoto: file }));
+      setFormData((prev) => ({ ...prev, profilePhoto: file }));
 
       // Show image preview
       const reader = new FileReader();
@@ -156,6 +154,7 @@ const AuthorSignUp = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Registration specific fields above Email/Password */}
           {!isLogin && (
             <>
               <div>
@@ -204,6 +203,8 @@ const AuthorSignUp = () => {
               </div>
             </>
           )}
+
+          {/* Common fields */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -236,6 +237,8 @@ const AuthorSignUp = () => {
               <p className="text-red-500 text-sm">{errors.password}</p>
             )}
           </div>
+
+          {/* Confirm Password appears below Password in registration mode */}
           {!isLogin && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -254,6 +257,7 @@ const AuthorSignUp = () => {
               )}
             </div>
           )}
+
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
@@ -265,10 +269,7 @@ const AuthorSignUp = () => {
 
         <p className="mt-4 text-sm text-center text-gray-600">
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <button
-            onClick={toggleAuthMode}
-            className="text-blue-500 hover:underline"
-          >
+          <button onClick={toggleAuthMode} className="text-blue-500 hover:underline">
             {isLogin ? "Sign Up" : "Login"}
           </button>
         </p>
