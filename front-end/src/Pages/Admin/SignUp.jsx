@@ -125,112 +125,125 @@ const SignUp = () => {
     <>
       <nav className="sticky top-0 z-50 bg-white dark:bg-custom-dark shadow-md dark:shadow-sm dark:shadow-black p-4">
         <div className="mx-auto flex justify-center items-center">
-          <img src="/logo2.png" alt="Logo" className="h-8 md:h-12 w-auto transition-transform hover:scale-105" />
+          <img
+            src="/logo2.png"
+            alt="Logo"
+            className="h-8 md:h-12 w-auto transition-transform hover:scale-105"
+          />
         </div>
       </nav>
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-custom-dark -mt-16">
-        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg dark:bg-custom-dark">
-          <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">
-            {isLogin ? "Admin Login" : "Admin Sign Up"}
-          </h2>
+      <div className="flex flex-col min-h-screen bg-custom-dark">
+        <div className="flex items-center justify-center flex-grow px-4 py-8">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg dark:bg-custom-dark">
+            <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">
+              {isLogin ? "Admin Login" : "Admin Sign Up"}
+            </h2>
 
-          {/* Server Error Message */}
-          {serverError && (
-            <p className="text-red-500 text-sm text-center mb-4">
-              {serverError}
-            </p>
-          )}
+            {/* Server Error Message */}
+            {serverError && (
+              <p className="text-red-500 text-sm text-center mb-4">
+                {serverError}
+              </p>
+            )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
-                  Full Name
+                  Email
                 </label>
                 <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
+                  type="email"
+                  name="email"
+                  value={formData.email}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
-                  placeholder="Enter your full name"
+                  placeholder="Enter your email"
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email}</p>
+                )}
               </div>
-            )}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
-                placeholder="Enter your email"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email}</p>
-              )}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
-                placeholder="Enter your password"
-              />
-              {errors.password && (
-                <p className="text-red-500 text-sm">{errors.password}</p>
-              )}
-            </div>
-            {!isLogin && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
-                  Confirm Password
+                  Password
                 </label>
                 <input
                   type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
+                  name="password"
+                  value={formData.password}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
-                  placeholder="Confirm your password"
+                  placeholder="Enter your password"
                 />
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm">
-                    {errors.confirmPassword}
-                  </p>
+                {errors.password && (
+                  <p className="text-red-500 text-sm">{errors.password}</p>
                 )}
               </div>
-            )}
-            <button
-              type="submit"
-              className={`w-full py-2 rounded-lg text-white transition ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-500 hover:bg-blue-600"
-              }`}
-              disabled={loading}
-            >
-              {loading ? "Processing..." : isLogin ? "Login" : "Sign Up"}
-            </button>
-          </form>
-          <p className="mt-4 text-sm text-center text-gray-600">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-            <button
-              onClick={toggleAuthMode}
-              className="text-blue-500 hover:underline"
-            >
-              {isLogin ? "Sign Up" : "Login"}
-            </button>
-          </p>
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
+                    placeholder="Confirm your password"
+                  />
+                  {errors.confirmPassword && (
+                    <p className="text-red-500 text-sm">
+                      {errors.confirmPassword}
+                    </p>
+                  )}
+                </div>
+              )}
+              <button
+                type="submit"
+                className={`w-full py-2 rounded-lg text-white transition ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-500 hover:bg-blue-600"
+                }`}
+                disabled={loading}
+              >
+                {loading ? "Processing..." : isLogin ? "Login" : "Sign Up"}
+              </button>
+            </form>
+            <p className="mt-4 text-sm text-center text-gray-600">
+              {isLogin
+                ? "Don't have an account?"
+                : "Already have an account?"}{" "}
+              <button
+                onClick={toggleAuthMode}
+                className="text-blue-500 hover:underline"
+              >
+                {isLogin ? "Sign Up" : "Login"}
+              </button>
+            </p>
+          </div>
         </div>
+        <footer className="bg-white dark:bg-custom-dark py-4">
+          <p className="text-center text-gray-600 dark:text-gray-400 text-sm">
+            &copy; {new Date().getFullYear()} Grey Matter. All rights reserved.
+          </p>
+        </footer>
       </div>
     </>
   );

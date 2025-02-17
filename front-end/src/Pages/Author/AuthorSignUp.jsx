@@ -41,7 +41,9 @@ const AuthorSignUp = () => {
     /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email);
 
   const validatePassword = (password) =>
-    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
+    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+      password
+    );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -123,7 +125,8 @@ const AuthorSignUp = () => {
     if (name === "confirmPassword") {
       setErrors((prev) => ({
         ...prev,
-        confirmPassword: value === formData.password ? "" : "Passwords do not match.",
+        confirmPassword:
+          value === formData.password ? "" : "Passwords do not match.",
       }));
     }
   };
@@ -143,138 +146,165 @@ const AuthorSignUp = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-custom-dark">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg dark:bg-custom-dark">
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-          {isLogin ? "Author Login" : "Author Sign Up"}
-        </h2>
+    <>
+      <nav className="sticky top-0 z-50 bg-white dark:bg-custom-dark shadow-md dark:shadow-sm dark:shadow-black p-4">
+        <div className="mx-auto flex justify-center items-center">
+          <img
+            src="/logo2.png"
+            alt="Logo"
+            className="h-8 md:h-12 w-auto transition-transform hover:scale-105"
+          />
+        </div>
+      </nav>
+      <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-custom-dark">
+        <div className="flex items-center justify-center flex-grow px-4 py-8">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg dark:bg-custom-dark">
+            <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+              {isLogin ? "Author Login" : "Author Sign Up"}
+            </h2>
 
-        {serverError && (
-          <p className="text-red-500 text-sm text-center mb-4">{serverError}</p>
-        )}
+            {serverError && (
+              <p className="text-red-500 text-sm text-center mb-4">
+                {serverError}
+              </p>
+            )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Registration specific fields above Email/Password */}
-          {!isLogin && (
-            <>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Registration specific fields */}
+              {!isLogin && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
+                      placeholder="Enter your full name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Short Bio (Optional)
+                    </label>
+                    <textarea
+                      name="bio"
+                      value={formData.bio}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
+                      placeholder="Write a short bio"
+                      rows="3"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Profile Picture (Optional)
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="w-full border-gray-300"
+                    />
+                    {previewImage && (
+                      <img
+                        src={previewImage}
+                        alt="Preview"
+                        className="mt-2 w-24 h-24 rounded-full object-cover"
+                      />
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* Common fields */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
+                  Email
                 </label>
                 <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
+                  type="email"
+                  name="email"
+                  value={formData.email}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
-                  placeholder="Enter your full name"
+                  placeholder="Enter your email"
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Short Bio (Optional)
-                </label>
-                <textarea
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
-                  placeholder="Write a short bio"
-                  rows="3"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Profile Picture (Optional)
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="w-full border-gray-300"
-                />
-                {previewImage && (
-                  <img
-                    src={previewImage}
-                    alt="Preview"
-                    className="mt-2 w-24 h-24 rounded-full object-cover"
-                  />
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email}</p>
                 )}
               </div>
-            </>
-          )}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
+                  placeholder="Enter your password"
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-sm">{errors.password}</p>
+                )}
+              </div>
 
-          {/* Common fields */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
-              placeholder="Enter your email"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
-              placeholder="Enter your password"
-            />
-            {errors.password && (
-              <p className="text-red-500 text-sm">{errors.password}</p>
-            )}
-          </div>
-
-          {/* Confirm Password appears below Password in registration mode */}
-          {!isLogin && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
-                placeholder="Confirm your password"
-              />
-              {errors.confirmPassword && (
-                <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+              {/* Confirm Password for sign up */}
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
+                    placeholder="Confirm your password"
+                  />
+                  {errors.confirmPassword && (
+                    <p className="text-red-500 text-sm">
+                      {errors.confirmPassword}
+                    </p>
+                  )}
+                </div>
               )}
-            </div>
-          )}
 
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
-            disabled={loading}
-          >
-            {loading ? "Processing..." : isLogin ? "Login" : "Sign Up"}
-          </button>
-        </form>
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+                disabled={loading}
+              >
+                {loading ? "Processing..." : isLogin ? "Login" : "Sign Up"}
+              </button>
+            </form>
 
-        <p className="mt-4 text-sm text-center text-gray-600">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <button onClick={toggleAuthMode} className="text-blue-500 hover:underline">
-            {isLogin ? "Sign Up" : "Login"}
-          </button>
-        </p>
+            <p className="mt-4 text-sm text-center text-gray-600">
+              {isLogin
+                ? "Don't have an account?"
+                : "Already have an account?"}{" "}
+              <button
+                onClick={toggleAuthMode}
+                className="text-blue-500 hover:underline"
+              >
+                {isLogin ? "Sign Up" : "Login"}
+              </button>
+            </p>
+          </div>
+        </div>
+        <footer className="bg-white dark:bg-custom-dark py-4">
+          <p className="text-center text-gray-600 dark:text-gray-400 text-sm">
+            &copy; {new Date().getFullYear()} Grey Matter. All rights reserved.
+          </p>
+        </footer>
       </div>
-    </div>
+    </>
   );
 };
 

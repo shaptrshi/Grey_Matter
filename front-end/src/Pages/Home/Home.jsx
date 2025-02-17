@@ -186,7 +186,7 @@ const Home = () => {
           <ul className="flex flex-col gap-8">
             {trendingArticles.slice(0, 7).map((article, index) => (
               <Link to={article.link} key={index} className="gap-8">
-                <Card className="hover:shadow-lg transition-transform hover:scale-105 hover:bg-custom-green-1 dark:hover:bg-custom-accent-green dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
+                <Card className="hover:shadow-lg transition-transform hover:scale-105 hover:bg-custom-green-1 dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
                   <CardHeader className="p-3 sm:p-4">
                     <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 hover:underline line-clamp-2 dark:text-gray-100">
                       {article.title}
