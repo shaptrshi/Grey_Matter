@@ -159,7 +159,7 @@ const AuthorSignUp = () => {
       <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-custom-dark">
         <div className="flex items-center justify-center flex-grow px-4 py-8">
           <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg dark:bg-custom-dark">
-            <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+            <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">
               {isLogin ? "Author Login" : "Author Sign Up"}
             </h2>
 
@@ -174,33 +174,33 @@ const AuthorSignUp = () => {
               {!isLogin && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Full Name
+                    <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+                      Name
                     </label>
                     <input
                       type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
                       placeholder="Enter your full name"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
                       Short Bio (Optional)
                     </label>
                     <textarea
                       name="bio"
                       value={formData.bio}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
                       placeholder="Write a short bio"
                       rows="3"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
                       Profile Picture (Optional)
                     </label>
                     <input
@@ -222,7 +222,7 @@ const AuthorSignUp = () => {
 
               {/* Common fields */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
                   Email
                 </label>
                 <input
@@ -230,7 +230,7 @@ const AuthorSignUp = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
                   placeholder="Enter your email"
                 />
                 {errors.email && (
@@ -238,7 +238,7 @@ const AuthorSignUp = () => {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
                   Password
                 </label>
                 <input
@@ -246,7 +246,7 @@ const AuthorSignUp = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
                   placeholder="Enter your password"
                 />
                 {errors.password && (
@@ -257,7 +257,7 @@ const AuthorSignUp = () => {
               {/* Confirm Password for sign up */}
               {!isLogin && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
                     Confirm Password
                   </label>
                   <input
@@ -265,7 +265,7 @@ const AuthorSignUp = () => {
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
                     placeholder="Confirm your password"
                   />
                   {errors.confirmPassword && (
@@ -285,7 +285,7 @@ const AuthorSignUp = () => {
               </button>
             </form>
 
-            <p className="mt-4 text-sm text-center text-gray-600">
+            <p className="mt-4 text-sm text-center text-gray-600 dark:text-gray-200">
               {isLogin
                 ? "Don't have an account?"
                 : "Already have an account?"}{" "}

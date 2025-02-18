@@ -45,7 +45,7 @@ const Footer = () => {
         </nav>
 
         {/* Copyright Text */}
-        <p className="text-gray-700  dark:text-gray-100 text-base sm:text-lg">&copy; {new Date().getFullYear()} Grey Matter. All rights reserved.</p>
+        <p className="text-gray-700 text-center dark:text-gray-100 text-sm">&copy; {new Date().getFullYear()} Grey Matter. All rights reserved.</p>
       </div>
     </footer>
   );

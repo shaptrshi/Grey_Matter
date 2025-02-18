@@ -226,7 +226,7 @@ const SignUp = () => {
                 {loading ? "Processing..." : isLogin ? "Login" : "Sign Up"}
               </button>
             </form>
-            <p className="mt-4 text-sm text-center text-gray-600">
+            <p className="mt-4 text-sm text-center text-gray-600 dark:text-gray-200">
               {isLogin
                 ? "Don't have an account?"
                 : "Already have an account?"}{" "}
