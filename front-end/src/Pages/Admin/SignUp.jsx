@@ -132,7 +132,7 @@ const SignUp = () => {
           />
         </div>
       </nav>
-      <div className="flex flex-col min-h-screen bg-custom-dark">
+      <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-custom-dark">
         <div className="flex items-center justify-center flex-grow px-4 py-8">
           <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg dark:bg-custom-dark">
             <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">
