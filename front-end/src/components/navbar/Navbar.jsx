@@ -23,7 +23,7 @@ const Dropdown = ({ label, items, isDesktop }) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center text-base font-semibold lg:text-lg text-gray-900 dark:text-gray-100 hover:text-custom-green dark:hover:text-custom-green transition-colors duration-300 rounded-md"
+        className="flex items-center text-base font-bold lg:text-lg text-gray-900 dark:text-gray-100 hover:text-custom-green dark:hover:text-custom-green transition-colors duration-300 rounded-md"
       >
         {label}
         <ChevronDown
@@ -209,7 +209,7 @@ const Navbar = () => {
                   <a
                     key={item.name}
                     href={item.link}
-                    className=" text-gray-900 hover:text-custom-green transition-colors duration-300 font-semibold dark:text-gray-100"
+                    className=" text-gray-900 hover:text-custom-green transition-colors duration-300 font-bold dark:text-gray-100"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}

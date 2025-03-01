@@ -11,15 +11,7 @@ const AuthorProfilePage = () => {
   const initialProfile = {
     name: "John Doe",
     email: "johndoe@example.com",
-    mobile: "123-456-7890",
     bio: "A passionate writer and tech enthusiast.",
-    socialMedia: [
-      { id: 1, url: "https://twitter.com/johndoe" },
-      { id: 2, url: "https://linkedin.com/in/johndoe" },
-      { id: 3, url: "https://instagram.com/johndoe" },
-      { id: 4, url: "https://facebook.com/johndoe" },
-      { id: 5, url: "https://pinterest.com/johndoe" },
-    ],
     profilePhoto: null,
   };
 
@@ -27,35 +19,10 @@ const AuthorProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [unsavedChanges, setUnsavedChanges] = useState(initialProfile);
 
-  const socialIcons = {
-    twitter: <BsTwitter className="text-blue-400" />,
-    linkedin: <FaLinkedin className="text-blue-700" />,
-    instagram: <AiFillInstagram className="text-pink-500" />,
-    facebook: <FaFacebook className="text-blue-600" />,
-    pinterest: <FaPinterest className="text-red-600" />,
-  };
-
-  const detectPlatform = (url) => {
-    if (url.includes("twitter.com")) return "twitter";
-    if (url.includes("linkedin.com")) return "linkedin";
-    if (url.includes("instagram.com")) return "instagram";
-    if (url.includes("facebook.com")) return "facebook";
-    if (url.includes("pinterest.com")) return "pinterest";
-    return "web"; // Default to generic web platform if no match
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUnsavedChanges((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSocialMediaChange = (id, value) => {
-    setUnsavedChanges((prevState) => ({
-      ...prevState,
-      socialMedia: prevState.socialMedia.map((social) =>
-        social.id === id ? { ...social, url: value } : social
-      ),
-    }));
   };
 
   const handleProfilePhotoChange = (e) => {
@@ -67,20 +34,6 @@ const AuthorProfilePage = () => {
       };
       reader.readAsDataURL(file);
     }
-  };
-
-  const addSocialMedia = () => {
-    setUnsavedChanges((prevState) => ({
-      ...prevState,
-      socialMedia: [...prevState.socialMedia, { id: Date.now(), url: "" }],
-    }));
-  };
-
-  const removeSocialMedia = (id) => {
-    setUnsavedChanges((prevState) => ({
-      ...prevState,
-      socialMedia: prevState.socialMedia.filter((social) => social.id !== id),
-    }));
   };
 
   const handleSave = () => {
@@ -138,17 +91,6 @@ const AuthorProfilePage = () => {
           </div>
 
           <div>
-            <label className="block text-gray-600">Mobile Number:</label>
-            <Input
-              name="mobile"
-              value={unsavedChanges.mobile}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className={`w-full mt-2 ${isEditing ? "bg-white border-gray-300" : "bg-gray-100"}`}
-            />
-          </div>
-
-          <div>
             <label className="block text-gray-600">Bio:</label>
             <Textarea
               name="bio"
@@ -158,48 +100,6 @@ const AuthorProfilePage = () => {
               rows="3"
               className={`w-full mt-2 ${isEditing ? "bg-white border-gray-300" : "bg-gray-100"}`}
             />
-          </div>
-
-          <div>
-            <label className="block text-gray-600">Social Media:</label>
-            <div className="space-y-4 mt-2">
-              {unsavedChanges.socialMedia.map((social) => (
-                <div key={social.id} className="flex items-center space-x-2">
-                  <div className="flex items-center space-x-2">
-                    {social.url && detectPlatform(social.url) === "twitter" && socialIcons.twitter}
-                    {social.url && detectPlatform(social.url) === "linkedin" && socialIcons.linkedin}
-                    {social.url && detectPlatform(social.url) === "instagram" && socialIcons.instagram}
-                    {social.url && detectPlatform(social.url) === "facebook" && socialIcons.facebook}
-                    {social.url && detectPlatform(social.url) === "pinterest" && socialIcons.pinterest}
-                    {social.url && detectPlatform(social.url) === "web" && (
-                      <span className="text-gray-500">🌐</span>
-                    )}
-                  </div>
-                  <Input
-                    type="text"
-                    value={social.url}
-                    onChange={(e) => handleSocialMediaChange(social.id, e.target.value)}
-                    disabled={!isEditing}
-                    placeholder="Profile URL"
-                    className={`w-full ${isEditing ? "bg-white border-gray-300" : "bg-gray-100"}`}
-                  />
-                  {isEditing && (
-                    <Button
-                      onClick={() => removeSocialMedia(social.id)}
-                      variant="link"
-                      className="text-red-500"
-                    >
-                      <FaTrash />
-                    </Button>
-                  )}
-                </div>
-              ))}
-              {isEditing && (
-                <Button onClick={addSocialMedia} className="text-green-500 mt-4">
-                  <FaPlus /> Add Social Media
-                </Button>
-              )}
-            </div>
           </div>
         </div>
 

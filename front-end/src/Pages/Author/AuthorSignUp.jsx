@@ -1,16 +1,20 @@
 import { useState } from "react";
 import axios from "axios";
 
-const SignUp = () => {
+const AuthorSignUp = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [serverError, setServerError] = useState(""); // For error messages
+  const [serverError, setServerError] = useState("");
+  const [previewImage, setPreviewImage] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
+    bio: "",
+    profilePhoto: null,
   });
+
   const [errors, setErrors] = useState({
     name: "",
     email: "",
@@ -18,75 +22,81 @@ const SignUp = () => {
     confirmPassword: "",
   });
 
+  // Toggle between login and signup modes.
   const toggleAuthMode = () => {
     setIsLogin((prev) => !prev);
-    setServerError(""); // Clear error when switching modes
+    setServerError("");
+    setPreviewImage(null);
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      bio: "",
+      profilePhoto: null,
+    });
   };
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    return emailRegex.test(email);
-  };
+  const validateEmail = (email) =>
+    /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email);
 
-  const validatePassword = (password) => {
-    const passwordRegex =
-      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordRegex.test(password);
-  };
+  const validatePassword = (password) =>
+    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+      password
+    );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setServerError(""); // Reset error on new attempt
+    setServerError("");
     setLoading(true);
 
-    // Trim input values
-    const trimmedData = {
-      name: formData.name.trim(),
-      email: formData.email.trim(),
-      password: formData.password.trim(),
-      confirmPassword: formData.confirmPassword.trim(),
-    };
+    // Create FormData and append required fields
+    const formDataToSend = new FormData();
+    formDataToSend.append("email", formData.email.trim());
+    formDataToSend.append("password", formData.password.trim());
 
-    // Validation before sending request
-    if (!validateEmail(trimmedData.email)) {
-      setErrors((prev) => ({ ...prev, email: "Invalid email format" }));
-      setLoading(false);
-      return;
+    // For registration, append additional fields.
+    if (!isLogin) {
+      formDataToSend.append("name", formData.name.trim());
+      formDataToSend.append("bio", formData.bio.trim() || "");
+      if (formData.profilePhoto) {
+        formDataToSend.append("profilePhoto", formData.profilePhoto);
+      }
+      formDataToSend.append("confirmPassword", formData.confirmPassword.trim());
+
+      // Check if passwords match
+      if (formData.password !== formData.confirmPassword) {
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: "Passwords do not match",
+        }));
+        setLoading(false);
+        return;
+      }
     }
 
-    if (!validatePassword(trimmedData.password)) {
-      setErrors((prev) => ({
-        ...prev,
-        password:
-          "Password must be at least 8 characters, include a number, and a special character.",
-      }));
-      setLoading(false);
-      return;
-    }
-
-    if (!isLogin && trimmedData.password !== trimmedData.confirmPassword) {
-      setErrors((prev) => ({
-        ...prev,
-        confirmPassword: "Passwords do not match",
-      }));
-      setLoading(false);
-      return;
+    // Debug: Log FormData entries
+    for (let pair of formDataToSend.entries()) {
+      console.log(pair[0] + ": " + pair[1]);
     }
 
     try {
       const endpoint = isLogin ? "login" : "register";
+      console.log("url", `http://localhost:5000/api/author/${endpoint}`);
       const res = await axios.post(
-        `http://localhost:5000/api/admin/${endpoint}`,
-        trimmedData
+        `http://localhost:5000/api/author/${endpoint}`,
+        formDataToSend,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
-      console.log(res.data);
-      alert(isLogin ? "User Logged In" : "User Registered");
+      console.log("Response:", res.data);
+      alert(isLogin ? "Author Logged In" : "Author Registered");
     } catch (error) {
-      if (error.response && error.response.data) {
-        setServerError(error.response.data.message || "Something went wrong");
-      } else {
-        setServerError("Server is unreachable. Please try again later.");
-      }
+      console.error("Error:", error.response?.data);
+      setServerError(
+        error.response?.data?.message || "Server error. Try again later."
+      );
     } finally {
       setLoading(false);
     }
@@ -99,7 +109,7 @@ const SignUp = () => {
     if (name === "email") {
       setErrors((prev) => ({
         ...prev,
-        email: validateEmail(value) ? "" : "Please enter a valid email.",
+        email: validateEmail(value) ? "" : "Invalid email format.",
       }));
     }
 
@@ -108,7 +118,7 @@ const SignUp = () => {
         ...prev,
         password: validatePassword(value)
           ? ""
-          : "Password must be at least 8 characters, include a number, and a special character.",
+          : "Weak password! Use at least 8 characters, a number, and a special character.",
       }));
     }
 
@@ -118,6 +128,20 @@ const SignUp = () => {
         confirmPassword:
           value === formData.password ? "" : "Passwords do not match.",
       }));
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, profilePhoto: file }));
+
+      // Show image preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -136,10 +160,9 @@ const SignUp = () => {
         <div className="flex items-center justify-center flex-grow px-4 py-8">
           <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg dark:bg-custom-dark">
             <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">
-              {isLogin ? "Admin Login" : "Admin Sign Up"}
+              {isLogin ? "Author Login" : "Author Sign Up"}
             </h2>
 
-            {/* Server Error Message */}
             {serverError && (
               <p className="text-red-500 text-sm text-center mb-4">
                 {serverError}
@@ -147,21 +170,57 @@ const SignUp = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Registration specific fields */}
               {!isLogin && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
-                    placeholder="Enter your full name"
-                  />
-                </div>
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
+                      placeholder="Enter your full name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+                      Short Bio (Optional)
+                    </label>
+                    <textarea
+                      name="bio"
+                      value={formData.bio}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300 text-black"
+                      placeholder="Write a short bio"
+                      rows="3"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+                      Profile Picture (Optional)
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="w-full border-gray-300"
+                    />
+                    {previewImage && (
+                      <img
+                        src={previewImage}
+                        alt="Preview"
+                        className="mt-2 w-24 h-24 rounded-full object-cover"
+                      />
+                    )}
+                  </div>
+                </>
               )}
+
+              {/* Common fields */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
                   Email
@@ -194,6 +253,8 @@ const SignUp = () => {
                   <p className="text-red-500 text-sm">{errors.password}</p>
                 )}
               </div>
+
+              {/* Confirm Password for sign up */}
               {!isLogin && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
@@ -214,18 +275,16 @@ const SignUp = () => {
                   )}
                 </div>
               )}
+
               <button
                 type="submit"
-                className={`w-full py-2 rounded-lg text-white transition ${
-                  loading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-blue-500 hover:bg-blue-600"
-                }`}
+                className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
                 disabled={loading}
               >
                 {loading ? "Processing..." : isLogin ? "Login" : "Sign Up"}
               </button>
             </form>
+
             <p className="mt-4 text-sm text-center text-gray-600 dark:text-gray-200">
               {isLogin
                 ? "Don't have an account?"
@@ -249,4 +308,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default AuthorSignUp;

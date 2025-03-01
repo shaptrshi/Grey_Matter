@@ -22,7 +22,6 @@ const adminLogin = async (req, res) => {
         .json({ success: false, message: "Admin not found" });
     }
 
-    console.log('here');
 
     if (adminExist && (await adminExist.matchPassword(password))) {
       res.status(200).json({
