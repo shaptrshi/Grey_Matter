@@ -81,4 +81,54 @@ const authorRegister = async (req, res) => {
   }
 };
 
-module.exports = { authorLogin, authorRegister };
+//update author details
+const updateAuthor = async (req, res) => {
+  try {
+    const {name, bio} = req.body;
+    const profilePhoto = req.file ? req.file.path : undefined;
+
+    const updateFields = {};
+    if(name) updateFields.name = name;
+    if(bio) updateFields.bio = bio;
+    if (profilePhoto) updateFields.profilePhoto = profilePhoto;
+
+    const updateAuthor = await Author.findByIdAndUpdate(
+      req.user._id,
+      updateFields,
+      { new: true, }
+    );
+    
+    if (!updateAuthor) {
+      return res
+      .status(400)
+      .json({ success: false, message: "Author not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      _id: updateAuthor._id,
+      name: updateAuthor.name,
+      email: updateAuthor.email,
+      bio: updateAuthor.bio,
+      profilePhoto: updateAuthor.profilePhoto,
+    });
+  }
+  catch (error) {
+    res
+    .status(500) 
+    .json({ success: false, error: "Server error", error: error.message }); 
+  }    
+};
+
+const authorLogout = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    res.status(200).json({ success: true, message: "Logged Out"});
+  } catch (error) {
+    res.status(500).json({success: false, message: "Error Logging Out", error: error.message});
+  }
+};
+
+
+
+module.exports = { authorLogin, authorRegister, updateAuthor, authorLogout };

@@ -1,7 +1,11 @@
 const express = require("express");
 const dotenv = require("dotenv");
+//const adminRoute = require("./routes/adminRoute");
+//const authorRoute = require("./routes/authorRoute");
+//const articleRoute = require("./routes/articleRoute.js");
 const adminRoute = require("./routes/adminRoute");
-const authorRoute = require("./routes/authorRoute")
+const userRoute = require("./routes/userRoute");
+const articleRoute = require("./routes/articleRoute");
 const cors = require("cors");
 const connectDb = require("./config/db");
 const path = require("path");
@@ -20,7 +24,7 @@ const upload = multer({ storage });
 connectDb();
 
 app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({limit: "50mb", extended: true }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -29,14 +33,10 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/admin", adminRoute);
-app.use("/api/author", authorRoute);
+//app.use("/api/author", authorRoute);
+app.use("/api/articles", articleRoute);
+app.use("/api/users", userRoute);
 
 app.listen(port, () => {
   console.log(`Server is listening at port number ${port}`);
 });
-/*
-app.use(bodyParser.json({ limit: "50mb" }));
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-app.use(cors());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(cookieParser());*/

@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import Quill's CSS for styling
 import QuillToolbar, { modules, formats } from "./EditorToolbar";
@@ -13,7 +12,6 @@ import { FaArrowLeft } from "react-icons/fa"; // Import the back arrow icon
 const CreateArticle = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
   const [bannerImage, setBannerImage] = useState(null);
   const [content, setContent] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
@@ -59,11 +57,9 @@ const CreateArticle = () => {
 
     const newArticle = {
       title,
-      author,
       bannerImage,
       content,
       tags,
-      date: new Date().toLocaleDateString(),
       isFeatured,
     };
 
@@ -71,20 +67,19 @@ const CreateArticle = () => {
   };
 
   return (
-    <div className="bg-background min-h-screen py-10 px-6">
-      <div className="container mx-auto max-w-6xl">
-        <Card>
+    <div className="bg-background dark:bg-custom-dark min-h-screen py-10 px-6">
+      <div className="container mx-auto max-w-6xl dark:bg-custom-dark">
+        <Card className="dark:bg-custom-dark dark:border">
           <CardContent className="p-7 space-y-7">
             <div className="flex items-center space-x-4 mb-6">
               <button
                 onClick={() => navigate(-1)}
-                className="p-2 bg-gray-100 text-gray-700 rounded-full hover:bg-red-400 transition"
+                className="p-2 bg-gray-100 dark:text-white dark:bg-custom-dark dark:hover:bg-red-700 text-gray-700 rounded-full hover:bg-red-400 transition"
               >
                 <FaArrowLeft size={24} />
               </button>
               <h1 className="text-2xl font-semibold">Create Article</h1>
             </div>
-            <Separator />
             <form onSubmit={handlePublish} className="space-y-4">
               <div>
                 <Label htmlFor="title" className="text-sm font-medium">
@@ -101,20 +96,6 @@ const CreateArticle = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="author" className="text-sm font-medium">
-                  Author Name
-                </Label>
-                <Input
-                  id="author"
-                  type="text"
-                  placeholder="Enter the author's name"
-                  value={author}
-                  onChange={(e) => setAuthor(e.target.value)}
-                  className="mt-2 border-2 border-gray-300"
-                  required
-                />
-              </div>
-              <div>
                 <Label htmlFor="banner" className="text-sm font-medium">
                   Banner Image
                 </Label>
@@ -123,7 +104,7 @@ const CreateArticle = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleBannerImageUpload}
-                  className="mt-2 w-50 cursor-pointer bg-gray-100 text-gray-500 hover:bg-custom-green-1 shadow-sm transition-transform transform hover:scale-105 border-2 border-gray-300"
+                  className="mt-2 w-50 cursor-pointer bg-gray-100 text-gray-500 hover:bg-custom-green-1 dark:hover:bg-custom-accent-green shadow-sm transition-transform transform hover:scale-105 border-2 border-gray-300 dark:text-black"
                   required
                 />
                 {bannerImage && (
@@ -180,8 +161,8 @@ const CreateArticle = () => {
                     <button
                       key={tag}
                       type="button"
-                      className={`px-4 py-2 rounded-full transiton-transform transform hover:scale-105 ${
-                        tags.includes(tag) ? "bg-custom-green-1" : "bg-gray-200"
+                      className={`px-4 py-2 rounded-full transiton-transform transform hover:scale-105 dark:text-black ${
+                        tags.includes(tag) ? "bg-custom-green-1 dark:bg-custom-accent-green" : "bg-gray-200 dark:bg-gray-300"
                       }`}
                       onClick={() => handleTagToggle(tag)}
                     >
@@ -208,13 +189,13 @@ const CreateArticle = () => {
                 </button>
               </div>
               <div className="flex space-x-4 mt-6">
-                <Button type="submit" className="w-50 bg-gray-900 text-gray-200 hover:bg-gray-500 transition-transform transform hover:scale-105">
+                <Button type="submit" className="w-50 bg-gray-900 text-gray-200 hover:bg-custom-accent-green dark:hover:bg-custom-accent-green transition-transform transform hover:scale-105">
                   Publish Article
                 </Button>
                 <Button
                   type="button"
                   onClick={() => navigate(-1)}
-                  className="w-50 bg-gray-100 text-black hover:bg-custom-green-1 transition-transform transform hover:scale-105 border-2 border-gray-300"
+                  className="w-50 bg-gray-100 text-black hover:bg-custom-green-1 dark:hover:bg-custom-accent-green transition-transform transform hover:scale-105 border-2 border-gray-300"
                 >
                   Cancel
                 </Button>

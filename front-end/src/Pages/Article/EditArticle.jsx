@@ -17,7 +17,6 @@ const EditArticle = () => {
 
   // Initialize the state based on the existing article data
   const [title, setTitle] = useState(state?.title || "");
-  const [author, setAuthor] = useState(state?.author || "");
   const [bannerImage, setBannerImage] = useState(state?.bannerImage || null);
   const [content, setContent] = useState(state?.content || "");
   const [isFeatured, setIsFeatured] = useState(state?.isFeatured || false);
@@ -50,7 +49,6 @@ const EditArticle = () => {
           const response = await fetch(`/api/articles/${id}`);
           const data = await response.json();
           setTitle(data.title);
-          setAuthor(data.author);
           setBannerImage(data.bannerImage);
           setContent(data.content);
           setIsFeatured(data.isFeatured);
@@ -92,11 +90,9 @@ const EditArticle = () => {
     const updatedArticle = {
       id,
       title,
-      author,
       bannerImage,
       content,
       tags,
-      date: new Date().toLocaleDateString(),
       isFeatured,
     };
 
@@ -110,21 +106,20 @@ const EditArticle = () => {
   };
 
   return (
-    <div className="bg-background min-h-screen py-10 px-6">
-      <div className="container mx-auto max-w-6xl">
-        <Card>
+    <div className="bg-background dark:bg-custom-dark min-h-screen py-10 px-6">
+      <div className="container mx-auto max-w-6xl dark:bg-custom-dark">
+        <Card className="dark:bg-custom-dark dark:border">
           <CardContent className="p-7 space-y-7">
             <form onSubmit={handleFormSubmit}>
               <div className="flex items-center space-x-4 mb-6">
                 <button
                   onClick={() => navigate(-1)} // Navigate to the previous page
-                  className="p-2 bg-gray-100 text-gray-700 rounded-full hover:bg-red-400 transition"
+                  className="p-2 bg-gray-100 text-gray-700 dark:text-white dark:hover:bg-red-700 rounded-full hover:bg-red-400 transition"
                 >
                   <FaArrowLeft size={24} />
                 </button>
                 <h1 className="text-2xl font-semibold">Edit Article</h1>
               </div>
-              <Separator />
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="title" className="text-sm font-medium">
@@ -140,19 +135,6 @@ const EditArticle = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="author" className="text-sm font-medium">
-                    Author Name
-                  </Label>
-                  <Input
-                    id="author"
-                    type="text"
-                    placeholder="Enter the author's name"
-                    value={author}
-                    onChange={(e) => setAuthor(e.target.value)}
-                    className="mt-2 border-2 border-gray-300"
-                  />
-                </div>
-                <div>
                   <Label htmlFor="banner" className="text-sm font-medium">
                     Banner Image
                   </Label>
@@ -161,7 +143,7 @@ const EditArticle = () => {
                     type="file"
                     accept="image/*"
                     onChange={handleBannerImageUpload}
-                    className="mt-2 w-50 cursor-pointer bg-gray-100 text-gray-500 hover:bg-custom-green-1 shadow-sm transition-transform transform hover:scale-105 border-2 border-gray-300"
+                    className="mt-2 w-50 cursor-pointer bg-gray-100 text-gray-500 hover:bg-custom-green-1 dark:hover:bg-custom-green shadow-sm transition-transform transform hover:scale-105 border-2 border-gray-300 dark:text-black"
                   />
                   {bannerImage && (
                     <div className="mt-4">
@@ -214,8 +196,8 @@ const EditArticle = () => {
                       <button
                         key={tag}
                         type="button"
-                        className={`px-4 py-2 rounded-full transiton-transform transform hover:scale-105 ${
-                          tags.includes(tag) ? "bg-custom-green-1" : "bg-gray-200"
+                        className={`px-4 py-2 rounded-full transiton-transform transform hover:scale-105 dark:text-black ${
+                          tags.includes(tag) ? "bg-custom-green-1 dark:bg-custom-green" : "bg-gray-200 dark:bg-gray-300"
                         }`}
                         onClick={() => handleTagToggle(tag)}
                       >
@@ -246,14 +228,14 @@ const EditArticle = () => {
               <div className="flex space-x-4 mt-6">
                 <Button
                   type="submit"
-                  className="w-50 bg-gray-900 text-gray-200 hover:bg-gray-500 transition-transform transform hover:scale-105"
+                  className="w-50 bg-gray-900 text-gray-200 dark:hover:bg-custom-accent-green hover:bg-gray-500 transition-transform transform hover:scale-105"
                 >
                   Save Changes
                 </Button>
                 <Button
                   type="button"
                   onClick={() => navigate("/article")}
-                  className="w-50 bg-gray-100 text-black hover:bg-custom-green-1 transition-transform transform hover:scale-105 border-2 border-gray-300"
+                  className="w-50 bg-gray-100 text-black hover:bg-custom-green-1 dark:hover:bg-custom-accent-green transition-transform transform hover:scale-105 border-2 border-gray-300"
                 >
                   Cancel
                 </Button>
