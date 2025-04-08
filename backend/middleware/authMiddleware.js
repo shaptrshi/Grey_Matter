@@ -21,11 +21,6 @@ const authMiddleware = async (req, res, next) => {
     try {
         const decoded = jwt.verify(tokenWithoutBearer, process.env.JWT_SECRET);
 
-        //let user = await Admin.findById(decoded._id);
-        //if (!user) {
-       //     user = await Author.findById(decoded._id);
-        //}
-
         const user = await User.findById(decoded._id);
         if (!user) {
             return res.status(401).json({ success: false, message: "Access denied. User not found." });
