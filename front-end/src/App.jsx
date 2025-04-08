@@ -24,10 +24,12 @@ import Trending from "./Pages/Trending/Trending";
 import SignUp from "./Pages/Admin/SignUp";
 import AuthorPage from "./Pages/Author/AuthorPage";
 import EditArticle from "./Pages/Article/EditArticle";
-import AuthorProfilePage from "./Pages/Author/AuthorProfilePage";
 import AuthorPublicProfilePage from "./Pages/Author/AuthorPublicProfilePage";
 import AboutUs from "./Pages/AboutUs/AboutUs";
 import AuthorSignUp from "./Pages/Author/AuthorSignUp";
+import { useState } from "react";
+import PrivateRoute from "./Pages/PrivateRoute";
+import AuthRoute from "./Pages/AuthRoute";
 
 function App() {
   return (
@@ -35,11 +37,25 @@ function App() {
       <Routes>
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/signup" element={<SignUp />} />
-        <Route path="/author/signup" element={<AuthorSignUp />} />
-        <Route path="/author-page" element={<AuthorPage />} />
-        <Route path="/profile" element={<AuthorProfilePage />} />
+        <Route
+          path="/author/signup"
+          element={
+            <AuthRoute>
+              <AuthorSignUp />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/author-page"
+          element={
+            <PrivateRoute>
+              <AuthorPage />
+            </PrivateRoute>
+          }
+        />
         <Route path="/create-article" element={<CreateArticle />} />
         <Route path="/edit-article" element={<EditArticle />} />
+
         <Route
           path="*"
           element={

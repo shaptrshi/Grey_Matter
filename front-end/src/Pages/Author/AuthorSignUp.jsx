@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AuthorSignUp = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -21,6 +22,8 @@ const AuthorSignUp = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const navigate = useNavigate();
 
   // Toggle between login and signup modes.
   const toggleAuthMode = () => {
@@ -90,10 +93,12 @@ const AuthorSignUp = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
+      localStorage.setItem("token", res.data.token);
       console.log("Response:", res.data);
+      navigate("/author-page");
       alert(isLogin ? "Author Logged In" : "Author Registered");
     } catch (error) {
-      console.error("Error:", error.response?.data);
+      console.error("Error:", error);
       setServerError(
         error.response?.data?.message || "Server error. Try again later."
       );
@@ -221,6 +226,7 @@ const AuthorSignUp = () => {
               )}
 
               {/* Common fields */}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
                   Email

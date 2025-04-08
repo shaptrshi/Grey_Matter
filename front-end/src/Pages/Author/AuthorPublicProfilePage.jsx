@@ -1,62 +1,89 @@
 import { useState } from "react";
-import { FaLinkedin, FaInstagram, FaFacebook, FaPinterest } from "react-icons/fa";
-import { BsTwitter } from "react-icons/bs";
-import { AiFillInstagram } from "react-icons/ai";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Link } from "react-router-dom";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { FaUserCircle } from "react-icons/fa";
 
 const AuthorPublicProfilePage = () => {
-  const initialProfile = {
+  const [author] = useState({
     name: "John Doe",
-    email: "johndoe@example.com",
-    bio: "A passionate writer and tech enthusiast.",
-    profilePhoto: null,
-  };
-
-  const [authorInfo] = useState(initialProfile);
+    email: "johndoe@gmail.com",
+    bio: "Passionate writer exploring the world of technology and innovation.",
+    profilePicture: "./pic.jpg",
+    articles: [
+      {
+        id: 1,
+        title: "First Article",
+        bannerImage: "./pic.jpg",
+        link: "/article/1",
+        author: "John Doe",
+        date: "Jan 1, 2025",
+      },
+      {
+        id: 2,
+        title: "Second Article",
+        bannerImage: "./pic.jpg",
+        link: "/article/2",
+        author: "John Doe",
+        date: "Feb 14, 2025",
+      },
+    ],
+  });
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 lg:px-16">
-      <Card className="w-full max-w-5xl p-10 bg-white shadow-none">
-        <div className="text-center">
-          <div className="relative mx-auto w-40 h-40 rounded-full overflow-hidden border-4 border-gray-300 shadow-md">
-            {authorInfo.profilePhoto ? (
-              <img
-                src={authorInfo.profilePhoto}
-                alt="Profile"
-                className="w-full h-full object-cover"
+    <div className="dark:bg-custom-dark dark:text-white min-h-screen">
+      {/* Author Profile Section */}
+      <div className="container mx-auto px-6 py-6">
+        <div className="flex flex-col md:flex-row items-center p-6 rounded-lg">
+          <Avatar className="w-32 h-32">
+            {author.profilePicture ? (
+              <AvatarImage
+                src={author.profilePicture}
+                alt="Profile Picture"
+                className="rounded-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-gray-300 flex items-center justify-center text-white">
-                <span className="text-4xl">📷</span>
-              </div>
+              <FaUserCircle size={128} className="text-gray-500 dark:text-gray-400" />
             )}
+          </Avatar>
+          <div className="ml-6">
+            <h2 className="text-3xl font-semibold">{author.name}</h2>
+            <p className="text-gray-400">{author.email}</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">{author.bio}</p>
           </div>
-          <h1 className="text-2xl font-semibold mt-4">{authorInfo.name}</h1>
         </div>
+      </div>
 
-        <div className="mt-6 space-y-4">
-          <div>
-            <label className="block text-gray-600">Email:</label>
-            <a
-              href={`mailto:${authorInfo.email}`}
-              className="w-full bg-gray-100 text-blue-600 hover:underline"
-            >
-              {authorInfo.email}
-            </a>
-          </div>
-          <div>
-            <label className="block text-gray-600">Bio:</label>
-            <Textarea
-              value={authorInfo.bio}
-              disabled
-              rows="3"
-              className="w-full mt-2 bg-gray-100"
-            />
-          </div>
+      {/* Articles Section */}
+      <div className="container mx-auto px-6 py-6">
+        <h2 className="text-2xl font-semibold mb-4">Articles by {author.name}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+          {author.articles.map((article) => (
+            <Link to={article.link} key={article.id} className="block">
+              <Card className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
+                <div className="relative h-[150px] sm:h-[150px]">
+                  <img
+                    src={article.bannerImage}
+                    alt={article.title}
+                    className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+                  />
+                </div>
+                <CardHeader className="p-3 sm:p-4 mt-1">
+                  <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2 hover:underline dark:text-gray-100">
+                    {article.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-3 sm:p-4 -mt-2">
+                  <div className="flex justify-between items-center text-xs sm:text-sm">
+                    <p className="font-semibold text-teal-700">{article.author}</p>
+                    <p className="font-semibold text-teal-700">{article.date}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
         </div>
-      </Card>
+      </div>
     </div>
   );
 };

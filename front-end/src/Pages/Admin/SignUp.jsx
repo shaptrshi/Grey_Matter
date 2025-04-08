@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,6 +18,8 @@ const SignUp = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const navigate = useNavigate();
 
   const toggleAuthMode = () => {
     setIsLogin((prev) => !prev);
@@ -79,7 +82,9 @@ const SignUp = () => {
         `http://localhost:5000/api/admin/${endpoint}`,
         trimmedData
       );
+      localStorage.setItem("token", res.data.token);
       console.log(res.data);
+      navigate("/admin");
       alert(isLogin ? "User Logged In" : "User Registered");
     } catch (error) {
       if (error.response && error.response.data) {
