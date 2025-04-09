@@ -7,7 +7,7 @@ const {
     deleteArticleAdmin,
     getAllArticlesByUserAdmin,
 } =  require("../controller/adminControllers");
-const { protect,admin } = require("../middleware/authMiddleware");
+const { protect } = require("../middleware/authMiddleware");
 const { authorizeRoles } = require("../middleware/roleMiddleware");
 
 router.use(protect, authorizeRoles("admin")); // Protect all routes by default
