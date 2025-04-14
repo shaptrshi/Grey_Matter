@@ -95,13 +95,13 @@ const getRandomArticles = async (req, res) => {
 // Get articles by specific author (anyone can access)
 const getArticlesByAuthorPublic = async (req, res) => {
     try {
-        const {userId} = req.params;
+        const {Id} = req.params;
 
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
+        if (!mongoose.Types.ObjectId.isValid(Id)) {
             return res.status(400).json({ message: "Invalid user ID" });
         }
 
-        const articles = await Article.find({ author: userId })
+        const articles = await Article.find({ author: Id })
             .populate("author", "name email")
             .lean();
 
@@ -115,9 +115,9 @@ const getArticlesByAuthorPublic = async (req, res) => {
 // Get articles by logged-in author (only logged-in user can access)
 const getArticlesByAuthorPrivate = async (req, res) => {
     try {
-        const userId = req.user._id; // Assuming req.user is populated with the logged-in user's data
+        const Id = req.user._id; // Assuming req.user is populated with the logged-in user's data
 
-        const articles = await Article.find({ author: userId })
+        const articles = await Article.find({ author: Id })
             .populate("author", "name email")
             .lean();
 

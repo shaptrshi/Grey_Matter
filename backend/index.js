@@ -1,8 +1,5 @@
 const express = require("express");
 const dotenv = require("dotenv");
-//const adminRoute = require("./routes/adminRoute");
-//const authorRoute = require("./routes/authorRoute");
-//const articleRoute = require("./routes/articleRoute.js");
 const adminRoute = require("./routes/adminRoute");
 const userRoute = require("./routes/userRoute");
 const articleRoute = require("./routes/articleRoute");
@@ -33,7 +30,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/admin", adminRoute);
-//app.use("/api/author", authorRoute);
 app.use("/api/articles", articleRoute);
 app.use("/api/users", userRoute);
 
