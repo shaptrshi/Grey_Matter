@@ -1,22 +1,24 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
-    getAllUsers,
-    deleteUser,
-    getAllArticlesAdmin,
-    deleteArticleAdmin,
-    getAllArticlesByUserAdmin,
-} =  require("../controller/adminControllers");
+  getAllUsers,
+  deleteUser,
+  getAllArticlesAdmin,
+  deleteArticleAdmin,
+  getAllArticlesByUserAdmin,
+} = require("../controller/adminControllers");
 const { protect } = require("../middleware/authMiddleware");
 const { authorizeRoles } = require("../middleware/roleMiddleware");
 
-router.use(protect, authorizeRoles("admin")); // Protect all routes by default
+// Apply protection and role authorization to all admin routes
+router.use(protect);
+router.use(authorizeRoles("admin"));
 
 // Admin routes
-router.get("/users", getAllUsers); // Get all users
-router.delete("/users/:id", deleteUser); // Delete user
-router.get("/articles", getAllArticlesAdmin); // Get all articles
-router.delete("/articles/:id", deleteArticleAdmin); // Delete article
-router.get("/articles/user/:id", getAllArticlesByUserAdmin); // Get all articles by user
+router.get("/users", getAllUsers);
+router.delete("/users/:id", deleteUser);
+router.get("/articles", getAllArticlesAdmin);
+router.delete("/articles/:id", deleteArticleAdmin);
+router.get("/articles/user/:id", getAllArticlesByUserAdmin);
 
 module.exports = router;

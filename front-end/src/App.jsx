@@ -21,22 +21,25 @@ import Interviews from "./Pages/Focus/Interviews";
 import Spotlight from "./Pages/Focus/Spotlight";
 import PolicyAndGovernance from "./Pages/Focus/PolicyAndGovernance";
 import Trending from "./Pages/Trending/Trending";
-import SignUp from "./Pages/Admin/SignUp";
 import AuthorPage from "./Pages/Author/AuthorPage";
 import EditArticle from "./Pages/Article/EditArticle";
 import AuthorPublicProfilePage from "./Pages/Author/AuthorPublicProfilePage";
 import AboutUs from "./Pages/AboutUs/AboutUs";
 import AuthorSignUp from "./Pages/Author/AuthorSignUp";
-import { useState } from "react";
 import PrivateRoute from "./Pages/PrivateRoute";
 import AuthRoute from "./Pages/AuthRoute";
+import Unauthorized from "./Pages/Unauthorized";
+import ProtectedRoute from "./components/protectedRoute/ProtectedRoute";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/admin/signup" element={<SignUp />} />
+        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+          <Route path="/admin" element={<Admin />} />
+        </Route>
+        <Route path="/unauthorized" element={<Unauthorized />} />
+
         <Route
           path="/author/signup"
           element={
@@ -45,14 +48,9 @@ function App() {
             </AuthRoute>
           }
         />
-        <Route
-          path="/author-page"
-          element={
-            <PrivateRoute>
-              <AuthorPage />
-            </PrivateRoute>
-          }
-        />
+        <Route element={<ProtectedRoute allowedRoles={["author", "admin"]} />}>
+          <Route path="/author-page" element={<AuthorPage />} />
+        </Route>
         <Route path="/create-article" element={<CreateArticle />} />
         <Route path="/edit-article" element={<EditArticle />} />
 

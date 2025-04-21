@@ -28,7 +28,9 @@ const deleteUser = async (req, res) => {
 //Get all articles (Admin Only)
 const getAllArticlesAdmin = async (req, res) => {
   try {
-    const articles = await Article.find({}).populate("author", "name email").lean();
+    const articles = await Article.find({})
+      .populate("author", "name email")
+      .lean();
     res.status(200).json(articles);
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
@@ -52,13 +54,14 @@ const deleteArticleAdmin = async (req, res) => {
 //get all articles by user (Admin Only)
 const getAllArticlesByUserAdmin = async (req, res) => {
   try {
-    const articles = await Article.find({ author: req.params.id }).populate("author", "name email").lean();
+    const articles = await Article.find({ author: req.params.id })
+      .populate("author", "name email")
+      .lean();
     res.status(200).json(articles);
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 module.exports = {
   getAllUsers,

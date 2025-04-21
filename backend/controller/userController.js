@@ -29,7 +29,11 @@ const userLogin = async (req, res) => {
         success: true,
         _id: userExist._id,
         email: userExist.email,
+        name: userExist.name,
         role: userExist.role,
+        bio: userExist.bio,
+        profilePhoto: userExist.profilePhoto,
+        articles: userExist.articles,
         token: generateToken(userExist._id),
       });
     } else {
@@ -133,4 +137,9 @@ const userLogout = async (req, res) => {
   }
 };
 
-module.exports = { userLogin, userRegister, updateUser, userLogout };
+module.exports = {
+  userLogin,
+  userRegister,
+  updateUser,
+  userLogout,
+};

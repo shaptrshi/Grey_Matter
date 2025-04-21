@@ -10,7 +10,7 @@ const Trending = () => {
       image: "./pic.jpg",
       author: "John Doe",
       date: "January 10, 2025",
-      link: "/articles/space",
+      link: "/article",
     },
     {
       id: 2,

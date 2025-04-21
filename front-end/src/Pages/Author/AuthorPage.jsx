@@ -13,30 +13,19 @@ import axios from "axios";
 const AuthorPage = () => {
   const navigate = useNavigate();
   const [author, setAuthor] = useState({
-    name: "John Doe",
-    email: "johndoe@gmail.com",
-    bio: "Passionate writer exploring the world of technology and innovation.",
-    profilePicture: "./pic.jpg",
-    articles: [
-      {
-        id: 1,
-        title: "First Article",
-        bannerImage: "./pic.jpg",
-        link: "/article/1",
-        author: "John Doe",
-        date: "Jan 1, 2025",
-      },
-      {
-        id: 2,
-        title: "Second Article",
-        bannerImage: "./pic.jpg",
-        link: "/article/2",
-        author: "John Doe",
-        date: "Feb 14, 2025",
-      },
-      // add more articles as needed
-    ],
+    name: localStorage.getItem("userName"),
+    email: localStorage.getItem("email"),
+    bio: localStorage.getItem("bio"),
+    profilePicture: localStorage.getItem("profilePhoto"),
+    articles: JSON.parse(localStorage.getItem("articles") || "[]").map(
+      (article) => ({
+        ...article,
+        link: `/article/${article.id}`,
+      })
+    ),
   });
+
+  console.log("profile picture", author.profilePicture);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [editMode, setEditMode] = useState(false);
@@ -49,11 +38,11 @@ const AuthorPage = () => {
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this article?")) {
-    setAuthor((prev) => ({
-      ...prev,
-      articles: prev.articles.filter((article) => article.id !== id),
-    }));
-  }
+      setAuthor((prev) => ({
+        ...prev,
+        articles: prev.articles.filter((article) => article.id !== id),
+      }));
+    }
   };
 
   const handleProfilePictureChange = (e) => {
@@ -69,11 +58,19 @@ const AuthorPage = () => {
   const handleCreateArticle = () => navigate("/create-article");
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost:5000/api/author/logout");
+      await axios.post(
+        "http://localhost:5000/api/users/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       localStorage.removeItem("token");
       navigate("/author/signup");
     } catch (error) {
-      console.error("Error logging out", error)
+      console.error("Error logging out", error);
     }
   };
   const handleGoToHomePage = () => navigate("/");
@@ -81,6 +78,11 @@ const AuthorPage = () => {
   const filteredArticles = author.articles.filter((article) =>
     article.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const getFileNameFromPhoturl = (url) => {
+    const parts = url.split("\\");
+    return parts[parts.length - 1];
+  };
 
   return (
     <div className="dark:bg-custom-dark dark:text-white min-h-screen">
@@ -149,25 +151,28 @@ const AuthorPage = () => {
         {/* Author Profile Card */}
         <div className="flex flex-col md:flex-row items-center md:items-start  p-6 rounded-lg">
           <div className="relative">
-          <Avatar className="w-32 h-32">
-            {author.profilePicture ? (
-            <AvatarImage
-              src={author.profilePicture}
-              alt="Profile Picture"
-              className="rounded-full object-cover"
-            />
-            ) : (
-              <FaUserCircle size={128} className="text-gray-500 dark:text-gray-400 object-cover" />
-            )}  
-          </Avatar>
-           {editMode && (
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleProfilePictureChange}
-              className="absolute bottom-0 left-0 w-full opacity-0 cursor-pointer"
-            />
-           )} 
+            <Avatar className="w-32 h-32">
+              {author.profilePicture ? (
+                <AvatarImage
+                  src={getFileNameFromPhoturl(author.profilePicture)}
+                  alt="Profile Picture"
+                  className="rounded-full object-cover"
+                />
+              ) : (
+                <FaUserCircle
+                  size={128}
+                  className="text-gray-500 dark:text-gray-400 object-cover"
+                />
+              )}
+            </Avatar>
+            {editMode && (
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleProfilePictureChange}
+                className="absolute bottom-0 left-0 w-full opacity-0 cursor-pointer"
+              />
+            )}
           </div>
           <div className="ml-6 w-full">
             {editMode ? (
@@ -178,7 +183,7 @@ const AuthorPage = () => {
                   onChange={handleChange}
                   className="text-2xl font-bold dark:bg-gray-700 dark:text-white"
                 />
-                <p className="text-gray-400">{author.email}</p> 
+                <p className="text-gray-400">{author.email}</p>
                 <Textarea
                   name="bio"
                   value={author.bio}
@@ -269,7 +274,7 @@ const AuthorPage = () => {
                       }}
                       variant="outline"
                       size="sm"
-                      className = "dark:text-white dark:bg-gray-700 hover:bg-gray-400"
+                      className="dark:text-white dark:bg-gray-700 hover:bg-gray-400"
                     >
                       Edit
                     </Button>
@@ -280,7 +285,7 @@ const AuthorPage = () => {
                       }}
                       variant="destructive"
                       size="sm"
-                      className = "dark:text-white dark:bg-red-700"
+                      className="dark:text-white dark:bg-red-700"
                     >
                       Delete
                     </Button>

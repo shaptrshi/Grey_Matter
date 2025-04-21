@@ -1,18 +1,21 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+const { protect } = require("../middleware/authMiddleware");
+const { authorizeRoles } = require("../middleware/roleMiddleware");
 const upload = require("../middleware/upload");
 const {
-    userLogin,
-    userRegister,
-    updateUser,
-    userLogout,
+  userLogin,
+  userRegister,
+  updateUser,
+  userLogout,
 } = require("../controller/userController");
-const { protect } = require("../middleware/authMiddleware");
 
+// Public routes
+router.post("/login", userLogin);
+router.post("/register", upload.single("profilePhoto"), userRegister);
 
-router.post("/login", userLogin); // User login
-router.post("/register", upload.single("profilePhoto"), userRegister); // User registration
-router.put("/update", protect, upload.single("profilePhoto"), updateUser); // Update user profile
-router.get("/logout", protect, userLogout); // User logout
+// Protected routes
+router.put("/update", protect, upload.single("profilePhoto"), updateUser);
+router.post("/logout", protect, userLogout);
 
 module.exports = router;

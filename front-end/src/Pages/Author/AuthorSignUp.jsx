@@ -25,7 +25,6 @@ const AuthorSignUp = () => {
 
   const navigate = useNavigate();
 
-  // Toggle between login and signup modes.
   const toggleAuthMode = () => {
     setIsLogin((prev) => !prev);
     setServerError("");
@@ -53,55 +52,95 @@ const AuthorSignUp = () => {
     setServerError("");
     setLoading(true);
 
-    // Create FormData and append required fields
-    const formDataToSend = new FormData();
-    formDataToSend.append("email", formData.email.trim());
-    formDataToSend.append("password", formData.password.trim());
-
-    // For registration, append additional fields.
-    if (!isLogin) {
-      formDataToSend.append("name", formData.name.trim());
-      formDataToSend.append("bio", formData.bio.trim() || "");
-      if (formData.profilePhoto) {
-        formDataToSend.append("profilePhoto", formData.profilePhoto);
-      }
-      formDataToSend.append("confirmPassword", formData.confirmPassword.trim());
-
-      // Check if passwords match
-      if (formData.password !== formData.confirmPassword) {
-        setErrors((prev) => ({
-          ...prev,
-          confirmPassword: "Passwords do not match",
-        }));
-        setLoading(false);
-        return;
-      }
-    }
-
-    // Debug: Log FormData entries
-    for (let pair of formDataToSend.entries()) {
-      console.log(pair[0] + ": " + pair[1]);
+    // Basic validation - check if required fields are empty
+    if (!formData.email || !formData.password) {
+      setServerError("All fields are required");
+      setLoading(false);
+      return;
     }
 
     try {
       const endpoint = isLogin ? "login" : "register";
-      console.log("url", `http://localhost:5000/api/author/${endpoint}`);
-      const res = await axios.post(
-        `http://localhost:5000/api/author/${endpoint}`,
-        formDataToSend,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
+      let dataToSend;
+      let config = {};
+
+      if (isLogin) {
+        // For login, send as regular JSON
+        dataToSend = {
+          email: formData.email.trim(),
+          password: formData.password.trim(),
+        };
+        config = {
+          headers: { "Content-Type": "application/json" },
+        };
+      } else {
+        // For signup, use FormData
+        const formDataToSend = new FormData();
+        formDataToSend.append("name", formData.name.trim());
+        formDataToSend.append("email", formData.email.trim());
+        formDataToSend.append("password", formData.password.trim());
+        formDataToSend.append(
+          "confirmPassword",
+          formData.confirmPassword.trim()
+        );
+        formDataToSend.append("bio", formData.bio.trim() || "");
+        if (formData.profilePhoto) {
+          formDataToSend.append("profilePhoto", formData.profilePhoto);
         }
+
+        // Validate passwords match
+        if (formData.password !== formData.confirmPassword) {
+          setErrors((prev) => ({
+            ...prev,
+            confirmPassword: "Passwords do not match",
+          }));
+          setLoading(false);
+          return;
+        }
+
+        dataToSend = formDataToSend;
+        config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+      }
+
+      const res = await axios.post(
+        `http://localhost:5000/api/users/${endpoint}`,
+        dataToSend,
+        config
       );
-      localStorage.setItem("token", res.data.token);
+
       console.log("Response:", res.data);
-      navigate("/author-page");
-      alert(isLogin ? "Author Logged In" : "Author Registered");
+
+      // Store user data including role
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userRole", res.data.role);
+      localStorage.setItem("userId", res.data._id);
+      localStorage.setItem("userName", res.data.name);
+      localStorage.setItem("email", res.data.email);
+      localStorage.setItem("bio", res.data.bio);
+      localStorage.setItem("profilePhoto", res.data.profilePhoto);
+      localStorage.setItem("articles", JSON.stringify(res.data.articles));
+
+      // Redirect based on role
+      if (res.data.role === "admin") {
+        navigate("/admin/dashboard");
+        alert("Admin logged in successfully");
+      } else {
+        navigate("/author-page");
+        alert(
+          isLogin
+            ? "Author logged in successfully"
+            : "Author registered successfully"
+        );
+      }
     } catch (error) {
       console.error("Error:", error);
-      setServerError(
-        error.response?.data?.message || "Server error. Try again later."
-      );
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Server error. Try again later.";
+      setServerError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -226,7 +265,7 @@ const AuthorSignUp = () => {
               )}
 
               {/* Common fields */}
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
                   Email
@@ -292,9 +331,7 @@ const AuthorSignUp = () => {
             </form>
 
             <p className="mt-4 text-sm text-center text-gray-600 dark:text-gray-200">
-              {isLogin
-                ? "Don't have an account?"
-                : "Already have an account?"}{" "}
+              {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
               <button
                 onClick={toggleAuthMode}
                 className="text-blue-500 hover:underline"
