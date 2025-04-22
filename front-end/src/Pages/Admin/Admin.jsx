@@ -90,7 +90,6 @@ const Admin = () => {
   };
 
   const handleEdit = (id) => navigate(`/edit-article/${id}`);
-  const handleGoToAuthorPage = () => navigate("/author-page");
   const handleLogout = async () => {
     try {
       await axios.post("http://localhost:5000/api/admin/logout");
