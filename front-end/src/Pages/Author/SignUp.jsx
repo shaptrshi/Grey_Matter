@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const AuthorSignUp = () => {
+const SignUp = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState("");
@@ -351,4 +351,4 @@ const AuthorSignUp = () => {
   );
 };
 
-export default AuthorSignUp;
+export default SignUp;

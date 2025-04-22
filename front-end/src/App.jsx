@@ -25,8 +25,7 @@ import AuthorPage from "./Pages/Author/AuthorPage";
 import EditArticle from "./Pages/Article/EditArticle";
 import AuthorPublicProfilePage from "./Pages/Author/AuthorPublicProfilePage";
 import AboutUs from "./Pages/AboutUs/AboutUs";
-import AuthorSignUp from "./Pages/Author/AuthorSignUp";
-import PrivateRoute from "./Pages/PrivateRoute";
+import SignUp from "./Pages/Author/SignUp";
 import AuthRoute from "./Pages/AuthRoute";
 import Unauthorized from "./Pages/Unauthorized";
 import ProtectedRoute from "./components/protectedRoute/ProtectedRoute";
@@ -41,10 +40,10 @@ function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         <Route
-          path="/author/signup"
+          path="/signup"
           element={
             <AuthRoute>
-              <AuthorSignUp />
+              <SignUp />
             </AuthRoute>
           }
         />
