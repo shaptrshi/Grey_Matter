@@ -50,8 +50,8 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={["author", "admin"]} />}>
           <Route path="/author-page" element={<AuthorPage />} />
         </Route>
-        <Route path="/create-article" element={<CreateArticle />} />
-        <Route path="/edit-article" element={<EditArticle />} />
+        <Route path="/create-article/:id" element={<CreateArticle />} />
+        <Route path="/edit-article/:id" element={<EditArticle />} />
 
         <Route
           path="*"
@@ -96,7 +96,7 @@ function App() {
                 <Route path="/terms-of-use" element={<Terms />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/aboutus" element={<AboutUs />} />
-                <Route path="/article" element={<Article />} />
+                <Route path="/article/:id" element={<Article />} />
                 <Route
                   path="/public-profile"
                   element={<AuthorPublicProfilePage />}

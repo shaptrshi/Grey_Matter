@@ -17,7 +17,7 @@ const userLogin = async (req, res) => {
         .json({ success: false, message: "All fields required" });
     }
 
-    const userExist = await User.findOne({ email });
+    const userExist = await User.findOne({ email }).populate('articles');
     if (!userExist) {
       return res
         .status(400)
@@ -33,7 +33,7 @@ const userLogin = async (req, res) => {
         role: userExist.role,
         bio: userExist.bio,
         profilePhoto: userExist.profilePhoto,
-        articles: userExist.articles,
+        articles: userExist.articles, // This will now be populated
         token: generateToken(userExist._id),
       });
     } else {

@@ -27,12 +27,24 @@ const AuthorPage = () => {
         ? parsed.map((article) => ({
             ...article,
             link: `/article/${article.id}`,
+            authorName: localStorage.getItem("userName"),
+            date: formatDate(article.updatedAt || article.createdAt),
           }))
         : [];
     } catch (error) {
       console.error("Error parsing articles", error);
       return [];
     }
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   }
 
   console.log("profile picture", author.profilePicture);
@@ -65,7 +77,8 @@ const AuthorPage = () => {
   };
 
   const handleEdit = (id) => navigate(`/edit-article/${id}`);
-  const handleCreateArticle = () => navigate("/create-article");
+  const handleCreateArticle = () =>
+    navigate(`/create-article/${localStorage.getItem("userId")}`);
   const handleLogout = async () => {
     try {
       await axios.post(
@@ -270,7 +283,7 @@ const AuthorPage = () => {
                 <CardContent className="p-3 sm:p-4 -mt-2">
                   <div className="flex justify-between items-center text-xs sm:text-sm">
                     <p className="font-semibold text-teal-700">
-                      {article.author}
+                      {article.authorName}
                     </p>
                     <p className="font-semibold text-teal-700">
                       {article.date}
