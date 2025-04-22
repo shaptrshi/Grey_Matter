@@ -17,13 +17,23 @@ const AuthorPage = () => {
     email: localStorage.getItem("email"),
     bio: localStorage.getItem("bio"),
     profilePicture: localStorage.getItem("profilePhoto"),
-    articles: JSON.parse(localStorage.getItem("articles") || "[]").map(
-      (article) => ({
-        ...article,
-        link: `/article/${article.id}`,
-      })
-    ),
+    articles: tryParseArticles(localStorage.getItem("articles")),
   });
+
+  function tryParseArticles(articlesJson) {
+    try {
+      const parsed = JSON.parse(articlesJson || "[]");
+      return Array.isArray(parsed)
+        ? parsed.map((article) => ({
+            ...article,
+            link: `/article/${article.id}`,
+          }))
+        : [];
+    } catch (error) {
+      console.error("Error parsing articles", error);
+      return [];
+    }
+  }
 
   console.log("profile picture", author.profilePicture);
 
@@ -68,7 +78,7 @@ const AuthorPage = () => {
         }
       );
       localStorage.removeItem("token");
-      navigate("/author/signup");
+      navigate("/signup");
     } catch (error) {
       console.error("Error logging out", error);
     }
