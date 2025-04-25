@@ -47,23 +47,70 @@ const AuthorPage = () => {
     });
   }
 
-  console.log("profile picture", author.profilePicture);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [newProfilePicture, setNewProfilePicture] = useState("");
 
   const handleEditProfile = () => setEditMode(!editMode);
-  const handleSaveProfile = () => setEditMode(false);
+  const handleSaveProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.put(
+        "http://localhost:5000/api/users/update",
+        {
+          name: author.name,
+          bio: author.bio,
+          profilePhoto: author.profilePicture,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const updatedUser = response.data;
+
+      localStorage.setItem("userName", updatedUser.name);
+      localStorage.setItem("bio", updatedUser.bio);
+      localStorage.setItem("profilePhoto", updatedUser.profilePhoto);
+
+      setAuthor((prevAuthor) => ({
+        ...prevAuthor,
+        name: updatedUser.name,
+        bio: updatedUser.bio,
+        profilePicture: updatedUser.profilePhoto,
+      }));
+
+      setEditMode(false);
+    } catch (error) {
+      console.error("Error updating profile", error);
+    }
+  };
+
   const handleChange = (e) =>
     setAuthor({ ...author, [e.target.name]: e.target.value });
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this article?")) {
-      setAuthor((prev) => ({
-        ...prev,
-        articles: prev.articles.filter((article) => article.id !== id),
-      }));
+      try {
+        const token = localStorage.getItem("token");
+        await axios.delete(`http://localhost:5000/api/articles/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setAuthor((prev) => ({
+          ...prev,
+          articles: prev.articles.filter(
+            (article) => article.id !== id && article._id !== id
+          ),
+        }));
+      } catch (error) {
+        console.error("Error deleting article:", error);
+      }
     }
   };
 
@@ -77,8 +124,10 @@ const AuthorPage = () => {
   };
 
   const handleEdit = (id) => navigate(`/edit-article/${id}`);
+
   const handleCreateArticle = () =>
     navigate(`/create-article/${localStorage.getItem("userId")}`);
+  
   const handleLogout = async () => {
     try {
       await axios.post(
@@ -265,57 +314,59 @@ const AuthorPage = () => {
         <h2 className="text-2xl font-semibold mb-4">Your Articles</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {filteredArticles.map((article) => (
-            <Link to={article.link} key={article.id} className="block">
-              <Card className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
-                {/* Fixed card height */}
-                <div className="relative h-[150px] sm:h-[150px]">
-                  <img
-                    src={article.bannerImage}
-                    alt={article.title}
-                    className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
-                  />
+            <Card
+              key={article._id || article.id}
+              className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black"
+              onClick={() => navigate(article.link)}
+            >
+              {/* Fixed card height */}
+              <div className="relative h-[150px] sm:h-[150px]">
+                <img
+                  src={article.bannerImage}
+                  alt={article.title}
+                  className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+                />
+              </div>
+              <CardHeader className="p-3 sm:p-4 mt-1">
+                <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2 hover:underline dark:text-gray-100">
+                  {article.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-3 sm:p-4 -mt-2">
+                <div className="flex justify-between items-center text-xs sm:text-sm">
+                  <p className="font-semibold text-teal-700">
+                    {article.authorName}
+                  </p>
+                  <p className="font-semibold text-teal-700">{article.date}</p>
                 </div>
-                <CardHeader className="p-3 sm:p-4 mt-1">
-                  <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2 hover:underline dark:text-gray-100">
-                    {article.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-3 sm:p-4 -mt-2">
-                  <div className="flex justify-between items-center text-xs sm:text-sm">
-                    <p className="font-semibold text-teal-700">
-                      {article.authorName}
-                    </p>
-                    <p className="font-semibold text-teal-700">
-                      {article.date}
-                    </p>
-                  </div>
-                  <div className="flex justify-end gap-4 mt-2">
-                    <Button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleEdit(article.id);
-                      }}
-                      variant="outline"
-                      size="sm"
-                      className="dark:text-white dark:bg-gray-700 hover:bg-gray-400"
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleDelete(article.id);
-                      }}
-                      variant="destructive"
-                      size="sm"
-                      className="dark:text-white dark:bg-red-700"
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
+                <div className="flex justify-end gap-4 mt-2">
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleEdit(article._id);
+                    }}
+                    variant="outline"
+                    size="sm"
+                    className="dark:text-white dark:bg-gray-700 hover:bg-gray-400"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleDelete(article._id);
+                    }}
+                    variant="destructive"
+                    size="sm"
+                    className="dark:text-white dark:bg-red-700"
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
