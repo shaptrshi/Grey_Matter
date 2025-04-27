@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipProvider } from "@/components/ui/tooltip";
@@ -13,24 +13,50 @@ import axios from "axios";
 const AuthorPage = () => {
   const navigate = useNavigate();
   const [author, setAuthor] = useState({
-    name: localStorage.getItem("userName"),
-    email: localStorage.getItem("email"),
-    bio: localStorage.getItem("bio"),
-    profilePicture: localStorage.getItem("profilePhoto"),
-    articles: tryParseArticles(localStorage.getItem("articles")),
+    name: "",
+    email: "",
+    bio: "",
+    profilePicture: "",
+    articles: [],
   });
 
-  function tryParseArticles(articlesJson) {
+  useEffect(() => {
+  const fetchUserProfile = async () => {
     try {
-      const parsed = JSON.parse(articlesJson || "[]");
-      return Array.isArray(parsed)
-        ? parsed.map((article) => ({
+      const token = localStorage.getItem("token");
+      const response = await axios.get("http://localhost:5000/api/users/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const userData = response.data;
+
+      setAuthor({
+        name: userData.name,
+        email: userData.email,
+        bio: userData.bio,
+        profilePicture: userData.profilePhoto,
+        articles: tryParseArticles(userData.articles, userData.name),
+      });
+    } catch (error) {
+      console.error("Error fetching user profile", error);
+    }
+  };
+
+    fetchUserProfile();
+  }, []);
+
+  function tryParseArticles(articles = [], authorName = "") {
+    try {
+      if (!Array.isArray(articles)) return [];
+  
+      return articles.map((article) => ({
             ...article,
-            link: `/article/${article.id}`,
-            authorName: localStorage.getItem("userName"),
+            link: `/article/${article.id || article._id}`,
+            authorName,
             date: formatDate(article.updatedAt || article.createdAt),
-          }))
-        : [];
+          }));
     } catch (error) {
       console.error("Error parsing articles", error);
       return [];
@@ -71,10 +97,6 @@ const AuthorPage = () => {
       );
 
       const updatedUser = response.data;
-
-      localStorage.setItem("userName", updatedUser.name);
-      localStorage.setItem("bio", updatedUser.bio);
-      localStorage.setItem("profilePhoto", updatedUser.profilePhoto);
 
       setAuthor((prevAuthor) => ({
         ...prevAuthor,
@@ -126,8 +148,8 @@ const AuthorPage = () => {
   const handleEdit = (id) => navigate(`/edit-article/${id}`);
 
   const handleCreateArticle = () =>
-    navigate(`/create-article/${localStorage.getItem("userId")}`);
-  
+    navigate("/create-article");
+
   const handleLogout = async () => {
     try {
       await axios.post(

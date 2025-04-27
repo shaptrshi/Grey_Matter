@@ -8,6 +8,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import Quill's CSS for styling
 import QuillToolbar, { modules, formats } from "./EditorToolbar";
 import { FaArrowLeft } from "react-icons/fa"; // Import the back arrow icon
+import axios from "axios";
 
 const CreateArticle = () => {
   const navigate = useNavigate();
@@ -44,26 +45,49 @@ const CreateArticle = () => {
 
   const handleTagToggle = (tag) => {
     setTags((prevTags) =>
-      prevTags.includes(tag) ? prevTags.filter((t) => t !== tag) : [...prevTags, tag]
+      prevTags.includes(tag)
+        ? prevTags.filter((t) => t !== tag)
+        : [...prevTags, tag]
     );
   };
 
-  const handlePublish = (e) => {
+  const handlePublish = async (e) => {
     e.preventDefault(); // Prevents page reload
-    if (!title || !author || !content || !bannerImage) {
-      alert("Please fill out all fields and upload a banner image.");
+
+    if (!title || !content) {
+      alert("Please fill out all fields.");
       return;
     }
 
-    const newArticle = {
-      title,
-      bannerImage,
-      content,
-      tags,
-      isFeatured,
-    };
+    try {
+      const articleData = {
+        title,
+        content,
+        tags,
+        isFeatured,
+      };
 
-    navigate("/article", { state: newArticle });
+      if (bannerImage) {
+        articleData.bannerImage = bannerImage;
+      }
+
+      const backendUrl = "http://localhost:5000/api/articles";
+
+      const { data } = await axios.post(backendUrl, articleData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (data && data.article) {
+      alert("Article published successfully!");
+      navigate("/article");
+      } else {
+        alert("Failed to publish article. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error publishing article:", error);
+    }
   };
 
   return (
@@ -162,7 +186,9 @@ const CreateArticle = () => {
                       key={tag}
                       type="button"
                       className={`px-4 py-2 rounded-full transiton-transform transform hover:scale-105 dark:text-black ${
-                        tags.includes(tag) ? "bg-custom-green-1 dark:bg-custom-accent-green" : "bg-gray-200 dark:bg-gray-300"
+                        tags.includes(tag)
+                          ? "bg-custom-green-1 dark:bg-custom-accent-green"
+                          : "bg-gray-200 dark:bg-gray-300"
                       }`}
                       onClick={() => handleTagToggle(tag)}
                     >
@@ -189,7 +215,10 @@ const CreateArticle = () => {
                 </button>
               </div>
               <div className="flex space-x-4 mt-6">
-                <Button type="submit" className="w-50 bg-gray-900 text-gray-200 hover:bg-custom-accent-green dark:hover:bg-custom-accent-green transition-transform transform hover:scale-105">
+                <Button
+                  type="submit"
+                  className="w-50 bg-gray-900 text-gray-200 hover:bg-custom-accent-green dark:hover:bg-custom-accent-green transition-transform transform hover:scale-105"
+                >
                   Publish Article
                 </Button>
                 <Button

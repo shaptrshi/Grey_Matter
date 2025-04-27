@@ -33,7 +33,6 @@ const userLogin = async (req, res) => {
         role: userExist.role,
         bio: userExist.bio,
         profilePhoto: userExist.profilePhoto,
-        articles: userExist.articles, // This will now be populated
         token: generateToken(userExist._id),
       });
     } else {
@@ -137,9 +136,33 @@ const userLogout = async (req, res) => {
   }
 };
 
+const userProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).populate("articles");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      bio: user.bio,
+      profilePhoto: user.profilePhoto,
+      articles: user.articles, // This will now be populated
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: "Server error", error });
+  }
+};
+
 module.exports = {
   userLogin,
   userRegister,
   updateUser,
   userLogout,
+  userProfile,
 };

@@ -8,6 +8,7 @@ const {
   userRegister,
   updateUser,
   userLogout,
+  userProfile,
 } = require("../controller/userController");
 
 // Public routes
@@ -17,5 +18,7 @@ router.post("/register", upload.single("profilePhoto"), userRegister);
 // Protected routes
 router.put("/update", protect, upload.single("profilePhoto"), updateUser);
 router.post("/logout", protect, userLogout);
+router.get('/profile', protect, userProfile);
+
 
 module.exports = router;
