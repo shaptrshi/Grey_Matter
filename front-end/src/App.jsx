@@ -54,6 +54,17 @@ function App() {
         <Route path="/edit-article/:id" element={<EditArticle />} />
 
         <Route
+          path="/article/:id"
+          element={
+            <>
+              <Navbar />
+              <Article />
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
           path="*"
           element={
             <>
@@ -96,7 +107,6 @@ function App() {
                 <Route path="/terms-of-use" element={<Terms />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/aboutus" element={<AboutUs />} />
-                <Route path="/article/:id" element={<Article />} />
                 <Route
                   path="/public-profile"
                   element={<AuthorPublicProfilePage />}
