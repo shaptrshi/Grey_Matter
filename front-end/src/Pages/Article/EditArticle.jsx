@@ -9,6 +9,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import Quill's CSS for styling
 import QuillToolbar, { modules, formats } from "./EditorToolbar";
+import axios from "axios";
 
 const EditArticle = () => {
   const { id } = useParams(); // Get article ID from the URL
@@ -21,6 +22,7 @@ const EditArticle = () => {
   const [content, setContent] = useState(state?.content || "");
   const [isFeatured, setIsFeatured] = useState(state?.isFeatured || false);
   const [tags, setTags] = useState(state?.tags || []);
+  const [loading, setLoading] = useState(!state);
 
   const availableTags = [
     "Trending",
@@ -38,33 +40,44 @@ const EditArticle = () => {
     "Policy and Governance",
   ];
 
-  // Using useEffect to simulate fetching article data or updating the page title
+  
   useEffect(() => {
-    // If the state is not passed (i.e., it's an edit view and article ID is available)
     if (!state) {
-      // Example API call to fetch article details by ID (you can replace this with your actual API call)
+      setLoading(true);
       const fetchArticleData = async () => {
         try {
-          // Replace this with the actual API endpoint
-          const response = await fetch(`/api/articles/${id}`);
-          const data = await response.json();
+          const response  = await axios.get(`http://localhost:5000/api/articles/${id}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            }
+          });
+
+          const data = await response.data;
           setTitle(data.title);
           setBannerImage(data.bannerImage);
           setContent(data.content);
           setIsFeatured(data.isFeatured);
           setTags(data.tags);
+          setLoading(false);
         } catch (error) {
           console.error("Failed to fetch article data:", error);
+          setLoading(false);
         }
       };
 
       fetchArticleData();
+    } else {
+      setTitle(state.title);
+      setBannerImage(state.bannerImage);
+      setContent(state.content);
+      setIsFeatured(state.isFeatured);
+      setTags(state.tags);
     }
 
-    // Update the document title
+
     document.title = title ? `${title} - Edit Article` : "Edit Article";
 
-  }, [id, state, title]); // The dependencies to watch
+  }, [id, state, title]);
 
   const handleBannerImageUpload = (event) => {
     const file = event.target.files[0];
@@ -81,14 +94,13 @@ const EditArticle = () => {
     );
   };
 
-  const handleSaveChanges = () => {
-    if (!title || !author || !content || !bannerImage) {
+  const handleSaveChanges = async () => {
+    if (!title || !content || !bannerImage) {
       alert("Please fill out all fields and upload a banner image.");
       return;
     }
 
     const updatedArticle = {
-      id,
       title,
       bannerImage,
       content,
@@ -96,14 +108,38 @@ const EditArticle = () => {
       isFeatured,
     };
 
-    // Save the updated article (e.g., make an API call or update local state)
-    navigate("/article", { state: updatedArticle });
+    try {
+      const  res = await axios.put(`http://localhost:5000/api/articles/${id}`, updatedArticle, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, 
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (res.status === 200 || res.data.success) {
+        alert("Article updated successfully!");
+        navigate("/article");
+      } else {
+        alert(`Failed to update article: ${res.data.message || "Unknown error"}`);
+      }
+    } catch (error) {
+      console.error("Error updating article:", error);
+      alert("An error occurred while updating the article. Please try again.");
+    }
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
     handleSaveChanges(); // Save changes and navigate
   };
+
+  if (loading) {
+    return (
+    <div className="flex justify-center items-center min-h-screen">
+      <h1 className="text-2xl font-semibold">Loading Article....</h1>
+    </div>
+    );
+  }
 
   return (
     <div className="bg-background dark:bg-custom-dark min-h-screen py-10 px-6">
@@ -114,7 +150,7 @@ const EditArticle = () => {
               <div className="flex items-center space-x-4 mb-6">
                 <button
                   onClick={() => navigate(-1)} // Navigate to the previous page
-                  className="p-2 bg-gray-100 text-gray-700 dark:text-white dark:hover:bg-red-700 rounded-full hover:bg-red-400 transition"
+                  className="p-2 bg-gray-100 dark:bg-custom-dark text-gray-700 dark:text-white dark:hover:bg-red-700 rounded-full hover:bg-red-400 transition"
                 >
                   <FaArrowLeft size={24} />
                 </button>
@@ -234,7 +270,7 @@ const EditArticle = () => {
                 </Button>
                 <Button
                   type="button"
-                  onClick={() => navigate("/article")}
+                  onClick={() => navigate(-1)}  
                   className="w-50 bg-gray-100 text-black hover:bg-custom-green-1 dark:hover:bg-custom-accent-green transition-transform transform hover:scale-105 border-2 border-gray-300"
                 >
                   Cancel
