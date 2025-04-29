@@ -7,7 +7,6 @@ const {
     getArticleByGenre,
     getLatestArticles,
     getRandomArticles,
-    getArticlesByAuthorPrivate,
     getArticlesByAuthorPublic,
     updateArticle,
     deleteArticle,
@@ -29,6 +28,5 @@ router.get("/:id", getArticleById); // Get article by ID
 router.post("/", protect, authorizeRoles("author"), createArticle); // Create an article
 router.put("/:id", protect, authorizeRoles("author"), updateArticle); // Update an article
 router.delete("/:id", protect, authorizeRoles("author"), deleteArticle); // Delete an article
-router.get("/author/private/:id", protect, authorizeRoles("author"), getArticlesByAuthorPrivate); // Get articles by author (private)
 
 module.exports = router;

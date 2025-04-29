@@ -1,16 +1,62 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import {
-  FaLinkedinIn,
-  FaLink,
-} from "react-icons/fa";
+import { FaLinkedinIn, FaLink } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
+import axios from "axios";
 
 const Article = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const [article, setArticle] = useState(null);
+  const [recommendedArticles, setRecommendedArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isUrlCopied, setIsUrlCopied] = useState(false);
+  const [isAuthor, setIsAuthor] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsAuthor(true);
+    }
+    const fetchArticle = async () => {
+      try {
+        const backendUrl = `http://localhost:5000/api/articles/${id}`;
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const { data } = await axios.get(backendUrl, { headers });
+        
+        console.log("API response:", data);
+
+        if (data && data.success && data.article) {
+          setArticle(data.article);
+        } else {
+          setArticle(null);
+        }
+      } catch (error) {
+        console.error("Error fetching article:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticle();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchRecommendedArticles = async () => {
+      try {
+        const { data } = await axios.get(
+          "http://localhost:5000/api/articles/random"
+        );
+        setRecommendedArticles(data.articles || []);
+      } catch (error) {
+        console.error("Failed to fetch recommended articles:", error);
+      }
+    };
+
+    fetchRecommendedArticles();
+  }, []);
 
   const shareArticle = (platform) => {
     const url = encodeURIComponent(window.location.href);
@@ -53,6 +99,16 @@ const Article = () => {
       });
   };
 
+  if (loading) {
+    return <div className="text-center py-20">Loading article...</div>;
+  }
+
+  if (!article) {
+    return (
+      <div className="text-center py-20 text-red-500">Article not found.</div>
+    );
+  }
+
   return (
     <div className="bg-background min-h-screen">
       <div className="container mx-auto px-5 py-8 max-w-screen-xl">
@@ -60,149 +116,51 @@ const Article = () => {
           {/* Banner Text */}
           <div className="absolute z-20 text-white px-5 md:px-10 lg:px-20">
             <h1 className="text-5xl md:text-6xl font-semibold mb-4">
-              Protecting Our Forests
+              {article.title}
             </h1>
             <p className="text-lg md:text-xl text-gray-300">
               By{" "}
-              <Link to="/public-profile" className="text-white hover:underline">
-                John Doe
-              </Link>{" "} | October 5, 2024
+              <Link
+                to={`/public-profile/${article.authorId}`}
+                className="text-white hover:underline"
+              >
+                {article.authorName || "Unknown Author"}
+              </Link>{" "}
+              | {new Date(article.createdAt).toLocaleDateString()}
             </p>
           </div>
 
           {/* Banner Image */}
-          <img
-            src="/pic.jpg"
-            alt="Protecting Our Forests"
-            className="absolute inset-0 w-full h-full object-cover z-10"
-          />
+          {article.bannerImage && (
+            <img
+              src={article.bannerImage}
+              alt={article.title}
+              className="absolute inset-0 w-full h-full object-cover z-10"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/20 z-10"></div>
 
           {/* Tags Below Banner Text within the Banner Image */}
-          <div className="absolute bottom-36 left-1/2 transform -translate-x-1/2 flex justify-center space-x-4 z-20">
-            <div className="bg-gray-500 bg-opacity-60 text-white text-xs px-2 py-1 rounded-md shadow-lg cursor-pointer hover:bg-gray-600  hover:bg-opacity-60">
-              Featured Article
+          {article.tags && (
+            <div className="absolute bottom-36 left-1/2 transform -translate-x-1/2 flex justify-center space-x-4 z-20">
+              {article.tags.map((tag, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-500 bg-opacity-60 text-white text-xs px-2 py-1 rounded-md shadow-lg cursor-pointer hover:bg-gray-600  hover:bg-opacity-60"
+                >
+                  {tag}
+                </div>
+              ))}
             </div>
-            <div className="bg-gray-500 bg-opacity-60 text-white text-xs px-2 py-1 rounded-md shadow-lg cursor-pointer hover:bg-gray-600  hover:bg-opacity-60">
-              Environment
-            </div>
-            <div className="bg-gray-500 bg-opacity-60 text-white text-xs px-2 py-1 rounded-md shadow-lg cursor-pointer hover:bg-gray-600  hover:bg-opacity-60">
-              Must Read
-            </div>
-          </div>
+          )}
         </div>
 
         <Card className="overflow-hidden dark:bg-custom-dark">
           <CardContent className="p-6">
-            <div className="prose prose-invert max-w-none text-lg leading-relaxed">
-              <p>
-                Forests are one of the most vital ecosystems on our planet. They
-                provide oxygen, store carbon, and house a diverse range of
-                species. However, deforestation and habitat destruction have
-                placed immense pressure on these natural wonders.
-              </p>
-
-              <h2 className="text-2xl font-semibold text-foreground my-4">
-                The Importance of Forests
-              </h2>
-              <p>
-                Forests are crucial for the environment and the well-being of
-                all living organisms. The trees in forests absorb carbon dioxide
-                (CO2) and release oxygen, which is essential for the survival of
-                all oxygen-dependent organisms, including humans. They play a
-                vital role in mitigating climate change by acting as carbon
-                sinks, storing more carbon than they release.
-              </p>
-              <p>
-                In addition to carbon sequestration, forests help maintain the
-                water cycle by absorbing rainwater and releasing moisture into
-                the atmosphere through transpiration. They also prevent soil
-                erosion by stabilizing the soil with their roots and reducing
-                the risk of flooding. Forests are also home to over 80% of the
-                world's terrestrial biodiversity, offering a habitat for
-                countless species.
-              </p>
-
-              <div className="my-8">
-                <img
-                  src="/pic.jpg"
-                  alt="Forest Conservation"
-                  className="w-1/2 h-auto mx-auto rounded-md shadow-lg transition-transform transform hover:scale-105"
-                />
-              </div>
-
-              <h2 className="text-2xl font-semibold text-foreground my-4">
-                Deforestation and Its Impact
-              </h2>
-              <p>
-                Unfortunately, deforestation is occurring at an alarming rate.
-                It is driven primarily by human activities such as agriculture,
-                urbanization, and logging. Every year, millions of hectares of
-                forest are cleared, with devastating consequences for wildlife,
-                the environment, and the climate. Deforestation leads to habitat
-                loss, threatening the survival of species and disrupting entire
-                ecosystems.
-              </p>
-              <p>
-                The loss of forests also contributes to global warming, as trees
-                that once absorbed CO2 are removed, and the carbon stored in
-                their biomass is released back into the atmosphere. This process
-                exacerbates climate change and leads to more extreme weather
-                events, such as heatwaves, storms, and floods.
-              </p>
-
-              <h2 className="text-2xl font-semibold text-foreground my-4">
-                Efforts to Protect Forests
-              </h2>
-              <p>
-                The good news is that there are many initiatives in place to
-                protect and restore forests. Governments, non-governmental
-                organizations (NGOs), and local communities are working together
-                to combat deforestation through legislation, conservation
-                programs, and reforestation projects.
-              </p>
-              <p>
-                One such initiative is the REDD+ program, which incentivizes
-                developing countries to reduce emissions from deforestation and
-                forest degradation. This program has been successful in reducing
-                deforestation rates in countries like Brazil, where the Amazon
-                rainforest has seen a reduction in clearing.
-              </p>
-              <p>
-                In addition to these programs, there are numerous grassroots
-                efforts around the world that aim to raise awareness about the
-                importance of forests and encourage sustainable practices. Local
-                communities are engaging in reforestation and agroforestry,
-                which involves integrating trees into agricultural systems, to
-                restore degraded lands and improve biodiversity.
-              </p>
-
-              <h2 className="text-2xl font-semibold text-foreground my-4">
-                How You Can Help
-              </h2>
-              <p>
-                As individuals, there are several ways we can contribute to the
-                protection of forests. First and foremost, we can support
-                sustainable products, such as those certified by organizations
-                like the Forest Stewardship Council (FSC), which ensures that
-                products come from responsibly managed forests.
-              </p>
-              <p>
-                Another way to help is by reducing our carbon footprint. By
-                adopting sustainable practices such as using energy-efficient
-                appliances, driving less, and reducing waste, we can help reduce
-                the pressure on forests. Lastly, supporting policies that
-                protect forests and advocating for stronger environmental
-                regulations can also make a significant impact.
-              </p>
-
-              <p>
-                Protecting our forests is not only about saving trees; it's
-                about ensuring a healthier future for all life on Earth. By
-                taking action today, we can help preserve these critical
-                ecosystems for generations to come.
-              </p>
-            </div>
+            <div
+              className="prose prose-invert max-w-none text-lg leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: article.content }}
+            />
           </CardContent>
         </Card>
 
@@ -219,11 +177,14 @@ const Article = () => {
                 onClick={() => shareArticle(platform)}
                 className={`bg-white dark:bg-custom-dark text-black p-5 text-xl rounded-md shadow-sm dark:shadow-sm dark:shadow-black transition-transform transform hover:scale-110 border-none hover:shadow-gray-400 
                 ${
-                  platform === "linkedin" && "text-blue-900 hover:bg-blue-700 dark:text-blue-700 dark:hover:bg-blue-800"
+                  platform === "linkedin" &&
+                  "text-blue-900 hover:bg-blue-700 dark:text-blue-700 dark:hover:bg-blue-800"
                 } ${
-                  platform === "email" && "text-red-600 hover:bg-red-400 dark:text-red-700 dark:hover:bg-red-500"
+                  platform === "email" &&
+                  "text-red-600 hover:bg-red-400 dark:text-red-700 dark:hover:bg-red-500"
                 } ${
-                  platform === "link" && "text-gray-600 hover:bg-gray-500 dark:text-gray-600 dark:hover:bg-gray-600"
+                  platform === "link" &&
+                  "text-gray-600 hover:bg-gray-500 dark:text-gray-600 dark:hover:bg-gray-600"
                 }`}
               >
                 {platform === "linkedin" && <FaLinkedinIn />}
@@ -251,49 +212,48 @@ const Article = () => {
           </Button>
         </div>
 
-        <div className="mt-12">
-            <h2 className="text-2xl font-semibold text-foreground mb-6">You May Enjoy</h2>
+        {/* Recommended Articles Section */}
+        {recommendedArticles.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-semibold text-foreground mb-6">
+              You May Enjoy
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
-              {[
-                { title: "The Future of Renewable Energy", img: "/pic.jpg", link: "#", author: "Michael Green", date: "January 18, 2024"},
-                { title: "Conservation Strategies for Wildlife", img: "/wildlife.jpg", link: "#", author: "Michael Green", date: "January 18, 2024"},
-                { title: "Sustainable Living Practices", img: "/sustainable.jpg", link: "#", author: "Michael Green", date: "January 18, 2024" },
-                { title: "The Role of Solar Energy", img: "/solar.jpg", link: "#", author: "Michael Green", date: "January 18, 2024", },
-              ].map((article, index) => (
+              {recommendedArticles.map((article, index) => (
                 <Card
                   key={index}
                   className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black "
-                  onClick={() => navigate(article.link)}
+                  onClick={() => navigate(`/articles/${article._id}`)}
                 >
                   <div className="relative h-[150px] sm:h-[150px]">
-                  <img
-                    src={article.img}
-                    alt={article.title}
-                    className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
-                  />
+                    <img
+                      src={article.bannerImage}
+                      alt={article.title}
+                      className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+                    />
                   </div>
                   <CardHeader className="p-3 sm:p-4 pt-0">
-                  <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2  hover:underline dark:text-gray-100">
-                  {" "}
-                  {/* Line clamping for titles */}
-                  {article.title}
-                  </CardTitle>
+                    <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2  hover:underline dark:text-gray-100">
+                      {" "}
+                      {/* Line clamping for titles */}
+                      {article.title}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="p-3 sm:p-4">
                     <div className="flex justify-between items-center text-xs sm:text-sm">
                       <p className="font-semibold text-teal-700">
-                      {article.author}
+                        {article.author?.name || "Unknown Author"}
                       </p>
                       <p className="font-semibold text-teal-700">
-                      {article.date}
+                        {new Date(article.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
-        </div>
-
+          </div>
+        )}
       </div>
     </div>
   );
