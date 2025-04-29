@@ -75,9 +75,9 @@ const EditArticle = () => {
     }
 
 
-    document.title = title ? `${title} - Edit Article` : "Edit Article";
+    document.title = state?.title ? `${state.title} - Edit Article` : "Edit Article";
 
-  }, [id, state, title]);
+  }, [id, state]);
 
   const handleBannerImageUpload = (event) => {
     const file = event.target.files[0];
