@@ -9,11 +9,13 @@ const {
   updateUser,
   userLogout,
   userProfile,
+  getPublicUserProfile,
 } = require("../controller/userController");
 
 // Public routes
 router.post("/login", userLogin);
 router.post("/register", upload.single("profilePhoto"), userRegister);
+router.get("/public/:id", getPublicUserProfile); 
 
 // Protected routes
 router.put("/update", protect, upload.single("profilePhoto"), updateUser);

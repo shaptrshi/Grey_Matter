@@ -159,10 +159,50 @@ const userProfile = async (req, res) => {
   }
 };
 
+const getPublicUserProfile = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Find user by ID and populate only necessary article fields
+    const user = await User.findById(userId)
+      .select("name bio profilePhoto email articles") // Only public fields
+      .populate({
+        path: "articles",
+        select: "title bannerImage createdAt slug", // customize fields as needed
+      });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      name: user.name,
+      email: user.email, // include only if it's meant to be public
+      bio: user.bio,
+      profilePicture: user.profilePhoto,
+      articles: user.articles.map((article) => ({
+        id: article._id,
+        title: article.title,
+        bannerImage: article.bannerImage,
+        date: article.createdAt,
+        link: `/article/${article.slug || article._id}`, // build link as needed
+        author: user.name,
+      })),
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: error.message });
+  }
+};
+
+
 module.exports = {
   userLogin,
   userRegister,
   updateUser,
   userLogout,
   userProfile,
+  getPublicUserProfile,
 };

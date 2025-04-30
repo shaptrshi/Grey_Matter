@@ -15,8 +15,8 @@ const AuthorPublicProfilePage = () => {
     const fetchAuthorData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/users/${id}`
-        ); 
+          `http://localhost:5000/api/users/public/${id}`
+        );
         setAuthor(response.data);
       } catch (err) {
         setError("Failed to load author profile");
@@ -29,7 +29,7 @@ const AuthorPublicProfilePage = () => {
   }, [id]);
 
   if (loading) {
-    return <div>Loading...</div>; // You can add a more styled loading spinner here
+    return <div>Loading...</div>;
   }
 
   if (error) {
@@ -92,7 +92,11 @@ const AuthorPublicProfilePage = () => {
                       {article.author}
                     </p>
                     <p className="font-semibold text-teal-700">
-                      {article.date}
+                      {new Date(article.date).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
                     </p>
                   </div>
                 </CardContent>

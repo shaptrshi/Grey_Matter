@@ -63,6 +63,17 @@ function App() {
             </>
           }
         />
+        
+        <Route
+          path="/profile/:id"
+          element={
+            <>
+              <Navbar />
+              <AuthorPublicProfilePage />
+              <Footer />
+            </>
+          }
+        />
 
         <Route
           path="*"
@@ -107,10 +118,10 @@ function App() {
                 <Route path="/terms-of-use" element={<Terms />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/aboutus" element={<AboutUs />} />
-                <Route
-                  path="/public-profile"
-                  element={<AuthorPublicProfilePage />}
-                />
+
+
+                <Route path="/article/:id" element={<Article />} />
+      <Route path="/profile/:id" element={<AuthorPublicProfilePage />} />
               </Routes>
               <Footer />
             </>
