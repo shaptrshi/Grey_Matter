@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { Menu, X, Search, ChevronDown, Moon, Sun } from "lucide-react";
 import { ThemeContext } from "../../context/ThemeContext";
+import logo from "../../assets/logo2.png";
 
 const Dropdown = ({ label, items, isDesktop }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -116,7 +117,7 @@ const Navbar = () => {
           <div className="flex-shrink-0">
             <a href="/">
               <img
-                src="./logo2.png"
+                src={logo}
                 alt="Logo"
                 className="h-8 md:h-12 w-auto transition-transform hover:scale-105"
               />

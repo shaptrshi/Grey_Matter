@@ -3,11 +3,42 @@
 @tailwind utilities;
 @layer base {
   :root {
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
 }
 
 body.dark {
   background-color: #121212;
   color: #ffffff;
+}
+
+/* Add these font definitions */
+@font-face {
+  font-family: "arial";
+  src: local("Arial");
+}
+
+@font-face {
+  font-family: "comic-sans";
+  src: local("Comic Sans MS");
+}
+
+@font-face {
+  font-family: "courier-new";
+  src: local("Courier New");
+}
+
+@font-face {
+  font-family: "georgia";
+  src: local("Georgia");
+}
+
+@font-face {
+  font-family: "helvetica";
+  src: local("Helvetica");
+}
+
+@font-face {
+  font-family: "lucida";
+  src: local("Lucida Console");
 }

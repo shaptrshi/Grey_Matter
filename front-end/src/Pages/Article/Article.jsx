@@ -25,17 +25,17 @@ const Article = () => {
         const backendUrl = `http://localhost:5000/api/articles/${id}`;
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
         const { data } = await axios.get(backendUrl, { headers });
-      
-        if (data && typeof data === 'object' && data._id) {
+
+        if (data && typeof data === "object" && data._id) {
           setArticle(data);
-        }  else if (data.article) {
+        } else if (data.article) {
           setArticle(data.article);
-        }  else {
+        } else {
           setArticle(null);
         }
       } catch (error) {
         console.error("Error fetching article:", error);
-        setArticle(null)
+        setArticle(null);
       } finally {
         setLoading(false);
       }
@@ -159,7 +159,7 @@ const Article = () => {
         <Card className="overflow-hidden dark:bg-custom-dark">
           <CardContent className="p-6">
             <div
-              className="prose prose-invert max-w-none text-lg leading-relaxed"
+              className="ql-editor"
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
           </CardContent>

@@ -9,6 +9,7 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { FaHome, FaSignOutAlt, FaPlus, FaUserCircle } from "react-icons/fa";
 import { Search } from "lucide-react";
 import axios from "axios";
+import logo from "../../assets/logo2.png";
 
 const AuthorPage = () => {
   const navigate = useNavigate();
@@ -21,28 +22,31 @@ const AuthorPage = () => {
   });
 
   useEffect(() => {
-  const fetchUserProfile = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:5000/api/users/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          "http://localhost:5000/api/users/profile",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      const userData = response.data;
+        const userData = response.data;
 
-      setAuthor({
-        name: userData.name,
-        email: userData.email,
-        bio: userData.bio,
-        profilePicture: userData.profilePhoto,
-        articles: tryParseArticles(userData.articles, userData.name),
-      });
-    } catch (error) {
-      console.error("Error fetching user profile", error);
-    }
-  };
+        setAuthor({
+          name: userData.name,
+          email: userData.email,
+          bio: userData.bio,
+          profilePicture: userData.profilePhoto,
+          articles: tryParseArticles(userData.articles, userData.name),
+        });
+      } catch (error) {
+        console.error("Error fetching user profile", error);
+      }
+    };
 
     fetchUserProfile();
   }, []);
@@ -50,13 +54,13 @@ const AuthorPage = () => {
   function tryParseArticles(articles = [], authorName = "") {
     try {
       if (!Array.isArray(articles)) return [];
-  
+
       return articles.map((article) => ({
-            ...article,
-            link: `/article/${article.id || article._id}`,
-            authorName,
-            date: formatDate(article.updatedAt || article.createdAt),
-          }));
+        ...article,
+        link: `/article/${article.id || article._id}`,
+        authorName,
+        date: formatDate(article.updatedAt || article.createdAt),
+      }));
     } catch (error) {
       console.error("Error parsing articles", error);
       return [];
@@ -147,8 +151,7 @@ const AuthorPage = () => {
 
   const handleEdit = (id) => navigate(`/edit-article/${id}`);
 
-  const handleCreateArticle = () =>
-    navigate("/create-article");
+  const handleCreateArticle = () => navigate("/create-article");
 
   const handleLogout = async () => {
     try {
@@ -185,7 +188,7 @@ const AuthorPage = () => {
         <div className="pl-4">
           <a href="/">
             <img
-              src="./logo2.png"
+              src={logo}
               alt="Logo"
               className="h-8 md:h-12 w-auto hover:scale-105 transition-transform"
             />
