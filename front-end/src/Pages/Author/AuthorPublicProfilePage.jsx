@@ -1,34 +1,40 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { FaUserCircle } from "react-icons/fa";
+import axios from "axios";
 
 const AuthorPublicProfilePage = () => {
-  const [author] = useState({
-    name: "John Doe",
-    email: "johndoe@gmail.com",
-    bio: "Passionate writer exploring the world of technology and innovation.",
-    profilePicture: "./pic.jpg",
-    articles: [
-      {
-        id: 1,
-        title: "First Article",
-        bannerImage: "./pic.jpg",
-        link: "/article/1",
-        author: "John Doe",
-        date: "Jan 1, 2025",
-      },
-      {
-        id: 2,
-        title: "Second Article",
-        bannerImage: "./pic.jpg",
-        link: "/article/2",
-        author: "John Doe",
-        date: "Feb 14, 2025",
-      },
-    ],
-  });
+  const { id } = useParams(); // Get the user ID from URL params
+  const [author, setAuthor] = useState(null); // State for author data
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+
+  useEffect(() => {
+    const fetchAuthorData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/users/${id}`
+        ); 
+        setAuthor(response.data);
+      } catch (err) {
+        setError("Failed to load author profile");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAuthorData();
+  }, [id]);
+
+  if (loading) {
+    return <div>Loading...</div>; // You can add a more styled loading spinner here
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="dark:bg-custom-dark dark:text-white min-h-screen">
@@ -43,20 +49,27 @@ const AuthorPublicProfilePage = () => {
                 className="rounded-full object-cover"
               />
             ) : (
-              <FaUserCircle size={128} className="text-gray-500 dark:text-gray-400" />
+              <FaUserCircle
+                size={128}
+                className="text-gray-500 dark:text-gray-400"
+              />
             )}
           </Avatar>
           <div className="ml-6">
             <h2 className="text-3xl font-semibold">{author.name}</h2>
             <p className="text-gray-400">{author.email}</p>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">{author.bio}</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">
+              {author.bio}
+            </p>
           </div>
         </div>
       </div>
 
       {/* Articles Section */}
       <div className="container mx-auto px-6 py-6">
-        <h2 className="text-2xl font-semibold mb-4">Articles by {author.name}</h2>
+        <h2 className="text-2xl font-semibold mb-4">
+          Articles by {author.name}
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {author.articles.map((article) => (
             <Link to={article.link} key={article.id} className="block">
@@ -75,8 +88,12 @@ const AuthorPublicProfilePage = () => {
                 </CardHeader>
                 <CardContent className="p-3 sm:p-4 -mt-2">
                   <div className="flex justify-between items-center text-xs sm:text-sm">
-                    <p className="font-semibold text-teal-700">{article.author}</p>
-                    <p className="font-semibold text-teal-700">{article.date}</p>
+                    <p className="font-semibold text-teal-700">
+                      {article.author}
+                    </p>
+                    <p className="font-semibold text-teal-700">
+                      {article.date}
+                    </p>
                   </div>
                 </CardContent>
               </Card>

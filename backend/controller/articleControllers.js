@@ -49,7 +49,7 @@ const getAllArticles = async (req, res) => {
 const getArticleById = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ message: "Invalid article ID" });
+      return res.status(400).json({ succes: false, message: "Invalid article ID" });
     }
     const article = await Article.findById(req.params.id)
       .populate("author", "name email")
