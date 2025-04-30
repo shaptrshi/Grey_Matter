@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import logo from "../../assets/logo2.png";
 
 const Footer = () => {
   return (
@@ -9,7 +10,7 @@ const Footer = () => {
         <div className="w-full max-w-[200px] mx-auto">
           <Link to="/">
             <img
-              src="./logo2.png"
+              src= {logo}
               alt="Logo"
               className="w-32 h-16 sm:w-40 sm:h-16 md:w-50 md:h-20 mx-auto transition-transform transform hover:scale-105 cursor-pointer object-contain"
             />
