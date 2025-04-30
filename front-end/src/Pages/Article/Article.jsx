@@ -25,16 +25,17 @@ const Article = () => {
         const backendUrl = `http://localhost:5000/api/articles/${id}`;
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
         const { data } = await axios.get(backendUrl, { headers });
-        
-        console.log("API response:", data);
-
-        if (data && data.success && data.article) {
+      
+        if (data && typeof data === 'object' && data._id) {
+          setArticle(data);
+        }  else if (data.article) {
           setArticle(data.article);
-        } else {
+        }  else {
           setArticle(null);
         }
       } catch (error) {
         console.error("Error fetching article:", error);
+        setArticle(null)
       } finally {
         setLoading(false);
       }
@@ -42,7 +43,7 @@ const Article = () => {
 
     fetchArticle();
   }, [id]);
-
+  console.log("Article data:", article);
   useEffect(() => {
     const fetchRecommendedArticles = async () => {
       try {
@@ -121,10 +122,10 @@ const Article = () => {
             <p className="text-lg md:text-xl text-gray-300">
               By{" "}
               <Link
-                to={`/public-profile/${article.authorId}`}
+                to={`/profile/${article.author?._id}`}
                 className="text-white hover:underline"
               >
-                {article.authorName || "Unknown Author"}
+                {article.author.name || "Unknown Author"}
               </Link>{" "}
               | {new Date(article.createdAt).toLocaleDateString()}
             </p>
@@ -223,7 +224,7 @@ const Article = () => {
                 <Card
                   key={index}
                   className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black "
-                  onClick={() => navigate(`/articles/${article._id}`)}
+                  onClick={() => navigate(`/article/${article._id}`)}
                 >
                   <div className="relative h-[150px] sm:h-[150px]">
                     <img
