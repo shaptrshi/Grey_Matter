@@ -12,6 +12,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import logo from "../../assets/logo2.png";
 
 const Admin = () => {
   const [authors, setAuthors] = useState([]);
@@ -112,7 +113,7 @@ const Admin = () => {
         <div className="pl-4">
           <a href="/">
             <img
-              src="./logo2.png"
+              src={logo}
               alt="Logo"
               className="h-8 md:h-12 w-auto transition-transform hover:scale-105"
             />

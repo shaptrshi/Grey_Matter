@@ -224,7 +224,7 @@ const Article = () => {
                 <Card
                   key={index}
                   className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black "
-                  onClick={() => navigate(`/article/${article._id}`)}
+                  onClick={() => navigate(`/articles/${article._id}`)}
                 >
                   <div className="relative h-[150px] sm:h-[150px]">
                     <img

@@ -57,7 +57,7 @@ const AuthorPage = () => {
 
       return articles.map((article) => ({
         ...article,
-        link: `/article/${article.id || article._id}`,
+        link: `/articles/${article.id || article._id}`,
         authorName,
         date: formatDate(article.updatedAt || article.createdAt),
       }));

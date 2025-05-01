@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import logo from "../../assets/logo2.png";
+
 
 const SignUp = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -193,11 +195,13 @@ const SignUp = () => {
     <>
       <nav className="sticky top-0 z-50 bg-white dark:bg-custom-dark shadow-md dark:shadow-sm dark:shadow-black p-4">
         <div className="mx-auto flex justify-center items-center">
+          <a href="/" className="transition-opacity duration-300 hover:opacity-80">
           <img
-            src="/logo2.png"
+            src={logo}
             alt="Logo"
-            className="h-8 md:h-12 w-auto transition-transform hover:scale-105"
+            className="h-8 md:h-12 w-auto transition-transform hover:scale-105 duration-300"
           />
+          </a>
         </div>
       </nav>
       <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-custom-dark">

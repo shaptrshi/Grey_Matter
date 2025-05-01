@@ -110,26 +110,6 @@ const getRandomArticles = async (req, res) => {
   }
 };
 
-// Get articles by specific author (anyone can access)
-const getArticlesByAuthorPublic = async (req, res) => {
-  try {
-    const { Id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(Id)) {
-      return res.status(400).json({ message: "Invalid user ID" });
-    }
-
-    const articles = await Article.find({ author: Id })
-      .populate("author", "name email")
-      .lean();
-
-    res.status(200).json(articles);
-  } catch (error) {
-    console.error("Error fetching articles by author:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
 // Update an article (only author can access)
 const updateArticle = async (req, res) => {
   try {
@@ -222,7 +202,6 @@ module.exports = {
   getArticleByGenre,
   getLatestArticles,
   getRandomArticles,
-  getArticlesByAuthorPublic,
   updateArticle,
   deleteArticle,
   getFeaturedArticles,
