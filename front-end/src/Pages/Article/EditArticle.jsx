@@ -33,24 +33,26 @@ const EditArticle = () => {
     "Sustainable_Living",
     "Technology_and_Advancements",
     "Science_and_Research",
-    "Startups_and_Entrepreneurship", 
+    "Startups_and_Entrepreneurship",
     "Evolving_Horizons",
     "Interviews",
     "Spotlight",
     "Policy_and_Governance",
   ];
 
-  
   useEffect(() => {
     if (!state) {
       setLoading(true);
       const fetchArticleData = async () => {
         try {
-          const response  = await axios.get(`http://localhost:5000/api/articles/${id}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+          const response = await axios.get(
+            `http://localhost:5000/api/articles/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
             }
-          });
+          );
 
           const data = await response.data;
           setTitle(data.title);
@@ -74,9 +76,9 @@ const EditArticle = () => {
       setTags(state.tags);
     }
 
-
-    document.title = state?.title ? `${state.title} - Edit Article` : "Edit Article";
-
+    document.title = state?.title
+      ? `${state.title} - Edit Article`
+      : "Edit Article";
   }, [id, state]);
 
   const handleBannerImageUpload = (event) => {
@@ -90,7 +92,9 @@ const EditArticle = () => {
 
   const handleTagToggle = (tag) => {
     setTags((prevTags) =>
-      prevTags.includes(tag) ? prevTags.filter((t) => t !== tag) : [...prevTags, tag]
+      prevTags.includes(tag)
+        ? prevTags.filter((t) => t !== tag)
+        : [...prevTags, tag]
     );
   };
 
@@ -109,18 +113,24 @@ const EditArticle = () => {
     };
 
     try {
-      const  res = await axios.put(`http://localhost:5000/api/articles/${id}`, updatedArticle, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`, 
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await axios.put(
+        `http://localhost:5000/api/articles/${id}`,
+        updatedArticle,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (res.status === 200 || res.data.success) {
         alert("Article updated successfully!");
         navigate("/article");
       } else {
-        alert(`Failed to update article: ${res.data.message || "Unknown error"}`);
+        alert(
+          `Failed to update article: ${res.data.message || "Unknown error"}`
+        );
       }
     } catch (error) {
       console.error("Error updating article:", error);
@@ -135,9 +145,9 @@ const EditArticle = () => {
 
   if (loading) {
     return (
-    <div className="flex justify-center items-center min-h-screen">
-      <h1 className="text-2xl font-semibold">Loading Article....</h1>
-    </div>
+      <div className="flex justify-center items-center min-h-screen">
+        <h1 className="text-2xl font-semibold">Loading Article....</h1>
+      </div>
     );
   }
 
@@ -206,7 +216,11 @@ const EditArticle = () => {
                     modules={modules}
                     formats={formats}
                     className="mt-2"
-                    style={{ minHeight: "200px", maxHeight: "600px", overflowY: "auto" }}
+                    style={{
+                      minHeight: "200px",
+                      maxHeight: "600px",
+                      overflowY: "auto",
+                    }}
                   />
                   <style>
                     {`
@@ -233,7 +247,9 @@ const EditArticle = () => {
                         key={tag}
                         type="button"
                         className={`px-4 py-2 rounded-full transiton-transform transform hover:scale-105 dark:text-black ${
-                          tags.includes(tag) ? "bg-custom-green-1 dark:bg-custom-green" : "bg-gray-200 dark:bg-gray-300"
+                          tags.includes(tag)
+                            ? "bg-custom-green-1 dark:bg-custom-green"
+                            : "bg-gray-200 dark:bg-gray-300"
                         }`}
                         onClick={() => handleTagToggle(tag)}
                       >
@@ -270,7 +286,7 @@ const EditArticle = () => {
                 </Button>
                 <Button
                   type="button"
-                  onClick={() => navigate(-1)}  
+                  onClick={() => navigate(-1)}
                   className="w-50 bg-gray-100 text-black hover:bg-custom-green-1 dark:hover:bg-custom-accent-green transition-transform transform hover:scale-105 border-2 border-gray-300"
                 >
                   Cancel

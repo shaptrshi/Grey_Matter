@@ -80,8 +80,8 @@ const CreateArticle = () => {
         },
       });
       if (data && data.article) {
-      alert("Article published successfully!");
-      navigate("/article");
+        alert("Article published successfully!");
+        navigate("/article");
       } else {
         alert("Failed to publish article. Please try again.");
       }
