@@ -24,14 +24,14 @@ const CreateArticle = () => {
     "Weather",
     "Agriculture",
     "Forest",
-    "Sustainable Living",
-    "Technology and Advancements",
-    "Science and Research",
-    "Startups and Entrepreneurship",
-    "Evolving Horizons",
+    "Sustainable_Living",
+    "Technology_and_Advancements",
+    "Science_and_Research",
+    "Startups_and_Entrepreneurship",
+    "Evolving_Horizons",
     "Interviews",
     "Spotlight",
-    "Policy and Governance",
+    "Policy_and_Governance",
   ];
 
   const handleBannerImageUpload = (event) => {

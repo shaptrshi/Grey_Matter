@@ -137,7 +137,7 @@ const Trending = () => {
 
             {/* Modern Pagination */}
             {totalPages > 1 || articles.length > 0 ? (
-              <div className="flex justify-center mt-8">
+              <div className="flex justify-center mt-16">
                 <Pagination className="bg-white dark:bg-custom-dark p-4">
                   <PaginationContent className="flex gap-2">
 
