@@ -138,7 +138,10 @@ const userLogout = async (req, res) => {
 
 const userProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).populate("articles");
+    const user = await User.findById(req.user._id).populate({
+      path:"articles",
+      options: {sort: { createdAt: -1 }}, // Sort by createdAt in descending order
+    });
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
@@ -168,6 +171,7 @@ const getPublicUserProfile = async (req, res) => {
       .select("name bio profilePhoto email articles") // Only public fields
       .populate({
         path: "articles",
+        options: { sort: { createdAt: -1 } }, // Sort by createdAt in descending order
         select: "title bannerImage createdAt slug", // customize fields as needed
       });
 

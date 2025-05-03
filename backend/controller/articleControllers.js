@@ -36,6 +36,7 @@ const createArticle = async (req, res) => {
 const getAllArticles = async (req, res) => {
   try {
     const articles = await Article.find()
+      .sort({ createdAt: -1 }) 
       .populate("author", "name email")
       .lean();
     res.status(200).json(articles);
@@ -69,6 +70,7 @@ const getArticleByGenre = async (req, res) => {
   try {
     const { tag } = req.params;
     const articles = await Article.find({ tags: tag })
+      .sort({ createdAt: -1 }) 
       .populate("author", "name email")
       .lean();
     res.status(200).json(articles);
@@ -186,6 +188,7 @@ const deleteArticle = async (req, res) => {
 const getFeaturedArticles = async (req, res) => {
   try {
     const featuredArticles = await Article.find({ isFeatured: true })
+      .sort({ createdAt: -1 })
       .populate("author", "name email")
       .lean();
     res.status(200).json(featuredArticles);
