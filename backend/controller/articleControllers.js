@@ -69,8 +69,29 @@ const getArticleById = async (req, res) => {
 const getArticleByGenre = async (req, res) => {
   try {
     const { tag } = req.params;
+    const { sort } = req.query;
+    
+    let sortOptions = {}
+
+    switch (sort) {
+      case "latest":
+        sortOptions = { createdAt: -1 }; 
+        break;
+      case "oldest":
+        sortOptions = { createdAt: 1 }; 
+        break;
+      case "title-asc":
+        sortOptions = { title: 1 }; 
+        break;
+      case "title-desc":
+        sortOptions = { title: -1 }; 
+        break;
+      default:
+        sortOptions = { createdAt: -1 };
+    }          
+
     const articles = await Article.find({ tags: tag })
-      .sort({ createdAt: -1 }) 
+      .sort(sortOptions)
       .populate("author", "name email")
       .lean();
     res.status(200).json(articles);

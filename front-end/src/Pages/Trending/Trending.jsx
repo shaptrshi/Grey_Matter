@@ -1,27 +1,29 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import axios from "axios";
 
 const Trending = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sort, setSort] = useState("latest");
   const navigate = useNavigate();
 
-  const fetchTrendingArticles = useCallback(async () => {
+  const fetchArticles = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/articles/genre/Trending");
+      const res = await axios.get(`http://localhost:5000/api/articles/genre/Trending?sort=${sort}`);
       setArticles(res.data);
     } catch (error) {
       console.error("Failed to fetch trending articles:", error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [sort]);
 
   useEffect(() => {
-    fetchTrendingArticles();
-  }, [fetchTrendingArticles]);
+    fetchArticles();
+  }, [fetchArticles]);
 
   return (
     <div className="container mx-auto px-4 sm:px-10 lg:px-8 py-4 sm:py-6 lg:py-8 min-h-screen bg-gray-100 dark:bg-custom-dark dark:text-gray-100">
@@ -33,6 +35,22 @@ const Trending = () => {
           Cover recent events, trending topics, and breaking news relevant to
           your blog’s theme.
         </p>
+
+        {/* Sort Dropdown */}
+        <div className="flex justify-center sm:justify-end mb-6 px-4">
+          <Select value={sort} onValueChange={(value) => setSort(value)}>
+            <SelectTrigger className="w-[220px] bg-white dark:bg-custom-dark text-gray-800 dark:text-white rounded-lg border border-gray-300 dark:border-gray-600 shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-500 flex justify-between items-center py-2 px-4 transition-all"
+            onClick={(e) => e.stopPropagation()}>
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent className="bg-white dark:bg-custom-dark text-gray-800 dark:text-white rounded-lg shadow-lg">
+              <SelectItem value="latest">Latest</SelectItem>
+              <SelectItem value="oldest">Oldest</SelectItem>
+              <SelectItem value="title-asc">Title (A-Z)</SelectItem>
+              <SelectItem value="title-desc">Title (Z-A)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
