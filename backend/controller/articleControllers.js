@@ -69,7 +69,12 @@ const getArticleById = async (req, res) => {
 const getArticleByGenre = async (req, res) => {
   try {
     const { tag } = req.params;
-    const { sort } = req.query;
+    const { sort = "latest", page = 1, limit = 8 } = req.query;
+
+    const pageNumber = isNaN(parseInt(page)) ? 1 : parseInt(page);
+    const limitNumber = isNaN(parseInt(limit)) ? 8 : parseInt(limit);
+
+    const skip = (pageNumber - 1) * limitNumber;
     
     let sortOptions = {}
 
@@ -92,9 +97,19 @@ const getArticleByGenre = async (req, res) => {
 
     const articles = await Article.find({ tags: tag })
       .sort(sortOptions)
+      .skip(skip)
+      .limit(limitNumber)
       .populate("author", "name email")
       .lean();
-    res.status(200).json(articles);
+
+      const total = await Article.countDocuments({ tags: tag });
+      const totalPages = Math.ceil(total / limitNumber);
+    res.status(200).json({
+      data: articles,
+      currentPage: pageNumber,
+      totalPages: totalPages,
+      totalArticles: total
+    });
   } catch (error) {
     console.error("Error fetching articles by genre:", error);
     res.status(500).json({ message: "Internal server error" });
