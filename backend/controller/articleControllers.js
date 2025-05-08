@@ -234,6 +234,54 @@ const getFeaturedArticles = async (req, res) => {
   }
 };
 
+const searchArticles = async (req, res) => {
+  try {
+    const { query = "", page = 1, limit = 10 } = req.query;
+
+    // Validate the query parameter
+    if (!query.trim()) {
+      return res.status(400).json({ message: "Query parameter is required" });
+    }
+
+    // Ensure page and limit are valid numbers
+    const pageNumber = parseInt(page) || 1;
+    const limitNumber = Math.min(parseInt(limit) || 10, 100); // Max limit of 100
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const regex = new RegExp(query, "i"); // Case-insensitive search
+
+    const filter = {
+      $or: [
+        { title: regex },
+        { content: regex },
+        { tags: regex },
+      ],
+    };
+
+    // Fetch articles with pagination
+    const articles = await Article.find(filter)
+      .skip(skip)
+      .limit(limitNumber)
+      .sort({ createdAt: -1 })
+      .populate("author", "name email")
+      .lean();
+
+    // Get the total number of matching articles for pagination
+    const total = await Article.countDocuments(filter);
+    const totalPages = Math.ceil(total / limitNumber);
+
+    res.status(200).json({
+      data: articles,
+      currentPage: pageNumber,
+      totalPages,
+      totalArticles: total,
+    });
+  } catch (error) {
+    console.error("Error searching articles:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   createArticle,
   getAllArticles,
@@ -244,4 +292,5 @@ module.exports = {
   updateArticle,
   deleteArticle,
   getFeaturedArticles,
+  searchArticles,
 };

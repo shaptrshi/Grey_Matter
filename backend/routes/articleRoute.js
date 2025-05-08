@@ -10,6 +10,7 @@ const {
     updateArticle,
     deleteArticle,
     getFeaturedArticles,
+    searchArticles,
 } = require("../controller/articleControllers");
 const { protect } = require("../middleware/authMiddleware");
 const { authorizeRoles } = require("../middleware/roleMiddleware");
@@ -20,7 +21,9 @@ router.get("/latest", getLatestArticles); // Get latest articles
 router.get("/random", getRandomArticles); // Get random articles
 router.get("/featured", getFeaturedArticles); // Get featured articles
 router.get("/genre/:tag", getArticleByGenre); // Get articles by genre
+router.get("/search", searchArticles); // Search articles
 router.get("/:id", getArticleById); // Get article by ID
+
 
 //Protected routes
 router.post("/", protect, authorizeRoles("author"), createArticle); // Create an article

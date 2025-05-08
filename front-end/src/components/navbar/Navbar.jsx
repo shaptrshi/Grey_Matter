@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { Menu, X, Search, ChevronDown, Moon, Sun } from "lucide-react";
+import { Menu, X, ChevronDown, Moon, Sun } from "lucide-react";
 import { ThemeContext } from "../../context/ThemeContext";
 import logo from "../../assets/logo2.png";
+import SearchBar from "../searchbar/SearchBar";
+import { Link, useNavigate } from "react-router-dom";
 
-const Dropdown = ({ label, items, isDesktop }) => {
+const Dropdown = ({ label, items, isDesktop, onItemClick = () => {} }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -41,16 +43,19 @@ const Dropdown = ({ label, items, isDesktop }) => {
           }`}
         >
           {items.map((item) => (
-            <a
+            <Link
               key={item.name}
-              href={item.link}
+              to={item.link}
               className={`block ${
                 isDesktop ? "px-4 py-2" : "py-2"
               } text-gray-900 hover:bg-custom-green-1 dark:text-gray-100 dark:hover:text-gray-800 transition-colors duration-300`}
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setIsOpen(false);
+                onItemClick();
+              }}
             >
               {item.name}
-            </a>
+            </Link>
           ))}
         </div>
       )}
@@ -61,6 +66,7 @@ const Dropdown = ({ label, items, isDesktop }) => {
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const navigate = useNavigate();
 
   const navItems = [
     { name: "Home", link: "/" },
@@ -100,6 +106,14 @@ const Navbar = () => {
     },
   ];
 
+  const handleSearchSubmit = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleSearchItemSelect = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <nav className="sticky top-0 z-50 bg-white dark:bg-custom-dark shadow-md dark:shadow-sm dark:shadow-black">
       <div className="container mx-auto px-4 lg:px-8">
@@ -115,13 +129,13 @@ const Navbar = () => {
 
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="/">
+            <Link to="/">
               <img
                 src={logo}
                 alt="Logo"
                 className="h-8 md:h-12 w-auto transition-transform hover:scale-105"
               />
-            </a>
+            </Link>
           </div>
 
           {/* Navigation Items (Desktop) */}
@@ -135,29 +149,24 @@ const Navbar = () => {
                   isDesktop={true}
                 />
               ) : (
-                <a
+                <Link
                   key={item.name}
-                  href={item.link}
+                  to={item.link}
                   className="relative text-base font-bold lg:text-lg text-gray-900 dark:text-gray-100 dark:hover:text-custom-green hover:text-custom-green transition-colors duration-300"
                 >
                   {item.name}
-                </a>
+                </Link>
               )
             )}
           </div>
 
           {/* Search Bar */}
           <div className="hidden sm:flex items-center max-w-xs flex-1 ml-auto">
-            <div className="w-full flex items-center bg-gray-100 rounded-lg hover:bg-custom-green-1 transition-colors duration-200">
-              <input
-                type="text"
-                placeholder="Search"
-                className="w-full bg-transparent py-2 px-4 text-sm text-gray-900 placeholder-gray-500 focus:outline-none"
-              />
-              <button className="p-2 text-gray-600 hover:text-gray-900">
-                <Search size={20} />
-              </button>
-            </div>
+            <SearchBar 
+              onSearchSubmit={handleSearchSubmit}
+              onItemSelect={handleSearchItemSelect}
+              className="w-full"
+            />
           </div>
           <button
             onClick={toggleTheme}
@@ -174,7 +183,7 @@ const Navbar = () => {
         <div className="fixed inset-0 z-50 bg-white dark:bg-custom-dark">
           <div className="flex flex-col h-full p-4">
             <div className="flex items-center justify-between">
-              <img src="./logo2.png" alt="Logo" className="h-8 w-auto" />
+              <img src={logo} alt="Logo" className="h-8 w-auto" />
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="p-2 rounded-md text-gray-900 hover:bg-gray-100 dark:text-gray-100"
@@ -185,15 +194,12 @@ const Navbar = () => {
             </div>
 
             <div className="mt-6 mb-8">
-              <div className="flex items-center bg-gray-100 hover:bg-custom-green-1 rounded-lg transition-colors duration-200">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="w-full bg-transparent py-3 px-4 text-gray-900 placeholder-gray-500 focus:outline-none"
+              <div className="w-full max-w-xs mx-auto">
+                <SearchBar 
+                  onSearchSubmit={handleSearchSubmit}
+                  onItemSelect={handleSearchItemSelect}
+                  className="w-full"
                 />
-                <button className="p-3 text-gray-600">
-                  <Search size={20} />
-                </button>
               </div>
             </div>
 
@@ -205,16 +211,17 @@ const Navbar = () => {
                     label={item.name}
                     items={item.dropdown}
                     isDesktop={false}
+                    onItemClick={() => setIsMobileMenuOpen(false)}
                   />
                 ) : (
-                  <a
+                  <Link
                     key={item.name}
-                    href={item.link}
-                    className=" text-gray-900 hover:text-custom-green transition-colors duration-300 font-bold dark:text-gray-100"
+                    to={item.link}
+                    className="text-gray-900 hover:text-custom-green transition-colors duration-300 font-bold dark:text-gray-100"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 )
               )}
             </div>

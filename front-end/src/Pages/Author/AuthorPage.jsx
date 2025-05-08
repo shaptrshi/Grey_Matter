@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { FaHome, FaSignOutAlt, FaPlus, FaUserCircle } from "react-icons/fa";
-import { Search } from "lucide-react";
 import axios from "axios";
 import logo from "../../assets/logo2.png";
+import SearchBar from "../../components/searchbar/searchbar";
 
 const AuthorPage = () => {
   const navigate = useNavigate();
@@ -181,6 +181,7 @@ const AuthorPage = () => {
     return parts[parts.length - 1];
   };
 
+
   return (
     <div className="dark:bg-custom-dark dark:text-white min-h-screen">
       {/* Navbar */}
@@ -195,19 +196,17 @@ const AuthorPage = () => {
           </a>
         </div>
         <div className="flex items-center space-x-4">
+          <div className="sm:hidden flex items-center max-w-xs flex-1 ml-4">
+            <SearchBar
+              
+              className="w-full"
+            />
+          </div>
           <div className="hidden sm:flex items-center max-w-xs flex-1 ml-4">
-            <div className="w-full flex items-center bg-gray-100 hover:bg-custom-green-1 transition-colors duration-200 rounded-lg">
-              <input
-                type="text"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-transparent py-2 px-4 text-sm text-gray-900 placeholder-gray-500 focus:outline-none"
-              />
-              <button className="p-2 text-gray-600 hover:text-gray-900">
-                <Search size={20} />
-              </button>
-            </div>
+            <SearchBar
+            
+              className="w-full"
+            />
           </div>
           <TooltipProvider>
             <Tooltip content="Go to Home">

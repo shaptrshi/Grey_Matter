@@ -29,10 +29,13 @@ import SignUp from "./Pages/Author/SignUp";
 import AuthRoute from "./Pages/AuthRoute";
 import Unauthorized from "./Pages/Unauthorized";
 import ProtectedRoute from "./components/protectedRoute/ProtectedRoute";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <Router>
+      <Toaster position="top-right" reverseOrder={false} />
+
       <Routes>
         <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
           <Route path="/admin" element={<Admin />} />
