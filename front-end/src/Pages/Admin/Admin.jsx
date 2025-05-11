@@ -93,12 +93,22 @@ const Admin = () => {
   const handleEdit = (id) => navigate(`/edit-article/${id}`);
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost:5000/api/admin/logout");
-      navigate("/admin/signup");
+      await axios.post(
+        "http://localhost:5000/api/users/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      localStorage.removeItem("token");
+      navigate("/signup");
     } catch (error) {
-      console.error("Error logging out: ", error);
+      console.error("Error logging out", error);
     }
   };
+
 
   const handleGoToHomePage = () => navigate("/");
 
