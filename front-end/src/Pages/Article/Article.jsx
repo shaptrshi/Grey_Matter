@@ -140,21 +140,23 @@ const Article = () => {
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/20 z-10"></div>
+        </div>
 
-          {/* Tags Below Banner Text within the Banner Image */}
-          {article.tags && (
-            <div className="absolute bottom-36 left-1/2 transform -translate-x-1/2 flex justify-center space-x-4 z-20">
-              {article.tags.map((tag, index) => (
+        {article.tags && (
+          <div className="flex flex-wrap justify-center gap-3 mb-8 px-4">
+            {article.tags.map((tag, index) => {
+              const formattedTag = tag.replace(/_/g, " ");
+              return (
                 <div
                   key={index}
-                  className="bg-gray-500 bg-opacity-60 text-white text-xs px-2 py-1 rounded-md shadow-lg cursor-pointer hover:bg-gray-600  hover:bg-opacity-60"
+                  className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white text-sm sm:text-base px-3 py-1 rounded-full shadow-md cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg"
                 >
-                  {tag}
+                  #{formattedTag}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+              );
+            })}
+          </div>
+        )}
 
         <Card className="overflow-hidden dark:bg-custom-dark">
           <CardContent className="p-6">

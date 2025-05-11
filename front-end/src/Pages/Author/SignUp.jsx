@@ -3,8 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo2.png";
 
-
 const SignUp = () => {
+  const [role, setRole] = useState("author");
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState("");
@@ -112,8 +112,6 @@ const SignUp = () => {
         config
       );
 
-      console.log("Response:", res.data);
-
       // Store user data including role
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userRole", res.data.role);
@@ -126,7 +124,7 @@ const SignUp = () => {
 
       // Redirect based on role
       if (res.data.role === "admin") {
-        navigate("/admin/dashboard");
+        navigate("/admin");
         alert("Admin logged in successfully");
       } else {
         navigate("/author-page");
@@ -195,31 +193,50 @@ const SignUp = () => {
     <>
       <nav className="sticky top-0 z-50 bg-white dark:bg-custom-dark shadow-md dark:shadow-sm dark:shadow-black p-4">
         <div className="mx-auto flex justify-center items-center">
-          <a href="/" className="transition-opacity duration-300 hover:opacity-80">
-          <img
-            src={logo}
-            alt="Logo"
-            className="h-8 md:h-12 w-auto transition-transform hover:scale-105 duration-300"
-          />
+          <a
+            href="/"
+            className="transition-opacity duration-300 hover:opacity-80"
+          >
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-8 md:h-12 w-auto transition-transform hover:scale-105 duration-300"
+            />
           </a>
         </div>
       </nav>
+
       <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-custom-dark">
         <div className="flex items-center justify-center flex-grow px-4 py-8">
           <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg dark:bg-custom-dark">
             <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">
-              {isLogin ? "Author Login" : "Author Sign Up"}
+              {isLogin
+                ? `${role.charAt(0).toUpperCase() + role.slice(1)} Login`
+                : "Author Sign Up"}
             </h2>
-
             {serverError && (
               <p className="text-red-500 text-sm text-center mb-4">
                 {serverError}
               </p>
             )}
 
+            <div className="mb-6 text-center">
+              <label className="text-gray-700 dark:text-gray-100 font-semibold mr-4">
+                Login as:
+              </label>
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="border rounded px-4 py-2 text-black"
+              >
+                <option value="author">Author</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Registration specific fields */}
-              {!isLogin && (
+              {!isLogin && role === "author" && (
                 <>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
@@ -269,7 +286,6 @@ const SignUp = () => {
               )}
 
               {/* Common fields */}
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
                   Email
@@ -304,7 +320,7 @@ const SignUp = () => {
               </div>
 
               {/* Confirm Password for sign up */}
-              {!isLogin && (
+              {!isLogin && role === "author" && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
                     Confirm Password
@@ -334,15 +350,24 @@ const SignUp = () => {
               </button>
             </form>
 
-            <p className="mt-4 text-sm text-center text-gray-600 dark:text-gray-200">
-              {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-              <button
-                onClick={toggleAuthMode}
-                className="text-blue-500 hover:underline"
-              >
-                {isLogin ? "Sign Up" : "Login"}
-              </button>
-            </p>
+            {role === "author" && (
+              <p className="text-center text-sm mt-4 text-gray-600 dark:text-gray-300">
+                {isLogin
+                  ? "Don't have an account?"
+                  : "Already have an account?"}{" "}
+                <button
+                  type="button"
+                  onClick={toggleAuthMode}
+                  className="text-blue-500 hover:underline font-semibold"
+                >
+                  {isLogin
+                    ? "Sign Up"
+                    : !isLogin && role !== "author"
+                    ? "Login"
+                    : "Login"}
+                </button>
+              </p>
+            )}
           </div>
         </div>
         <footer className="bg-white dark:bg-custom-dark py-4">

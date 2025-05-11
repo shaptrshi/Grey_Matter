@@ -217,9 +217,9 @@ const Admin = () => {
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="p-3 sm:p-4 -mt-2">
-                            <p className="font-semibold text-teal-700">
-                              {article.date}
-                            </p>
+                          <p className="font-semibold text-teal-700">
+                            {article.date}
+                          </p>
                           <div className="flex justify-end gap-4 mt-2">
                             <Button
                               onClick={(e) => {
