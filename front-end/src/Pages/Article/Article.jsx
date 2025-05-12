@@ -7,6 +7,7 @@ import { FaLinkedinIn, FaLink } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import axios from "axios";
 import toast from "react-hot-toast";
+import DOMPurify from "dompurify";
 
 const Article = () => {
   const navigate = useNavigate();
@@ -153,7 +154,9 @@ const Article = () => {
           <CardContent className="p-6">
             <div
               className="ql-editor"
-              dangerouslySetInnerHTML={{ __html: article.content }}
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(article.content),
+              }}
             />
           </CardContent>
         </Card>
@@ -192,21 +195,21 @@ const Article = () => {
 
         {/* Tags */}
         <div className="mt-8">
-        <h2 className="text-2xl font-semibold text-foreground mb-4">
+          <h2 className="text-2xl font-semibold text-foreground mb-4">
             Topics
-        </h2>
-        {Array.isArray(article.tags) && (
-          <div className="flex flex-wrap justify-left gap-2 mb-5 px-2">
-            {article.tags.map((tag, index) => (
-              <div
-                key={index}
-                className="bg-white dark:bg-custom-dark text-gray-700 font-bold dark:text-gray-400 text-sm sm:text-base px-3 py-1 rounded-full hover:text-custom-green dark:hover:text-custom-green cursor-pointer border-2 border-gray-400 dark:border-gray-700"
-              >
-                {tag.replace(/_/g, " ")}
-              </div>
-            ))}
-          </div>
-        )}
+          </h2>
+          {Array.isArray(article.tags) && (
+            <div className="flex flex-wrap justify-left gap-2 mb-5 px-2">
+              {article.tags.map((tag, index) => (
+                <div
+                  key={index}
+                  className="bg-white dark:bg-custom-dark text-gray-700 font-bold dark:text-gray-400 text-sm sm:text-base px-3 py-1 rounded-full hover:text-custom-green dark:hover:text-custom-green cursor-pointer border-2 border-gray-400 dark:border-gray-700"
+                >
+                  {tag.replace(/_/g, " ")}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Feedback */}
