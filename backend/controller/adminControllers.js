@@ -4,7 +4,14 @@ const Article = require("../models/articleModel");
 //Get all users(Admin Only)
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}).select("-password");
+    const users = await User.find({})
+    .select("-password")
+    .populate({
+      path: "articles",
+      select: "title bannerImage createdAt",
+      options: { sort: { createdAt: -1}, limit: 4}
+    })
+    .lean();
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
@@ -18,6 +25,7 @@ const deleteUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    await Article.deleteMany({ author: user._id });
     await user.deleteOne();
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
@@ -44,6 +52,9 @@ const deleteArticleAdmin = async (req, res) => {
     if (!article) {
       return res.status(404).json({ message: "Article not found" });
     }
+    await User.findByIdAndUpdate(article.author, {
+      $pull: { articles: article._id},
+    })
     await article.deleteOne();
     res.status(200).json({ message: "Article deleted successfully" });
   } catch (error) {
@@ -55,6 +66,7 @@ const deleteArticleAdmin = async (req, res) => {
 const getAllArticlesByUserAdmin = async (req, res) => {
   try {
     const articles = await Article.find({ author: req.params.id })
+      .sort({ createdAt: -1})
       .populate("author", "name email")
       .lean();
     res.status(200).json(articles);

@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { FaLinkedinIn, FaLink } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const Article = () => {
   const navigate = useNavigate();
@@ -17,21 +19,18 @@ const Article = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      setIsAuthor(true);
-    }
+    const userData = JSON.parse(localStorage.getItem("user"));
     const fetchArticle = async () => {
       try {
         const backendUrl = `http://localhost:5000/api/articles/${id}`;
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
         const { data } = await axios.get(backendUrl, { headers });
 
-        if (data && typeof data === "object" && data._id) {
-          setArticle(data);
-        } else if (data.article) {
-          setArticle(data.article);
-        } else {
-          setArticle(null);
+        const articleData = data?.article || data;
+        setArticle(articleData);
+
+        if (userData?._id && articleData?.author?._id) {
+          setIsAuthor(userData._id === articleData.author._id);
         }
       } catch (error) {
         console.error("Error fetching article:", error);
@@ -43,7 +42,7 @@ const Article = () => {
 
     fetchArticle();
   }, [id]);
-  console.log("Article data:", article);
+
   useEffect(() => {
     const fetchRecommendedArticles = async () => {
       try {
@@ -93,15 +92,24 @@ const Article = () => {
       .writeText(url)
       .then(() => {
         setIsUrlCopied(true);
-        setTimeout(() => setIsUrlCopied(false), 2000); // Reset after 2 seconds
+        toast.success("URL copied to clipboard!");
+        setTimeout(() => setIsUrlCopied(false), 2000);
       })
       .catch(() => {
-        alert("Failed to copy URL!");
+        toast.error("Failed to copy URL!");
       });
   };
 
   if (loading) {
-    return <div className="text-center py-20">Loading article...</div>;
+    return (
+      <div className="container mx-auto px-5 py-8 max-w-screen-xl">
+        <Skeleton className="w-full h-[300px] mb-6" />
+        <Skeleton className="h-8 w-3/4 mb-3" />
+        <Skeleton className="h-6 w-1/2 mb-6" />
+        <Skeleton className="w-full h-80 mb-8" />
+        <Skeleton className="h-10 w-1/3" />
+      </div>
+    );
   }
 
   if (!article) {
@@ -113,8 +121,8 @@ const Article = () => {
   return (
     <div className="bg-background min-h-screen">
       <div className="container mx-auto px-5 py-8 max-w-screen-xl">
+        {/* Banner */}
         <div className="relative w-70 h-60 md:h-[25rem] lg:h-[30rem] overflow-hidden mb-8 flex items-center justify-center text-center">
-          {/* Banner Text */}
           <div className="absolute z-20 text-white px-5 md:px-10 lg:px-20">
             <h1 className="text-5xl md:text-6xl font-semibold mb-4">
               {article.title}
@@ -125,40 +133,23 @@ const Article = () => {
                 to={`/profile/${article.author?._id}`}
                 className="text-white hover:underline"
               >
-                {article.author.name || "Unknown Author"}
+                {article.author?.name || "Unknown Author"}
               </Link>{" "}
               | {new Date(article.createdAt).toLocaleDateString()}
             </p>
           </div>
-
-          {/* Banner Image */}
           {article.bannerImage && (
             <img
               src={article.bannerImage}
-              alt={article.title}
+              alt={article.title || "Article Banner"}
               className="absolute inset-0 w-full h-full object-cover z-10"
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/20 z-10"></div>
         </div>
 
-        {article.tags && (
-          <div className="flex flex-wrap justify-center gap-3 mb-8 px-4">
-            {article.tags.map((tag, index) => {
-              const formattedTag = tag.replace(/_/g, " ");
-              return (
-                <div
-                  key={index}
-                  className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white text-sm sm:text-base px-3 py-1 rounded-full shadow-md cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                >
-                  #{formattedTag}
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        <Card className="overflow-hidden dark:bg-custom-dark">
+        {/* Content */}
+        <Card className="overflow-hidden dark:bg-custom-dark ">
           <CardContent className="p-6">
             <div
               className="ql-editor"
@@ -167,7 +158,7 @@ const Article = () => {
           </CardContent>
         </Card>
 
-        {/* Social Media Share and Feedback */}
+        {/* Share */}
         <div className="mt-8">
           <h2 className="text-2xl font-semibold text-foreground mb-4">
             Share this article
@@ -176,9 +167,10 @@ const Article = () => {
             {["linkedin", "email", "link"].map((platform, index) => (
               <Button
                 key={index}
+                aria-label={`Share on ${platform}`}
                 variant="outline"
                 onClick={() => shareArticle(platform)}
-                className={`bg-white dark:bg-custom-dark text-black p-5 text-xl rounded-md shadow-sm dark:shadow-sm dark:shadow-black transition-transform transform hover:scale-110 border-none hover:shadow-gray-400 
+                className={`bg-white dark:bg-custom-dark text-black p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 border-none 
                 ${
                   platform === "linkedin" &&
                   "text-blue-900 hover:bg-blue-700 dark:text-blue-700 dark:hover:bg-blue-800"
@@ -196,12 +188,28 @@ const Article = () => {
               </Button>
             ))}
           </div>
-
-          {isUrlCopied && (
-            <div className="mt-2 text-red-600">URL copied to clipboard!</div>
-          )}
         </div>
 
+        {/* Tags */}
+        <div className="mt-8">
+        <h2 className="text-2xl font-semibold text-foreground mb-4">
+            Topics
+        </h2>
+        {Array.isArray(article.tags) && (
+          <div className="flex flex-wrap justify-left gap-2 mb-5 px-2">
+            {article.tags.map((tag, index) => (
+              <div
+                key={index}
+                className="bg-white dark:bg-custom-dark text-gray-700 font-bold dark:text-gray-400 text-sm sm:text-base px-3 py-1 rounded-full hover:text-custom-green dark:hover:text-custom-green cursor-pointer border-2 border-gray-400 dark:border-gray-700"
+              >
+                {tag.replace(/_/g, " ")}
+              </div>
+            ))}
+          </div>
+        )}
+        </div>
+
+        {/* Feedback */}
         <div className="mt-10">
           <Button
             variant="outline"
@@ -215,7 +223,7 @@ const Article = () => {
           </Button>
         </div>
 
-        {/* Recommended Articles Section */}
+        {/* Recommendations */}
         {recommendedArticles.length > 0 && (
           <div className="mt-12">
             <h2 className="text-2xl font-semibold text-foreground mb-6">
@@ -225,20 +233,18 @@ const Article = () => {
               {recommendedArticles.map((article, index) => (
                 <Card
                   key={index}
-                  className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black "
+                  className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black"
                   onClick={() => navigate(`/articles/${article._id}`)}
                 >
                   <div className="relative h-[150px] sm:h-[150px]">
                     <img
                       src={article.bannerImage}
-                      alt={article.title}
+                      alt={article.title || "Recommended Article"}
                       className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
                     />
                   </div>
                   <CardHeader className="p-3 sm:p-4 pt-0">
-                    <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2  hover:underline dark:text-gray-100">
-                      {" "}
-                      {/* Line clamping for titles */}
+                    <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2 hover:underline dark:text-gray-100">
                       {article.title}
                     </CardTitle>
                   </CardHeader>

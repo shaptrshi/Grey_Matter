@@ -15,6 +15,7 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 import axios from "axios";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Environment = () => {
   const [articles, setArticles] = useState([]);
@@ -80,13 +81,18 @@ const Environment = () => {
 
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, i) => (
-              <div
-                key={i}
-                className="animate-pulse bg-gray-200 dark:bg-gray-700 h-[300px] rounded-lg"
-              />
-            ))}
-          </div>
+           {[...Array(8)].map((_, i) => (
+             <div key={i} className="p-2">
+               <Skeleton className="h-[150px] w-full rounded-lg mb-3" />
+               <Skeleton className="h-4 w-3/4 mb-2" />
+               <Skeleton className="h-4 w-2/3 mb-2" />
+               <div className="flex justify-between mt-4">
+                 <Skeleton className="h-4 w-20" />
+                 <Skeleton className="h-4 w-16" />
+               </div>
+             </div>
+           ))}
+         </div>
         ) : articles.length === 0 ? (
           <p className="text-center text-muted-foreground">
             No articles found.
