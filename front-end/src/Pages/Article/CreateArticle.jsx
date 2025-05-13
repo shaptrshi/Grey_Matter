@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "react-hot-toast";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // Import Quill's CSS for styling
+import "react-quill/dist/quill.snow.css";
 import QuillToolbar, { modules, formats } from "./EditorToolbar";
-import { FaArrowLeft } from "react-icons/fa"; // Import the back arrow icon
+import { FaArrowLeft } from "react-icons/fa";
 import axios from "axios";
 
 const CreateArticle = () => {
@@ -16,7 +18,8 @@ const CreateArticle = () => {
   const [bannerImage, setBannerImage] = useState(null);
   const [content, setContent] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
-  const [tags, setTags] = useState([]); // State to store selected tags
+  const [tags, setTags] = useState([]);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const availableTags = [
     "Trending",
@@ -52,12 +55,13 @@ const CreateArticle = () => {
   };
 
   const handlePublish = async (e) => {
-    e.preventDefault(); // Prevents page reload
-
-    if (!title || !content) {
-      alert("Please fill out all fields.");
+    e.preventDefault();
+    if (!title || !content || !bannerImage || tags.length === 0) {
+      toast.error("Please fill out all required fields.");
       return;
     }
+
+    setIsPublishing(true);
 
     try {
       const articleData = {
@@ -65,28 +69,28 @@ const CreateArticle = () => {
         content,
         tags,
         isFeatured,
+        bannerImage,
       };
 
-      if (bannerImage) {
-        articleData.bannerImage = bannerImage;
-      }
-
       const backendUrl = "http://localhost:5000/api/articles";
-
       const { data } = await axios.post(backendUrl, articleData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
       });
-      if (data && data.article) {
-        alert("Article published successfully!");
-        navigate("/article");
+
+      if (data?.article?._id) {
+        toast.success("Article published successfully!");
+        navigate(`/articles/${data.article._id}`);
       } else {
-        alert("Failed to publish article. Please try again.");
+        toast.error("Something went wrong. Try again.");
       }
     } catch (error) {
+      toast.error("Failed to publish article.");
       console.error("Error publishing article:", error);
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -104,132 +108,148 @@ const CreateArticle = () => {
               </button>
               <h1 className="text-2xl font-semibold">Create Article</h1>
             </div>
-            <form onSubmit={handlePublish} className="space-y-4">
-              <div>
-                <Label htmlFor="title" className="text-sm font-medium">
-                  Article Title
-                </Label>
-                <Input
-                  id="title"
-                  type="text"
-                  placeholder="Enter the title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="mt-2 border-2 border-gray-300"
-                  required
-                />
+
+            {/* Skeleton while publishing */}
+            {isPublishing ? (
+              <div className="space-y-4">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-52 w-full" />
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-12 w-40" />
               </div>
-              <div>
-                <Label htmlFor="banner" className="text-sm font-medium">
-                  Banner Image
-                </Label>
-                <Input
-                  id="banner"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleBannerImageUpload}
-                  className="mt-2 w-50 cursor-pointer bg-gray-100 text-gray-500 hover:bg-custom-green-1 dark:hover:bg-custom-accent-green shadow-sm transition-transform transform hover:scale-105 border-2 border-gray-300 dark:text-black"
-                  required
-                />
-                {bannerImage && (
-                  <div className="mt-4">
-                    <img
-                      src={bannerImage}
-                      alt="Banner Preview"
-                      className="w-50 h-50 rounded-md shadow-md"
-                    />
-                  </div>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="content" className="text-sm font-medium">
-                  Article Content
-                </Label>
-                <QuillToolbar />
-                <ReactQuill
-                  theme="snow"
-                  id="content"
-                  value={content}
-                  onChange={setContent}
-                  placeholder="Write something awesome..."
-                  modules={modules}
-                  formats={formats}
-                  className="mt-2"
-                  style={{
-                    minHeight: "200px",
-                    maxHeight: "600px",
-                    overflowY: "auto",
-                  }}
-                />
-                <style>
-                  {`
+            ) : (
+              <form onSubmit={handlePublish} className="space-y-4">
+                <div>
+                  <Label htmlFor="title">Article Title</Label>
+                  <Input
+                    id="title"
+                    type="text"
+                    placeholder="Enter the title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="mt-2 border-2 border-gray-300"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="banner">Banner Image</Label>
+                  <Input
+                    id="banner"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleBannerImageUpload}
+                    className="mt-2 w-50 cursor-pointer bg-gray-100 text-gray-500 hover:bg-custom-green-1 dark:hover:bg-custom-accent-green shadow-sm transition-transform transform hover:scale-105 border-2 border-gray-300 dark:text-black"
+                    required
+                  />
+                  {bannerImage && (
+                    <div className="mt-4">
+                      <img
+                        src={bannerImage}
+                        alt="Banner Preview"
+                        className="w-50 h-50 rounded-md shadow-md"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="content">Article Content</Label>
+                  <QuillToolbar />
+                  <ReactQuill
+                    theme="snow"
+                    id="content"
+                    value={content}
+                    onChange={setContent}
+                    placeholder="Write something awesome..."
+                    modules={modules}
+                    formats={formats}
+                    className="mt-2"
+                    style={{
+                      minHeight: "200px",
+                      maxHeight: "600px",
+                      overflowY: "auto",
+                    }}
+                  />
+                  <style>
+                    {`
+                    .ql-toolbar {
+                      border: 1px solid #ccc;
+                      border-radius: 4px;
+                      margin-bottom: 10px;
+                    }
                     .ql-container {
+                      border: 1px solid #ccc;
+                      border-radius: 4px;
                       min-height: 200px;
                       max-height: 600px;
                       overflow-y: auto;
                     }
                     @media (max-width: 768px) {
                       .ql-container {
-                        min-height: 200px;
+                        min-height: 150px;
+                        max-height: 400px;
                       }
-                    }
+                    }  
                   `}
-                </style>
-              </div>
-              <div>
-                <Label htmlFor="tags" className="text-sm font-medium pr-2">
-                  Tags (Pages)
-                </Label>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {availableTags.map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      className={`px-4 py-2 rounded-full transiton-transform transform hover:scale-105 dark:text-black ${
-                        tags.includes(tag)
-                          ? "bg-custom-green-1 dark:bg-custom-accent-green"
-                          : "bg-gray-200 dark:bg-gray-300"
-                      }`}
-                      onClick={() => handleTagToggle(tag)}
-                    >
-                      {tag}
-                    </button>
-                  ))}
+                  </style>
                 </div>
-              </div>
-              <div>
-                <Label htmlFor="featured" className="text-sm font-medium">
-                  Mark as Featured
-                </Label>
-                <button
-                  onClick={() => setIsFeatured(!isFeatured)}
-                  className={`w-14 h-8 flex items-center rounded-full p-1 transition-colors ${
-                    isFeatured ? "bg-custom-green" : "bg-gray-600"
-                  }`}
-                >
-                  <div
-                    className={`w-6 h-6 bg-white rounded-full transition-transform ${
-                      isFeatured ? "transform translate-x-6" : ""
+
+                <div>
+                  <Label htmlFor="tags">Tags (Pages)</Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {availableTags.map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        className={`px-4 py-2 rounded-full transition-transform transform hover:scale-105 dark:text-black ${
+                          tags.includes(tag)
+                            ? "bg-custom-green-1 dark:bg-custom-accent-green"
+                            : "bg-gray-200 dark:bg-gray-300"
+                        }`}
+                        onClick={() => handleTagToggle(tag)}
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="featured">Mark as Featured</Label>
+                  <button
+                    onClick={() => setIsFeatured(!isFeatured)}
+                    type="button"
+                    className={`w-14 h-8 flex items-center rounded-full p-1 transition-colors ${
+                      isFeatured ? "bg-custom-green" : "bg-gray-600"
                     }`}
-                  ></div>
-                </button>
-              </div>
-              <div className="flex space-x-4 mt-6">
-                <Button
-                  type="submit"
-                  className="w-50 bg-gray-900 text-gray-200 hover:bg-custom-accent-green dark:hover:bg-custom-accent-green transition-transform transform hover:scale-105"
-                >
-                  Publish Article
-                </Button>
-                <Button
-                  type="button"
-                  onClick={() => navigate(-1)}
-                  className="w-50 bg-gray-100 text-black hover:bg-custom-green-1 dark:hover:bg-custom-accent-green transition-transform transform hover:scale-105 border-2 border-gray-300"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
+                  >
+                    <div
+                      className={`w-6 h-6 bg-white rounded-full transition-transform ${
+                        isFeatured ? "transform translate-x-6" : ""
+                      }`}
+                    ></div>
+                  </button>
+                </div>
+
+                <div className="flex space-x-4 mt-6">
+                  <Button
+                    type="submit"
+                    className="w-50 bg-gray-900 text-gray-200 hover:bg-custom-accent-green dark:hover:bg-custom-accent-green transition-transform transform hover:scale-105"
+                    disabled={isPublishing}
+                  >
+                    Publish Article
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => navigate(-1)}
+                    className="w-50 bg-gray-100 text-black hover:bg-custom-green-1 dark:hover:bg-custom-accent-green transition-transform transform hover:scale-105 border-2 border-gray-300"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            )}
           </CardContent>
         </Card>
       </div>

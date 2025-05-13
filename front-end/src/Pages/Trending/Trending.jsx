@@ -112,7 +112,7 @@ const Trending = () => {
           </div>
         ) : articles.length === 0 ? (
           <p className="text-center text-muted-foreground">
-            No trending articles found.
+            No articles found.
           </p>
         ) : (
           <>
@@ -178,12 +178,18 @@ const Trending = () => {
                     {/* Page numbers */}
                     {(() => {
                       const pageNumbersToShow = 5;
-                      let startPage = Math.max(1, currentPage - Math.floor(pageNumbersToShow / 2));
+                      let startPage = Math.max(
+                        1,
+                        currentPage - Math.floor(pageNumbersToShow / 2)
+                      );
                       let endPage = startPage + pageNumbersToShow - 1;
 
                       if (endPage > totalPages) {
                         endPage = totalPages;
-                        startPage = Math.max(1, endPage - pageNumbersToShow + 1);
+                        startPage = Math.max(
+                          1,
+                          endPage - pageNumbersToShow + 1
+                        );
                       }
 
                       const pages = [];
@@ -192,7 +198,9 @@ const Trending = () => {
                           <PaginationItem key={i}>
                             <PaginationLink
                               isActive={i === currentPage}
-                              onClick={() => updateParams({ page: String(i), sort })}
+                              onClick={() =>
+                                updateParams({ page: String(i), sort })
+                              }
                               className={`cursor-pointer py-2 px-4 rounded-lg transition-all ${
                                 i === currentPage
                                   ? "bg-teal-500 text-white dark:bg-custom-dark"

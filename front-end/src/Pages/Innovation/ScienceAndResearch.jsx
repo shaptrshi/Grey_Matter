@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -20,10 +20,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 const ScienceAndResearch = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sort, setSort] = useState("latest");
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const currentPage = parseInt(searchParams.get("page") || "1", 10);
+    const sort = searchParams.get("sort") || "latest";
 
   const fetchArticles = useCallback(async () => {
     try {
@@ -40,9 +42,26 @@ const ScienceAndResearch = () => {
   }, [sort, currentPage]);
 
   useEffect(() => {
-    setLoading(true);
     fetchArticles();
   }, [fetchArticles]);
+
+   useEffect(() => {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }, [currentPage]);
+
+    const updateParams = (newParams) => {
+      setSearchParams((prev) => {
+        const updated = new URLSearchParams(prev);
+        Object.entries(newParams).forEach(([key, value]) => {
+          if (value === undefined || value === null) {
+            updated.delete(key);
+          } else {
+            updated.set(key, value);
+          }
+        });
+        return updated;
+      });
+    };
 
   return (
     <div className="container mx-auto px-4 sm:px-10 lg:px-8 py-4 sm:py-6 lg:py-8 min-h-screen bg-gray-100 dark:bg-custom-dark dark:text-gray-100">
@@ -59,11 +78,7 @@ const ScienceAndResearch = () => {
         <div className="flex justify-center sm:justify-end mb-6 px-4">
           <Select
             value={sort}
-            onValueChange={(value) => {
-              setSort(value);
-              setCurrentPage(1);
-              fetchArticles();
-            }}
+            onValueChange={(value) => updateParams({ sort: value, page: "1" })}
           >
             <SelectTrigger
               className="w-[220px] bg-white dark:bg-custom-dark text-gray-800 dark:text-white rounded-lg border border-gray-300 dark:border-gray-600 shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 flex justify-between items-center py-2 px-4 transition-all"
@@ -142,15 +157,16 @@ const ScienceAndResearch = () => {
             </div>
 
             {/* Modern Pagination */}
-            {totalPages > 1 || articles.length > 0 ? (
+            {totalPages > 1 && (
               <div className="flex justify-center mt-16">
                 <Pagination className="bg-white dark:bg-custom-dark p-4">
                   <PaginationContent className="flex gap-2">
-                    {/* ← Prev */}
+                    {/* Prev */}
                     <PaginationItem>
                       <PaginationLink
                         onClick={() =>
-                          currentPage > 1 && setCurrentPage(currentPage - 1)
+                          currentPage > 1 &&
+                          updateParams({ page: String(currentPage - 1), sort })
                         }
                         className="cursor-pointer py-2 px-3 rounded-lg text-teal-700 hover:bg-teal-200 dark:hover:bg-teal-600 dark:text-gray-100 dark:hover:text-white"
                       >
@@ -161,18 +177,12 @@ const ScienceAndResearch = () => {
                     {/* Dynamic Pages */}
                     {(() => {
                       const pageNumbersToShow = 5;
-                      let startPage = Math.max(
-                        1,
-                        currentPage - Math.floor(pageNumbersToShow / 2)
-                      );
+                      let startPage = Math.max(1, currentPage - Math.floor(pageNumbersToShow / 2));
                       let endPage = startPage + pageNumbersToShow - 1;
 
                       if (endPage > totalPages) {
                         endPage = totalPages;
-                        startPage = Math.max(
-                          1,
-                          endPage - pageNumbersToShow + 1
-                        );
+                        startPage = Math.max(1, endPage - pageNumbersToShow + 1);
                       }
 
                       const pages = [];
@@ -181,7 +191,7 @@ const ScienceAndResearch = () => {
                           <PaginationItem key={i}>
                             <PaginationLink
                               isActive={i === currentPage}
-                              onClick={() => setCurrentPage(i)}
+                              onClick={() => updateParams({ page: String(i), sort })}
                               className={`cursor-pointer py-2 px-4 rounded-lg transition-all ${
                                 i === currentPage
                                   ? "bg-teal-500 text-white dark:bg-custom-dark"
@@ -201,7 +211,7 @@ const ScienceAndResearch = () => {
                       <PaginationLink
                         onClick={() =>
                           currentPage < totalPages &&
-                          setCurrentPage(currentPage + 1)
+                          updateParams({ page: String(currentPage + 1), sort })
                         }
                         className="cursor-pointer py-2 px-3 rounded-lg text-teal-700 hover:bg-teal-200 dark:hover:bg-teal-600 dark:text-gray-100 dark:hover:text-white"
                       >
@@ -211,7 +221,7 @@ const ScienceAndResearch = () => {
                   </PaginationContent>
                 </Pagination>
               </div>
-            ) : null}
+            )}
           </>
         )}
       </div>
