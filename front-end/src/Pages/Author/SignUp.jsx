@@ -54,7 +54,6 @@ const SignUp = () => {
     setServerError("");
     setLoading(true);
 
-    // Basic validation - check if required fields are empty
     if (!formData.email || !formData.password) {
       setServerError("All fields are required");
       setLoading(false);
@@ -67,16 +66,15 @@ const SignUp = () => {
       let config = {};
 
       if (isLogin) {
-        // For login, send as regular JSON
         dataToSend = {
           email: formData.email.trim(),
           password: formData.password.trim(),
+          role: role,
         };
         config = {
           headers: { "Content-Type": "application/json" },
         };
       } else {
-        // For signup, use FormData
         const formDataToSend = new FormData();
         formDataToSend.append("name", formData.name.trim());
         formDataToSend.append("email", formData.email.trim());
@@ -90,7 +88,6 @@ const SignUp = () => {
           formDataToSend.append("profilePhoto", formData.profilePhoto);
         }
 
-        // Validate passwords match
         if (formData.password !== formData.confirmPassword) {
           setErrors((prev) => ({
             ...prev,
@@ -112,7 +109,21 @@ const SignUp = () => {
         config
       );
 
-      // Store user data including role
+      // 👉 INSERT THIS RIGHT AFTER THE RESPONSE
+      // Role mismatch validation
+      if (role === "author" && res.data.role !== "author") {
+        setServerError("Invalid credentials for selected role.");
+        setLoading(false);
+        return;
+      }
+
+      if (role === "admin" && res.data.role !== "admin") {
+        setServerError("Invalid credentials for selected role.");
+        setLoading(false);
+        return;
+      }
+
+      // Store user data in localStorage
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userRole", res.data.role);
       localStorage.setItem("userId", res.data._id);
@@ -220,19 +231,21 @@ const SignUp = () => {
               </p>
             )}
 
-            <div className="mb-6 text-center">
-              <label className="text-gray-700 dark:text-gray-100 font-semibold mr-4">
-                Login as:
-              </label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="border rounded px-4 py-2 text-black"
-              >
-                <option value="author">Author</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
+            {!(role === "author" && !isLogin) && (
+              <div className="mb-6 text-center">
+                <label className="text-gray-700 dark:text-gray-100 font-semibold mr-4">
+                  Login as:
+                </label>
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="border rounded px-4 py-2 text-black"
+                >
+                  <option value="author">Author</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Registration specific fields */}

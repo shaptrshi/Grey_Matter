@@ -9,15 +9,15 @@ const generateToken = (id) => {
 };
 
 const userLogin = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
   try {
-    if (!email || !password) {
+    if (!email || !password || !role) {
       return res
         .status(400)
         .json({ success: false, message: "All fields required" });
     }
 
-    const userExist = await User.findOne({ email }).populate('articles');
+    const userExist = await User.findOne({ email, role }).populate("articles");
     if (!userExist) {
       return res
         .status(400)
@@ -33,19 +33,21 @@ const userLogin = async (req, res) => {
         role: userExist.role,
         bio: userExist.bio,
         profilePhoto: userExist.profilePhoto,
+        isAdmin: userExist.role === "admin",
         token: generateToken(userExist._id),
       });
     } else {
       res.status(401).json({ success: false, message: "Invalid user data" });
     }
   } catch (error) {
+    console.log("Error", error);
     res.status(500).json({ success: false, error: "Server error", error });
   }
 };
 
 const userRegister = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword, bio } = req.body;
+    const { name, email, password, confirmPassword, bio, role } = req.body;
     const profilePhoto = req.file ? req.file.path : null;
 
     if (!name || !email || !password || !confirmPassword) {
@@ -54,7 +56,7 @@ const userRegister = async (req, res) => {
         .json({ success: false, message: "All fields required" });
     }
 
-    if (password != confirmPassword) {
+    if (password !== confirmPassword) {
       return res
         .status(400)
         .json({ success: false, message: "Passwords do not match" });
@@ -64,16 +66,15 @@ const userRegister = async (req, res) => {
     if (userExist) {
       return res
         .status(400)
-        .json({ succes: false, message: "User already exists" });
+        .json({ success: false, message: "User already exists" });
     }
 
-    const user = new User({ name, email, password, bio, profilePhoto });
-    delete user.confirmPassword;
+    const user = new User({ name, email, password, bio, role, profilePhoto });
 
     await user.save();
 
     res.status(201).json({
-      succes: true,
+      success: true,
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -139,12 +140,14 @@ const userLogout = async (req, res) => {
 const userProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate({
-      path:"articles",
-      options: {sort: { createdAt: -1 }}, // Sort by createdAt in descending order
+      path: "articles",
+      options: { sort: { createdAt: -1 } }, // Sort by createdAt in descending order
     });
 
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     res.status(200).json({
@@ -176,7 +179,9 @@ const getPublicUserProfile = async (req, res) => {
       });
 
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     res.status(200).json({
@@ -200,7 +205,6 @@ const getPublicUserProfile = async (req, res) => {
       .json({ success: false, message: "Server error", error: error.message });
   }
 };
-
 
 module.exports = {
   userLogin,

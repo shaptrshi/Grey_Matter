@@ -14,12 +14,10 @@ const protect = async (req, res, next) => {
   }
 
   if (!token.startsWith("Bearer ")) {
-    return res
-      .status(401)
-      .json({
-        success: false,
-        message: "Access denied. Invalid token format.",
-      });
+    return res.status(401).json({
+      success: false,
+      message: "Access denied. Invalid token format.",
+    });
   }
 
   const tokenWithoutBearer = token.replace("Bearer ", "");
@@ -48,13 +46,11 @@ const protect = async (req, res, next) => {
         .status(401)
         .json({ success: false, message: "Access denied. Invalid token." });
     } else {
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Server error",
-          error: error.message,
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Server error",
+        error: error.message,
+      });
     }
   }
 };
