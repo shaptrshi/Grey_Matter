@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/logo2.png";
+import logo from "../../assets/logo.svg";
 
 const SignUp = () => {
   const [role, setRole] = useState("author");
@@ -109,7 +109,6 @@ const SignUp = () => {
         config
       );
 
-      // 👉 INSERT THIS RIGHT AFTER THE RESPONSE
       // Role mismatch validation
       if (role === "author" && res.data.role !== "author") {
         setServerError("Invalid credentials for selected role.");
@@ -211,7 +210,7 @@ const SignUp = () => {
             <img
               src={logo}
               alt="Logo"
-              className="h-8 md:h-12 w-auto transition-transform hover:scale-105 duration-300"
+              className="h-9 md:h-14 w-auto transition-transform hover:scale-105 duration-300"
             />
           </a>
         </div>
@@ -239,7 +238,7 @@ const SignUp = () => {
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="border rounded px-4 py-2 text-black"
+                  className="border rounded px-4 py-2 text-black dark:bg-custom-dark dark:text-gray-100"
                 >
                   <option value="author">Author</option>
                   <option value="admin">Admin</option>

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { Menu, X, ChevronDown, Moon, Sun } from "lucide-react";
 import { ThemeContext } from "../../context/ThemeContext";
-import logo from "../../assets/logo.svg";
+import logo from "../../assets/logo.svg"
 import SearchBar from "../searchbar/SearchBar";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -133,7 +133,7 @@ const Navbar = () => {
               <img
                 src={logo}
                 alt="Logo"
-                className="h-32 md:h-36 w-auto transition-transform hover:scale-105"
+                className="h-12 md:h-14 w-auto transition-transform hover:scale-105"
               />
             </Link>
           </div>
