@@ -38,7 +38,7 @@ const ArticleCard = memo(({ article, loading }) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-3 sm:p-4 pt-0">
-          <div className="flex justify-between items-center text-xs sm:text-sm mt-5">
+          <div className="flex justify-between items-center text-xs sm:text-sm mt-3">
             <Link 
               to={`/profile/${article.author?._id}`} 
               onClick={(e) => e.stopPropagation()}
@@ -278,72 +278,91 @@ const Home = () => {
         {/* Middle Section */}
         <div className="lg:col-span-6">
           {/* Featured News Section */}
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-md overflow-hidden relative h-[250px] sm:h-[300px] lg:h-[400px]">
+          <div className="relative h-[300px] sm:h-[350px] lg:h-[450px] rounded-xl sm:rounded-2xl overflow-hidden shadow-lg group">
             {loading.featured ? (
-              <div className="w-full h-full relative">
-                <Skeleton className="w-full h-full rounded-xl" />
-                <div className="absolute bottom-0 left-0 w-full p-3 sm:p-4 mb-2">
-                  <Skeleton className="h-8 w-3/4 mb-2" />
-                  <Skeleton className="h-6 w-1/2" />
-                </div>
-                <div className="absolute top-1/2 left-0 right-0 flex justify-between px-2 sm:px-4 -translate-y-1/2">
-                  <Skeleton className="w-8 h-8 rounded-full" />
-                  <Skeleton className="w-8 h-8 rounded-full" />
-                </div>
-              </div>
+              <Skeleton className="w-full h-full rounded-xl" />
             ) : featured.length > 0 ? (
               <>
-                <img
-                  src={featured[activeArticle]?.bannerImage || ""}
-                  alt={featured[activeArticle]?.title || "Featured Article"}
-                  className="w-full h-full object-cover transition-all duration-1000 ease-in-out"
-                  loading="eager"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-50"></div>
-                <Link
-                  to={
-                    featured[activeArticle]?.link ||
-                    `/articles/${featured[activeArticle]?._id}`
-                  }
-                >
-                  <div className="absolute bottom-0 left-0 w-full p-3 sm:p-4 mb-2 text-white">
-                    <h3 className="text-lg sm:text-xl lg:text-3xl font-semibold hover:underline">
+                {/* Background image with zoom effect */}
+                <div className="relative w-full h-full overflow-hidden">
+                  <img
+                    src={featured[activeArticle]?.bannerImage || ""}
+                    alt={featured[activeArticle]?.title || "Featured Article"}
+                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                    loading="eager"
+                  />
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                </div>
+
+                {/* Content */}
+                <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 text-white space-y-3">
+                  {/* Category tag */}
+                  <span className="inline-block px-3 py-1 text-xs font-semibold tracking-wide rounded-full bg-custom-green text-white">
+                    Featured
+                  </span>
+                  
+                  {/* Title with hover effect */}
+                  <Link
+                    to={featured[activeArticle]?.link || `/articles/${featured[activeArticle]?._id}`}
+                    className="block"
+                  >
+                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight hover:underline transition-all">
                       {featured[activeArticle]?.title || "Featured Article"}
                     </h3>
-                    <div className="flex justify-between items-center mt-2">
-                      <Link 
-                        to={`/authors/${featured[activeArticle]?.author?._id || featured[activeArticle]?.author}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-sm font-semibold text-teal-300 hover:underline"
-                      >
-                        {featured[activeArticle]?.author?.name || featured[activeArticle]?.author || "Unknown"}
-                      </Link>
-                      <p className="text-sm font-semibold text-teal-300">
-                        {new Date(featured[activeArticle]?.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
+                  </Link>
+
+                  {/* Author and date */}
+                  <div className="flex items-center space-x-4 text-sm sm:text-base">
+                    <Link 
+                      to={`/authors/${featured[activeArticle]?.author?._id || featured[activeArticle]?.author}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="font-medium text-teal-300 hover:underline hover:text-teal-200 flex items-center"
+                    >
+                      <span>By {featured[activeArticle]?.author?.name || featured[activeArticle]?.author || "Unknown"}</span>
+                    </Link>
+                    <span className="text-gray-300">•</span>
+                    <span className="text-gray-300">
+                      {new Date(featured[activeArticle]?.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
-                </Link>
-                <div className="absolute top-1/2 left-0 right-0 flex justify-between px-2 sm:px-4 -translate-y-1/2">
+                </div>
+
+                {/* Navigation arrows */}
+                <div className="absolute top-1/2 left-0 right-0 flex justify-between px-4 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <button
                     onClick={handlePrev}
-                    className="text-white hover:text-custom-green p-2"
+                    className="p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-all"
                     aria-label="Previous article"
                   >
-                    <MdNavigateBefore size={28} />
+                    <MdNavigateBefore size={32} />
                   </button>
                   <button
                     onClick={handleNext}
-                    className="text-white hover:text-custom-green p-2"
+                    className="p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-all"
                     aria-label="Next article"
                   >
-                    <MdNavigateNext size={28} />
+                    <MdNavigateNext size={32} />
                   </button>
                 </div>
+
+                {/* Indicator dots */}
+                {featured.length > 1 && (
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                    {featured.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setActiveArticle(index)}
+                        className={`w-2 h-2 rounded-full transition-all ${index === activeArticle ? 'bg-custom-green w-4' : 'bg-white/50'}`}
+                        aria-label={`Go to slide ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
               </>
             ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <p>No featured articles available</p>
+              <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                <p className="text-gray-500 dark:text-gray-400">No featured articles available</p>
               </div>
             )}
           </div>
