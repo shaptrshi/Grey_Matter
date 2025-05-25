@@ -37,8 +37,8 @@ const ArticleCard = memo(({ article, loading }) => {
             {article.title}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-3 sm:p-4">
-          <div className="flex justify-between items-center text-xs sm:text-sm">
+        <CardContent className="p-3 sm:p-4 pt-0">
+          <div className="flex justify-between items-center text-xs sm:text-sm mt-5">
             <Link 
               to={`/profile/${article.author?._id}`} 
               onClick={(e) => e.stopPropagation()}
