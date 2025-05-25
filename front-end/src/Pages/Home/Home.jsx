@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useCallback, memo } from "react";
-import { MdNavigateBefore, MdNavigateNext, MdRssFeed, MdArrowForward } from "react-icons/md";
+import {
+  MdNavigateBefore,
+  MdNavigateNext,
+  MdRssFeed,
+  MdArrowForward,
+} from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 // Memoized Article Card Component
 const ArticleCard = memo(({ article, loading }) => {
+  const navigate = useNavigate();
   if (loading) {
     return (
       <div className="space-y-3">
@@ -39,13 +45,15 @@ const ArticleCard = memo(({ article, loading }) => {
         </CardHeader>
         <CardContent className="p-3 sm:p-4 pt-0">
           <div className="flex justify-between items-center text-xs sm:text-sm mt-3">
-            <Link 
-              to={`/profile/${article.author?._id}`} 
-              onClick={(e) => e.stopPropagation()}
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/profile/${article.author?._id}`);
+              }}
               className="font-semibold text-teal-700 hover:underline hover:text-teal-800 dark:hover:text-teal-500"
             >
               {article.author?.name || article.author || "Unknown"}
-            </Link>
+            </span>
             <p className="font-semibold text-teal-700">
               {article.date || new Date(article.createdAt).toLocaleDateString()}
             </p>
@@ -64,13 +72,13 @@ const Section = memo(({ title, articles, loading, limit = 4, genre }) => {
 
   const handleSeeMore = () => {
     const routeMap = {
-      "Trending": "/trending",
-      "Environment": "/environment",
-      "Sustainable_Living": "/sustainable-living",
-      "Interviews": "/interviews",
-      "Spotlight": "/spotlight"
+      Trending: "/trending",
+      Environment: "/environment",
+      Sustainable_Living: "/sustainable-living",
+      Interviews: "/interviews",
+      Spotlight: "/spotlight",
     };
-    
+
     navigate(routeMap[genre] || "/");
   };
 
@@ -80,8 +88,8 @@ const Section = memo(({ title, articles, loading, limit = 4, genre }) => {
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
           {title}
         </h2>
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={handleSeeMore}
           className="text-custom-green hover:text-custom-green-1 dark:text-custom-green dark:hover:text-custom-green-1"
         >
@@ -222,8 +230,8 @@ const Home = () => {
             <h2 className="text-xl sm:text-lg font-semibold text-gray-800 dark:text-gray-100 -mt-5">
               Trending
             </h2>
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               onClick={handleSeeMoreTrending}
               className="text-custom-green hover:text-custom-green-1 dark:text-custom-green dark:hover:text-custom-green-1"
             >
@@ -257,13 +265,15 @@ const Home = () => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="p-3 sm:p-4 pt-0 flex justify-between items-center">
-                      <Link 
-                        to={`/profile/${article.author?._id}`}
-                        onClick={(e) => e.stopPropagation()}
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/profile/${article.author?._id}`);
+                        }}
                         className="text-xs sm:text-sm font-semibold text-teal-700 hover:underline hover:text-teal-800 dark:hover:text-teal-500"
                       >
                         {article.author?.name || article.author || "Unknown"}
-                      </Link>
+                      </span>
                       <p className="text-xs sm:text-sm font-semibold text-teal-700">
                         {new Date(article.createdAt).toLocaleDateString()}
                       </p>
@@ -301,10 +311,13 @@ const Home = () => {
                   <span className="inline-block px-3 py-1 text-xs font-semibold tracking-wide rounded-full bg-custom-green text-white">
                     Featured
                   </span>
-                  
+
                   {/* Title with hover effect */}
                   <Link
-                    to={featured[activeArticle]?.link || `/articles/${featured[activeArticle]?._id}`}
+                    to={
+                      featured[activeArticle]?.link ||
+                      `/articles/${featured[activeArticle]?._id}`
+                    }
                     className="block"
                   >
                     <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight hover:underline transition-all">
@@ -314,16 +327,17 @@ const Home = () => {
 
                   {/* Author and date */}
                   <div className="flex items-center space-x-4 text-sm sm:text-base">
-                    <Link 
-                      to={`/authors/${featured[activeArticle]?.author?._id || featured[activeArticle]?.author}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="font-medium text-teal-300 hover:underline hover:text-teal-200 flex items-center"
-                    >
-                      <span>By {featured[activeArticle]?.author?.name || featured[activeArticle]?.author || "Unknown"}</span>
-                    </Link>
+                    <span className="font-medium text-teal-300  flex items-center">
+                      By{" "}
+                      {featured[activeArticle]?.author?.name ||
+                        featured[activeArticle]?.author ||
+                        "Unknown"}
+                    </span>
                     <span className="text-gray-300">•</span>
                     <span className="text-gray-300">
-                      {new Date(featured[activeArticle]?.createdAt).toLocaleDateString()}
+                      {new Date(
+                        featured[activeArticle]?.createdAt
+                      ).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
@@ -353,7 +367,11 @@ const Home = () => {
                       <button
                         key={index}
                         onClick={() => setActiveArticle(index)}
-                        className={`w-2 h-2 rounded-full transition-all ${index === activeArticle ? 'bg-custom-green w-4' : 'bg-white/50'}`}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          index === activeArticle
+                            ? "bg-custom-green w-4"
+                            : "bg-white/50"
+                        }`}
                         aria-label={`Go to slide ${index + 1}`}
                       />
                     ))}
@@ -362,7 +380,9 @@ const Home = () => {
               </>
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-                <p className="text-gray-500 dark:text-gray-400">No featured articles available</p>
+                <p className="text-gray-500 dark:text-gray-400">
+                  No featured articles available
+                </p>
               </div>
             )}
           </div>
