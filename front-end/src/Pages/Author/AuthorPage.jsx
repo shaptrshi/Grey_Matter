@@ -21,6 +21,8 @@ const AuthorPage = () => {
     articles: [],
   });
 
+  console.log("Author Data:", author);
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -177,10 +179,10 @@ const AuthorPage = () => {
   );
 
   const getFileNameFromPhoturl = (url) => {
-    const parts = url.split("\\");
-    return parts[parts.length - 1];
+    if (!url) return "";
+    const formattedUrl = `${url.replace(/\\/g, "/")}`;
+    return `http://localhost:5000/${formattedUrl}`;
   };
-
 
   return (
     <div className="dark:bg-custom-dark dark:text-white min-h-screen">
@@ -197,16 +199,10 @@ const AuthorPage = () => {
         </div>
         <div className="flex items-center space-x-4">
           <div className="sm:hidden flex items-center max-w-xs flex-1 ml-4">
-            <SearchBar
-              
-              className="w-full"
-            />
+            <SearchBar className="w-full" />
           </div>
           <div className="hidden sm:flex items-center max-w-xs flex-1 ml-4">
-            <SearchBar
-            
-              className="w-full"
-            />
+            <SearchBar className="w-full" />
           </div>
           <TooltipProvider>
             <Tooltip content="Go to Home">

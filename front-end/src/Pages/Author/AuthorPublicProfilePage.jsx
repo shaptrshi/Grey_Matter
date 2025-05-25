@@ -30,6 +30,12 @@ const AuthorPublicProfilePage = () => {
     fetchAuthorData();
   }, [id]);
 
+  const getFileNameFromPhoturl = (url) => {
+    if (!url) return "";
+    const formattedUrl = `${url.replace(/\\/g, "/")}`;
+    return `http://localhost:5000/${formattedUrl}`;
+  };
+
   if (loading) {
     return (
       <div className="dark:bg-custom-dark dark:text-white min-h-screen">
@@ -78,7 +84,7 @@ const AuthorPublicProfilePage = () => {
           <Avatar className="w-32 h-32">
             {author.profilePicture ? (
               <AvatarImage
-                src={author.profilePicture}
+                src={getFileNameFromPhoturl(author.profilePicture)}
                 alt="Profile Picture"
                 className="rounded-full object-cover"
               />
