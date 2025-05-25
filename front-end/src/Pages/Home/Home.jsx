@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 // Memoized Article Card Component
 const ArticleCard = memo(({ article, loading }) => {
   const navigate = useNavigate();
+
   if (loading) {
     return (
       <div className="space-y-3">
@@ -27,8 +28,26 @@ const ArticleCard = memo(({ article, loading }) => {
     );
   }
 
+  const handleCardClick = (e) => {
+    // If the click came from the author name, don't navigate to article
+    if (e.target.closest('.author-name')) {
+      return;
+    }
+    navigate(article.link || `/articles/${article._id}`);
+  };
+
+  const handleAuthorClick = (e) => {
+    e.stopPropagation();
+    if (article.author?._id) {
+      navigate(`/profile/${article.author._id}`);
+    }
+  };
+
   return (
-    <Link to={article.link || `/articles/${article._id}`}>
+    <div 
+      onClick={handleCardClick}
+      className="cursor-pointer"
+    >
       <Card className="hover:shadow-md transition-transform hover:scale-105 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
         <div className="relative h-[150px] sm:h-[150px]">
           <img
@@ -46,11 +65,8 @@ const ArticleCard = memo(({ article, loading }) => {
         <CardContent className="p-3 sm:p-4 pt-0">
           <div className="flex justify-between items-center text-xs sm:text-sm mt-3">
             <span
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/profile/${article.author?._id}`);
-              }}
-              className="font-semibold text-teal-700 hover:underline hover:text-teal-800 dark:hover:text-teal-500"
+              onClick={handleAuthorClick}
+              className="author-name font-semibold text-teal-700 hover:underline hover:text-teal-800 dark:hover:text-teal-500 cursor-pointer"
             >
               {article.author?.name || article.author || "Unknown"}
             </span>
@@ -60,7 +76,7 @@ const ArticleCard = memo(({ article, loading }) => {
           </div>
         </CardContent>
       </Card>
-    </Link>
+    </div>
   );
 });
 
@@ -85,13 +101,13 @@ const Section = memo(({ title, articles, loading, limit = 4, genre }) => {
   return (
     <div className="mt-10 sm:mt-11">
       <div className="flex justify-between items-center mb-5">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
           {title}
         </h2>
         <Button
           variant="ghost"
           onClick={handleSeeMore}
-          className="text-custom-green hover:text-custom-green-1 dark:text-custom-green dark:hover:text-custom-green-1"
+          className="text-custom-green hover:text-custom-accent-green dark:text-custom-green dark:hover:text-custom-accent-green"
         >
           See More <MdArrowForward className="ml-1" />
         </Button>
@@ -253,33 +269,31 @@ const Home = () => {
           ) : (
             <ul className="flex flex-col gap-8">
               {trending.data?.slice(0, 7).map((article, index) => (
-                <Link
-                  to={article.link || `/articles/${article._id}`}
-                  key={index}
-                  className="gap-8"
-                >
+                <div key={index} className="gap-8">
                   <Card className="hover:shadow-lg transition-transform hover:scale-105 hover:bg-custom-green-1 dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
-                    <CardHeader className="p-3 sm:p-4">
-                      <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 hover:underline line-clamp-2 dark:text-gray-100">
-                        {article.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-3 sm:p-4 pt-0 flex justify-between items-center">
-                      <span
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/profile/${article.author?._id}`);
-                        }}
-                        className="text-xs sm:text-sm font-semibold text-teal-700 hover:underline hover:text-teal-800 dark:hover:text-teal-500"
-                      >
-                        {article.author?.name || article.author || "Unknown"}
-                      </span>
-                      <p className="text-xs sm:text-sm font-semibold text-teal-700">
-                        {new Date(article.createdAt).toLocaleDateString()}
-                      </p>
-                    </CardContent>
+                    <div onClick={() => navigate(article.link || `/articles/${article._id}`)}>
+                      <CardHeader className="p-3 sm:p-4">
+                        <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 hover:underline line-clamp-2 dark:text-gray-100">
+                          {article.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-3 sm:p-4 pt-0 flex justify-between items-center">
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/profile/${article.author?._id}`);
+                          }}
+                          className="text-xs sm:text-sm font-semibold text-teal-700 hover:underline hover:text-teal-800 dark:hover:text-teal-500 cursor-pointer"
+                        >
+                          {article.author?.name || article.author || "Unknown"}
+                        </span>
+                        <p className="text-xs sm:text-sm font-semibold text-teal-700">
+                          {new Date(article.createdAt).toLocaleDateString()}
+                        </p>
+                      </CardContent>
+                    </div>
                   </Card>
-                </Link>
+                </div>
               ))}
             </ul>
           )}
@@ -313,25 +327,27 @@ const Home = () => {
                   </span>
 
                   {/* Title with hover effect */}
-                  <Link
-                    to={
-                      featured[activeArticle]?.link ||
-                      `/articles/${featured[activeArticle]?._id}`
-                    }
-                    className="block"
+                  <div
+                    onClick={() => navigate(featured[activeArticle]?.link || `/articles/${featured[activeArticle]?._id}`)}
+                    className="cursor-pointer"
                   >
                     <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight hover:underline transition-all">
                       {featured[activeArticle]?.title || "Featured Article"}
                     </h3>
-                  </Link>
+                  </div>
 
                   {/* Author and date */}
                   <div className="flex items-center space-x-4 text-sm sm:text-base">
-                    <span className="font-medium text-teal-300  flex items-center">
-                      By{" "}
-                      {featured[activeArticle]?.author?.name ||
-                        featured[activeArticle]?.author ||
-                        "Unknown"}
+                    <span 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (featured[activeArticle]?.author?._id) {
+                          navigate(`/profile/${featured[activeArticle].author._id}`);
+                        }
+                      }}
+                      className="font-medium text-teal-300 hover:underline cursor-pointer"
+                    >
+                      By {featured[activeArticle]?.author?.name || featured[activeArticle]?.author || "Unknown"}
                     </span>
                     <span className="text-gray-300">•</span>
                     <span className="text-gray-300">
