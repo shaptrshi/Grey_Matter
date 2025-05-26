@@ -11,13 +11,18 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Memoized Article Card Component
+// Fallback image
+const FALLBACK_IMAGE = "./placeholder-article.jpg";
+
+// Memoized Article Card Component with improvements
 const ArticleCard = memo(({ article, loading }) => {
   const navigate = useNavigate();
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   if (loading) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-3 animate-pulse">
         <Skeleton className="h-[150px] w-full rounded-t-lg" />
         <Skeleton className="h-6 w-full" />
         <div className="flex justify-between px-4 pb-4">
@@ -29,7 +34,6 @@ const ArticleCard = memo(({ article, loading }) => {
   }
 
   const handleCardClick = (e) => {
-    // If the click came from the author name, don't navigate to article
     if (e.target.closest('.author-name')) {
       return;
     }
@@ -47,18 +51,29 @@ const ArticleCard = memo(({ article, loading }) => {
     <div 
       onClick={handleCardClick}
       className="cursor-pointer"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      aria-label={`Read article: ${article.title}`}
     >
-      <Card className="hover:shadow-md transition-transform hover:scale-105 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
-        <div className="relative h-[150px] sm:h-[150px]">
+      <Card className={`hover:shadow-md transition-all duration-300 ${isHovered ? 'transform scale-[1.02]' : ''} h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black`}>
+        <div className="relative h-[150px] sm:h-[150px] overflow-hidden">
+          {!imageLoaded && (
+            <Skeleton className="absolute inset-0 w-full h-full" />
+          )}
           <img
-            src={article.bannerImage}
+            src={article.bannerImage || FALLBACK_IMAGE}
             alt={article.title}
-            className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+            className={`absolute inset-0 w-full h-full object-cover rounded-t-lg transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             loading="lazy"
+            onLoad={() => setImageLoaded(true)}
+            onError={(e) => {
+              e.target.src = FALLBACK_IMAGE;
+              setImageLoaded(true);
+            }}
           />
         </div>
         <CardHeader className="p-3 sm:p-4 mt-1">
-          <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2 hover:underline dark:text-gray-100">
+          <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2 hover:underline dark:text-gray-100 transition-all">
             {article.title}
           </CardTitle>
         </CardHeader>
@@ -66,7 +81,7 @@ const ArticleCard = memo(({ article, loading }) => {
           <div className="flex justify-between items-center text-xs sm:text-sm mt-3">
             <span
               onClick={handleAuthorClick}
-              className="author-name font-semibold text-teal-700 hover:underline hover:text-teal-800 dark:hover:text-teal-500 cursor-pointer"
+              className="author-name font-semibold text-teal-700 hover:underline hover:text-teal-800 dark:hover:text-teal-500 cursor-pointer transition-colors"
             >
               {article.author?.name || article.author || "Unknown"}
             </span>
@@ -82,9 +97,20 @@ const ArticleCard = memo(({ article, loading }) => {
 
 ArticleCard.displayName = "ArticleCard";
 
-// Memoized Section Component
+// Memoized Section Component with improvements
 const Section = memo(({ title, articles, loading, limit = 4, genre }) => {
   const navigate = useNavigate();
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    const element = document.getElementById(`section-${genre}`);
+    if (element) observer.observe(element);
+    return () => observer.disconnect();
+  }, [genre]);
 
   const handleSeeMore = () => {
     const routeMap = {
@@ -94,22 +120,25 @@ const Section = memo(({ title, articles, loading, limit = 4, genre }) => {
       Interviews: "/interviews",
       Spotlight: "/spotlight",
     };
-
     navigate(routeMap[genre] || "/");
   };
 
   return (
-    <div className="mt-10 sm:mt-11">
+    <div 
+      id={`section-${genre}`}
+      className={`mt-10 sm:mt-11 transition-opacity duration-500 ${inView ? 'opacity-100' : 'opacity-0'}`}
+    >
       <div className="flex justify-between items-center mb-5">
-        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
           {title}
         </h2>
         <Button
           variant="ghost"
           onClick={handleSeeMore}
-          className="text-custom-green hover:text-custom-accent-green dark:text-custom-green dark:hover:text-custom-accent-green"
+          className="text-custom-green hover:text-custom-green-1 dark:text-custom-green dark:hover:text-custom-green-1 group"
+          aria-label={`See more ${title} articles`}
         >
-          See More <MdArrowForward className="ml-1" />
+          See More <MdArrowForward className="ml-1 transition-transform group-hover:translate-x-1" />
         </Button>
       </div>
       {loading ? (
@@ -142,6 +171,8 @@ const Home = () => {
   const [activeArticle, setActiveArticle] = useState(0);
   const [sort, setSort] = useState("latest");
   const [currentPage, setCurrentPage] = useState(1);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState({
@@ -210,30 +241,58 @@ const Home = () => {
   }, [fetchFeatured, fetchLatest]);
 
   const handleNext = useCallback(() => {
-    setActiveArticle((prev) => (prev + 1) % featured.length);
-  }, [featured.length]);
+    if (isTransitioning || featured.length <= 1) return;
+    
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setActiveArticle((prev) => (prev + 1) % featured.length);
+      setIsTransitioning(false);
+    }, 500); // Match this duration with the CSS transition duration
+  }, [featured.length, isTransitioning]);
 
   const handlePrev = useCallback(() => {
-    setActiveArticle((prev) => (prev - 1 + featured.length) % featured.length);
-  }, [featured.length]);
+    if (isTransitioning || featured.length <= 1) return;
+    
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setActiveArticle((prev) => (prev - 1 + featured.length) % featured.length);
+      setIsTransitioning(false);
+    }, 500); // Match this duration with the CSS transition duration
+  }, [featured.length, isTransitioning]);
+
+  // Auto-rotation effect
+  useEffect(() => {
+    if (!autoRotate || featured.length <= 1) return;
+
+    const interval = setInterval(handleNext, 5000);
+    return () => clearInterval(interval);
+  }, [autoRotate, featured.length, handleNext]);
 
   const handleSeeMoreTrending = () => {
     navigate("/trending");
   };
 
+  const handleFeaturedMouseEnter = () => {
+    setAutoRotate(false);
+  };
+
+  const handleFeaturedMouseLeave = () => {
+    setAutoRotate(true);
+  };
+
   return (
     <div className="container mx-auto px-4 sm:px-10 lg:px-8 py-4 sm:py-6 lg:py-8 min-h-screen bg-gray-100 dark:bg-custom-dark dark:text-gray-100">
-      {/* Banner Section Top */}
-      <div className="w-full -mt-2 sm:-mt-3 lg:-mt-5 mb-4 sm:mb-5">
+      {/* Banner Section Top with animation */}
+      <div className="w-full -mt-2 sm:-mt-3 lg:-mt-5 mb-4 sm:mb-5 animate-fadeIn">
         <img
           src="./whitegreen.png"
-          alt="Light Mode Banner"
+          alt="Eco-friendly lifestyle tips"
           className="w-full h-auto max-h-32 sm:max-h-40 md:max-h-48 lg:max-h-56 object-cover rounded-xl sm:rounded-2xl shadow-sm transition-all duration-300 dark:hidden"
           loading="eager"
         />
         <img
           src="./dark.png"
-          alt="Dark Mode Banner"
+          alt="Sustainable living in dark mode"
           className="w-full h-auto max-h-32 sm:max-h-40 md:max-h-48 lg:max-h-56 object-cover rounded-xl sm:rounded-2xl shadow-sm transition-all duration-300 hidden dark:block"
           loading="eager"
         />
@@ -241,7 +300,7 @@ const Home = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-11 gap-4 sm:gap-5">
         {/* Trending News Section */}
-        <div className="lg:col-span-3 bg-white dark:bg-custom-dark p-4 sm:p-6 hidden lg:block border:none">
+        <div className="lg:col-span-3 bg-white dark:bg-custom-dark p-4 sm:p-6 hidden lg:block border:none rounded-lg shadow-sm">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl sm:text-lg font-semibold text-gray-800 dark:text-gray-100 -mt-5">
               Trending
@@ -249,15 +308,16 @@ const Home = () => {
             <Button
               variant="ghost"
               onClick={handleSeeMoreTrending}
-              className="text-custom-green hover:text-custom-green-1 dark:text-custom-green dark:hover:text-custom-green-1"
+              className="text-custom-green hover:text-custom-green-1 dark:text-custom-green dark:hover:text-custom-green-1 group"
+              aria-label="See more trending articles"
             >
-              See More <MdArrowForward className="ml-1" />
+              See More <MdArrowForward className="ml-1 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
           {loading.trending ? (
             <div className="flex flex-col gap-8">
               {[...Array(7)].map((_, index) => (
-                <div key={index} className="space-y-2">
+                <div key={index} className="space-y-2 animate-pulse">
                   <Skeleton className="h-6 w-full" />
                   <div className="flex justify-between">
                     <Skeleton className="h-4 w-20" />
@@ -269,11 +329,14 @@ const Home = () => {
           ) : (
             <ul className="flex flex-col gap-8">
               {trending.data?.slice(0, 7).map((article, index) => (
-                <div key={index} className="gap-8">
-                  <Card className="hover:shadow-lg transition-transform hover:scale-105 hover:bg-custom-green-1 dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
+                <div key={index} className="gap-8 group">
+                  <Card 
+                    className="hover:shadow-lg transition-all duration-300 hover:bg-custom-green-1/10 dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black group-hover:scale-[1.02]"
+                    aria-label={`Trending article: ${article.title}`}
+                  >
                     <div onClick={() => navigate(article.link || `/articles/${article._id}`)}>
                       <CardHeader className="p-3 sm:p-4">
-                        <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 hover:underline line-clamp-2 dark:text-gray-100">
+                        <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 hover:underline line-clamp-2 dark:text-gray-100 transition-all">
                           {article.title}
                         </CardTitle>
                       </CardHeader>
@@ -283,7 +346,7 @@ const Home = () => {
                             e.stopPropagation();
                             navigate(`/profile/${article.author?._id}`);
                           }}
-                          className="text-xs sm:text-sm font-semibold text-teal-700 hover:underline hover:text-teal-800 dark:hover:text-teal-500 cursor-pointer"
+                          className="text-xs sm:text-sm font-semibold text-teal-700 hover:underline hover:text-teal-800 dark:hover:text-teal-500 cursor-pointer transition-colors"
                         >
                           {article.author?.name || article.author || "Unknown"}
                         </span>
@@ -301,32 +364,41 @@ const Home = () => {
 
         {/* Middle Section */}
         <div className="lg:col-span-6">
-          {/* Featured News Section */}
-          <div className="relative h-[300px] sm:h-[350px] lg:h-[450px] rounded-xl sm:rounded-2xl overflow-hidden shadow-lg group">
+          {/* Featured News Section with improved carousel */}
+          <div 
+            className="relative h-[300px] sm:h-[350px] lg:h-[450px] rounded-xl sm:rounded-2xl overflow-hidden shadow-lg group"
+            onMouseEnter={handleFeaturedMouseEnter}
+            onMouseLeave={handleFeaturedMouseLeave}
+          >
             {loading.featured ? (
-              <Skeleton className="w-full h-full rounded-xl" />
+              <Skeleton className="w-full h-full rounded-xl animate-pulse" />
             ) : featured.length > 0 ? (
               <>
-                {/* Background image with zoom effect */}
                 <div className="relative w-full h-full overflow-hidden">
-                  <img
-                    src={featured[activeArticle]?.bannerImage || ""}
-                    alt={featured[activeArticle]?.title || "Featured Article"}
-                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-                    loading="eager"
-                  />
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                  {featured.map((article, index) => (
+                    <div
+                      key={index}
+                      className={`absolute inset-0 transition-opacity duration-500 ${index === activeArticle ? 'opacity-100' : 'opacity-0'}`}
+                    >
+                      <img
+                        src={article.bannerImage || FALLBACK_IMAGE}
+                        alt={article.title}
+                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                        loading={index === activeArticle ? "eager" : "lazy"}
+                        onError={(e) => {
+                          e.target.src = FALLBACK_IMAGE;
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    </div>
+                  ))}
                 </div>
 
-                {/* Content */}
                 <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 text-white space-y-3">
-                  {/* Category tag */}
-                  <span className="inline-block px-3 py-1 text-xs font-semibold tracking-wide rounded-full bg-custom-green text-white">
+                  <span className="inline-block px-3 py-1 text-xs font-semibold tracking-wide rounded-full bg-custom-green text-white hover:bg-custom-green-1 transition-colors">
                     Featured
                   </span>
 
-                  {/* Title with hover effect */}
                   <div
                     onClick={() => navigate(featured[activeArticle]?.link || `/articles/${featured[activeArticle]?._id}`)}
                     className="cursor-pointer"
@@ -334,9 +406,11 @@ const Home = () => {
                     <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight hover:underline transition-all">
                       {featured[activeArticle]?.title || "Featured Article"}
                     </h3>
+                    <p className="text-sm sm:text-base mt-2 line-clamp-2 opacity-90">
+                      {featured[activeArticle]?.excerpt || featured[activeArticle]?.description || ""}
+                    </p>
                   </div>
 
-                  {/* Author and date */}
                   <div className="flex items-center space-x-4 text-sm sm:text-base">
                     <span 
                       onClick={(e) => {
@@ -345,7 +419,7 @@ const Home = () => {
                           navigate(`/profile/${featured[activeArticle].author._id}`);
                         }
                       }}
-                      className="font-medium text-teal-300 hover:underline cursor-pointer"
+                      className="font-medium text-teal-300 hover:underline cursor-pointer transition-colors"
                     >
                       By {featured[activeArticle]?.author?.name || featured[activeArticle]?.author || "Unknown"}
                     </span>
@@ -362,14 +436,14 @@ const Home = () => {
                 <div className="absolute top-1/2 left-0 right-0 flex justify-between px-4 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <button
                     onClick={handlePrev}
-                    className="p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-all"
+                    className="p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-all focus:outline-none focus:ring-2 focus:ring-white"
                     aria-label="Previous article"
                   >
                     <MdNavigateBefore size={32} />
                   </button>
                   <button
                     onClick={handleNext}
-                    className="p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-all"
+                    className="p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-all focus:outline-none focus:ring-2 focus:ring-white"
                     aria-label="Next article"
                   >
                     <MdNavigateNext size={32} />
@@ -383,10 +457,10 @@ const Home = () => {
                       <button
                         key={index}
                         onClick={() => setActiveArticle(index)}
-                        className={`w-2 h-2 rounded-full transition-all ${
+                        className={`w-2 h-2 rounded-full transition-all focus:outline-none ${
                           index === activeArticle
                             ? "bg-custom-green w-4"
-                            : "bg-white/50"
+                            : "bg-white/50 hover:bg-white/75"
                         }`}
                         aria-label={`Go to slide ${index + 1}`}
                       />
@@ -430,9 +504,9 @@ const Home = () => {
         <div className="lg:col-span-2 space-y-4 sm:space-y-5">
           {/* Contact Us Card */}
           {loading.featured ? (
-            <Skeleton className="h-[250px] sm:h-[300px] lg:h-[400px] rounded-xl" />
+            <Skeleton className="h-[250px] sm:h-[300px] lg:h-[400px] rounded-xl animate-pulse" />
           ) : (
-            <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] lg:h-[400px] bg-custom-green-1">
+            <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] lg:h-[400px] bg-custom-green-1 transition-all hover:shadow-lg">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
                 Contact Us
               </h2>
@@ -442,10 +516,11 @@ const Home = () => {
               <Link to="/contact">
                 <Button
                   variant="primary"
-                  className="w-full rounded-full bg-custom-green text-custom-green-1 hover:scale-105 mt-6 lg:mt-36 font-bold"
+                  className="w-full rounded-full bg-custom-green text-custom-green-1 hover:scale-105 mt-6 lg:mt-36 font-bold transition-transform focus:outline-none focus:ring-2 focus:ring-custom-green focus:ring-offset-2"
+                  aria-label="Contact us"
                 >
                   Contact Us
-                  <MdNavigateNext size={24} className="ml-2" />
+                  <MdNavigateNext size={24} className="ml-2 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
             </div>
@@ -453,7 +528,7 @@ const Home = () => {
 
           {/* Subscribe Card */}
           {loading.featured ? (
-            <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] relative">
+            <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] relative animate-pulse">
               <Skeleton className="h-8 w-3/4 mb-3" />
               <Skeleton className="h-5 w-full mb-2" />
               <Skeleton className="h-5 w-5/6 mb-10" />
@@ -462,7 +537,7 @@ const Home = () => {
               </div>
             </div>
           ) : (
-            <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] bg-custom-green">
+            <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] bg-custom-green transition-all hover:shadow-lg">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-200 mb-3">
                 Subscribe
               </h2>
@@ -474,13 +549,14 @@ const Home = () => {
                 href="https://rss.com/"
                 target="_blank"
                 rel="noreferrer"
-                className="block mt-6"
+                className="block mt-6 group"
               >
                 <Button
                   variant="primary"
-                  className="w-full rounded-full bg-custom-accent-green text-custom-green hover:scale-105 font-bold"
+                  className="w-full rounded-full bg-custom-accent-green text-custom-green hover:scale-105 font-bold transition-transform focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                  aria-label="Subscribe to RSS feed"
                 >
-                  Subscribe <MdRssFeed size={24} className="ml-2" />
+                  Subscribe <MdRssFeed size={24} className="ml-2 transition-transform group-hover:scale-110" />
                 </Button>
               </a>
             </div>
@@ -488,17 +564,20 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="w-full mt-10">
+      <div className="w-full mt-10 animate-fadeIn">
         <img
           src="./Grey Matter.png"
-          alt="Promotional Banner"
-          className="w-auto h-auto object-cover rounded-2xl shadow-lg"
+          alt="Discover more eco-friendly content"
+          className="w-auto h-auto object-cover rounded-2xl shadow-lg hover:shadow-xl transition-shadow"
           loading="lazy"
+          onError={(e) => {
+            e.target.src = FALLBACK_IMAGE;
+          }}
         />
       </div>
 
       {/* More Articles Section */}
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center animate-fadeIn">
         <h1 className="text-3xl mt-10 font-semibold text-gray-800 dark:text-gray-100">
           More Articles You'll Love
         </h1>
