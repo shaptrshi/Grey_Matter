@@ -538,9 +538,6 @@ const Home = () => {
         {/* Right Section */}
         <div className="lg:col-span-2 space-y-4 sm:space-y-5">
           {/* Contact Us Card */}
-          {loading.featured ? (
-            <Skeleton className="h-[250px] sm:h-[300px] lg:h-[400px] rounded-xl animate-pulse" />
-          ) : (
             <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] lg:h-[400px] bg-custom-green-1 transition-all hover:shadow-lg">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
                 Contact Us
@@ -559,19 +556,8 @@ const Home = () => {
                 </Button>
               </Link>
             </div>
-          )}
 
           {/* Subscribe Card */}
-          {loading.featured ? (
-            <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] relative animate-pulse">
-              <Skeleton className="h-8 w-3/4 mb-3" />
-              <Skeleton className="h-5 w-full mb-2" />
-              <Skeleton className="h-5 w-5/6 mb-10" />
-              <div className="absolute bottom-6 left-4 right-4">
-                <Skeleton className="h-10 w-full rounded-full" />
-              </div>
-            </div>
-          ) : (
             <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] bg-custom-green transition-all hover:shadow-lg">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-200 mb-3">
                 Subscribe
@@ -595,7 +581,6 @@ const Home = () => {
                 </Button>
               </a>
             </div>
-          )}
         </div>
       </div>
 

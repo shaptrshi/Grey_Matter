@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
@@ -15,79 +15,66 @@ const Article = () => {
   const [article, setArticle] = useState(null);
   const [recommendedArticles, setRecommendedArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [recommendedLoading, setRecommendedLoading] = useState(true);
   const [isUrlCopied, setIsUrlCopied] = useState(false);
-  const [isAuthor, setIsAuthor] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userData = JSON.parse(localStorage.getItem("user"));
-    const fetchArticle = async () => {
-      try {
-        const backendUrl = `http://localhost:5000/api/articles/${id}`;
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
-        const { data } = await axios.get(backendUrl, { headers });
+  const fetchArticle = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const backendUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/articles/${id}`;
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const { data } = await axios.get(backendUrl, { headers });
 
-        const articleData = data?.article || data;
-        setArticle(articleData);
-
-        if (userData?._id && articleData?.author?._id) {
-          setIsAuthor(userData._id === articleData.author._id);
-        }
-      } catch (error) {
-        console.error("Error fetching article:", error);
-        setArticle(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchArticle();
+      setArticle(data?.article || data);
+    } catch (error) {
+      console.error("Error fetching article:", error);
+      setArticle(null);
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
-  useEffect(() => {
-    const fetchRecommendedArticles = async () => {
-      try {
-        const { data } = await axios.get(
-          "http://localhost:5000/api/articles/random"
-        );
-        setRecommendedArticles(data.articles || []);
-      } catch (error) {
-        console.error("Failed to fetch recommended articles:", error);
-      }
-    };
-
-    fetchRecommendedArticles();
+  const fetchRecommendedArticles = useCallback(async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/articles/random`
+      );
+      setRecommendedArticles(data.articles || []);
+    } catch (error) {
+      console.error("Failed to fetch recommended articles:", error);
+    } finally {
+      setRecommendedLoading(false);
+    }
   }, []);
 
-  const shareArticle = (platform) => {
+  useEffect(() => {
+    fetchArticle();
+  }, [fetchArticle]);
+
+  useEffect(() => {
+    fetchRecommendedArticles();
+  }, [fetchRecommendedArticles]);
+
+  const shareArticle = useCallback((platform) => {
     const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent("Check out this amazing article!");
+    const text = encodeURIComponent(article?.title || "Check out this amazing article!");
 
-    switch (platform) {
-      case "facebook":
-        window.open(
-          `https://facebook.com/sharer/sharer.php?u=${url}`,
-          "_blank"
-        );
-        break;
-      case "linkedin":
-        window.open(`https://linkedin.com/shareArticle?url=${url}`, "_blank");
-        break;
-      case "whatsapp":
-        window.open(`https://wa.me/?text=${text} ${url}`, "_blank");
-        break;
-      case "email":
-        window.open(`mailto:?subject=${text}&body=${url}`, "_self");
-        break;
-      case "link":
-        copyUrlToClipboard();
-        break;
-      default:
-        break;
+    const shareUrls = {
+      linkedin: `https://linkedin.com/shareArticle?url=${url}`,
+      email: `mailto:?subject=${text}&body=${url}`,
+    };
+
+    if (platform === "link") {
+      copyUrlToClipboard();
+      return;
     }
-  };
 
-  const copyUrlToClipboard = () => {
+    if (shareUrls[platform]) {
+      window.open(shareUrls[platform], platform === "email" ? "_self" : "_blank");
+    }
+  }, [article]);
+
+  const copyUrlToClipboard = useCallback(() => {
     const url = window.location.href;
     navigator.clipboard
       .writeText(url)
@@ -99,23 +86,43 @@ const Article = () => {
       .catch(() => {
         toast.error("Failed to copy URL!");
       });
-  };
+  }, []);
+
+  const renderShareButton = (platform, icon, colorClass) => (
+    <Button
+      aria-label={`Share on ${platform}`}
+      variant="outline"
+      onClick={() => shareArticle(platform)}
+      className={`bg-white dark:bg-custom-dark p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 border-none ${colorClass}`}
+    >
+      {icon}
+    </Button>
+  );
 
   if (loading) {
     return (
       <div className="container mx-auto px-5 py-8 max-w-screen-xl">
-        <Skeleton className="w-full h-[300px] mb-6" />
-        <Skeleton className="h-8 w-3/4 mb-3" />
-        <Skeleton className="h-6 w-1/2 mb-6" />
-        <Skeleton className="w-full h-80 mb-8" />
-        <Skeleton className="h-10 w-1/3" />
+        <Skeleton className="w-full h-[300px] mb-6 rounded-lg" />
+        <Skeleton className="h-8 w-3/4 mb-3 rounded" />
+        <Skeleton className="h-6 w-1/2 mb-6 rounded" />
+        <div className="space-y-3">
+          {[...Array(8)].map((_, i) => (
+            <Skeleton key={i} className="w-full h-4 rounded" />
+          ))}
+        </div>
+        <Skeleton className="h-10 w-1/3 mt-8 rounded" />
       </div>
     );
   }
 
   if (!article) {
     return (
-      <div className="text-center py-20 text-red-500">Article not found.</div>
+      <div className="text-center py-20">
+        <h2 className="text-2xl font-bold text-red-500 mb-4">Article not found</h2>
+        <Button onClick={() => navigate("/")} className="mt-4">
+          Back to Home
+        </Button>
+      </div>
     );
   }
 
@@ -123,37 +130,44 @@ const Article = () => {
     <div className="bg-background min-h-screen">
       <div className="container mx-auto px-5 py-8 max-w-screen-xl">
         {/* Banner */}
-        <div className="relative w-70 h-60 md:h-[25rem] lg:h-[30rem] overflow-hidden mb-8 flex items-center justify-center text-center">
-          <div className="absolute z-20 text-white px-5 md:px-10 lg:px-20">
-            <h1 className="text-5xl md:text-6xl font-semibold mb-4">
+        <div className="relative w-full aspect-video md:aspect-[16/7] lg:aspect-[16/6] overflow-hidden mb-8 rounded-xl">
+          {article.bannerImage && (
+            <>
+              <img
+                src={article.bannerImage}
+                alt={article.title || "Article Banner"}
+                className="absolute inset-0 w-full h-full object-cover"
+                loading="eager"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
+            </>
+          )}
+          <div className="absolute bottom-0 left-0 right-0 z-20 text-white px-5 md:px-10 lg:px-20 pb-8">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg">
               {article.title}
             </h1>
-            <p className="text-lg md:text-xl text-gray-300">
+            <p className="text-base md:text-lg text-gray-200 drop-shadow-md">
               By{" "}
               <Link
                 to={`/profile/${article.author?._id}`}
-                className="text-white hover:underline"
+                className="font-semibold hover:underline"
               >
                 {article.author?.name || "Unknown Author"}
               </Link>{" "}
-              | {new Date(article.createdAt).toLocaleDateString()}
+              · {new Date(article.createdAt).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </p>
           </div>
-          {article.bannerImage && (
-            <img
-              src={article.bannerImage}
-              alt={article.title || "Article Banner"}
-              className="absolute inset-0 w-full h-full object-cover z-10"
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/20 z-10"></div>
         </div>
 
         {/* Content */}
-        <Card className="overflow-hidden dark:bg-custom-dark ">
-          <CardContent className="p-6">
+        <Card className="overflow-hidden dark:bg-custom-dark shadow-sm">
+          <CardContent className="p-6 md:p-8">
             <div
-              className="ql-editor"
+              className="prose dark:prose-invert max-w-none"
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(article.content),
               }}
@@ -161,55 +175,52 @@ const Article = () => {
           </CardContent>
         </Card>
 
-        {/* Share */}
-        <div className="mt-8">
-          <h2 className="text-2xl font-semibold text-foreground mb-4">
-            Share this article
-          </h2>
-          <div className="flex space-x-4">
-            {["linkedin", "email", "link"].map((platform, index) => (
-              <Button
-                key={index}
-                aria-label={`Share on ${platform}`}
-                variant="outline"
-                onClick={() => shareArticle(platform)}
-                className={`bg-white dark:bg-custom-dark text-black p-5 text-xl rounded-md shadow-sm transition-transform transform hover:scale-110 border-none 
-                ${
-                  platform === "linkedin" &&
-                  "text-blue-900 hover:bg-blue-700 dark:text-blue-700 dark:hover:bg-blue-800"
-                } ${
-                  platform === "email" &&
-                  "text-red-600 hover:bg-red-400 dark:text-red-700 dark:hover:bg-red-500"
-                } ${
-                  platform === "link" &&
-                  "text-gray-600 hover:bg-gray-500 dark:text-gray-600 dark:hover:bg-gray-600"
-                }`}
-              >
-                {platform === "linkedin" && <FaLinkedinIn />}
-                {platform === "email" && <MdEmail />}
-                {platform === "link" && <FaLink />}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        {/* Tags */}
-        <div className="mt-8">
-          <h2 className="text-2xl font-semibold text-foreground mb-4">
-            Topics
-          </h2>
-          {Array.isArray(article.tags) && (
-            <div className="flex flex-wrap justify-left gap-2 mb-5 px-2">
-              {article.tags.map((tag, index) => (
-                <div
-                  key={index}
-                  className="bg-white dark:bg-custom-dark text-gray-700 font-bold dark:text-gray-400 text-sm sm:text-base px-3 py-1 rounded-full hover:text-custom-green dark:hover:text-custom-green cursor-pointer border-2 border-gray-400 dark:border-gray-700"
-                >
-                  {tag.replace(/_/g, " ")}
-                </div>
-              ))}
+        {/* Share & Tags Section */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Share */}
+          <div>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">
+              Share this article
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {renderShareButton(
+                "linkedin",
+                <FaLinkedinIn className="text-blue-700 dark:text-blue-600" />,
+                "hover:bg-blue-100 dark:hover:bg-blue-900/50"
+              )}
+              {renderShareButton(
+                "email",
+                <MdEmail className="text-red-600 dark:text-red-500" />,
+                "hover:bg-red-100 dark:hover:bg-red-900/50"
+              )}
+              {renderShareButton(
+                "link",
+                <FaLink className="text-gray-600 dark:text-gray-400" />,
+                "hover:bg-gray-100 dark:hover:bg-gray-800"
+              )}
             </div>
-          )}
+          </div>
+
+          {/* Tags */}
+          <div>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">
+              Topics
+            </h2>
+            {Array.isArray(article.tags) && article.tags.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {article.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="bg-white dark:bg-custom-dark text-gray-700 dark:text-gray-400 text-sm px-3 py-1 rounded-full border border-gray-300 dark:border-gray-600"
+                  >
+                    {tag.replace(/_/g, " ")}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400">No topics listed</p>
+            )}
+          </div>
         </div>
 
         {/* Feedback */}
@@ -217,55 +228,75 @@ const Article = () => {
           <Button
             variant="outline"
             onClick={() =>
-              (window.location.href =
-                "mailto:shaptrshik@gmail.com?subject=Feedback on Article&body=Your message here.")
+              (window.location.href = `mailto:shaptrshik@gmail.com?subject=Feedback on "${article.title}"&body=Your feedback here...`)
             }
-            className="rounded-lg border-2 border-black dark:text-gray-100 dark:bg-custom-dark bg-white px-6 py-3 font-semibold uppercase text-black transition-all duration-300 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:rounded-md hover:shadow-[4px_4px_0px_black] active:translate-x-[0px] active:translate-y-[0px] active:rounded-2xl active:shadow-none"
+            className="rounded-lg border-2 border-black dark:border-gray-600 dark:text-gray-100 dark:bg-custom-dark bg-white px-6 py-3 font-semibold uppercase text-black transition-all duration-300 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:rounded-md hover:shadow-[4px_4px_0px_black] active:translate-x-[0px] active:translate-y-[0px] active:rounded-2xl active:shadow-none"
           >
             Send Feedback
           </Button>
         </div>
 
         {/* Recommendations */}
-        {recommendedArticles.length > 0 && (
-          <div className="mt-12">
-            <h2 className="text-2xl font-semibold text-foreground mb-6">
-              You May Enjoy
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
-              {recommendedArticles.map((article, index) => (
+        <div className="mt-12">
+          <h2 className="text-2xl font-semibold text-foreground mb-6">
+            You May Also Like
+          </h2>
+          
+          {recommendedLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {[...Array(4)].map((_, index) => (
+                <Card key={index} className="h-[300px] dark:bg-custom-dark">
+                  <Skeleton className="h-[150px] w-full rounded-t-lg" />
+                  <CardHeader className="space-y-2">
+                    <Skeleton className="h-6 w-full" />
+                    <Skeleton className="h-6 w-3/4" />
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-1/3" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : recommendedArticles.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {recommendedArticles.map((article) => (
                 <Card
-                  key={index}
-                  className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black"
+                  key={article._id}
+                  className="hover:shadow-md cursor-pointer h-[300px] dark:bg-custom-dark dark:border-none transition-transform transform hover:scale-105 dark:shadow-sm dark:shadow-black"
                   onClick={() => navigate(`/articles/${article._id}`)}
                 >
-                  <div className="relative h-[150px] sm:h-[150px]">
+                  <div className="relative h-[150px] overflow-hidden rounded-t-lg">
                     <img
                       src={article.bannerImage}
                       alt={article.title || "Recommended Article"}
-                      className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+                      className="w-full h-full object-cover rounded-t-lg inset-0"
+                      loading="lazy"
                     />
                   </div>
-                  <CardHeader className="p-3 sm:p-4 pt-0">
-                    <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2 hover:underline dark:text-gray-100">
+                  <CardHeader className="p-4">
+                    <CardTitle className="text-lg font-semibold line-clamp-2">
                       {article.title}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-3 sm:p-4">
-                    <div className="flex justify-between items-center text-xs sm:text-sm">
-                      <p className="font-semibold text-teal-700">
-                        {article.author?.name || "Unknown Author"}
-                      </p>
-                      <p className="font-semibold text-teal-700">
-                        {new Date(article.createdAt).toLocaleDateString()}
-                      </p>
+                  <CardContent className="p-4 pt-0">
+                    <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-400">
+                      <span>{article.author?.name || "Unknown"}</span>
+                      <span>
+                        {new Date(article.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400">No recommendations available</p>
+          )}
+        </div>
       </div>
     </div>
   );

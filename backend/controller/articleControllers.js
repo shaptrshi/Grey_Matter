@@ -155,12 +155,16 @@ const getLatestArticles = async (req, res) => {
 //Get random articles
 const getRandomArticles = async (req, res) => {
   try {
-    const allArticles = await Article.find()
-      .populate("author", "name email")
-      .lean();
-
-    const shuffled = allArticles.sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, 4);
+    // Step 1: Get just the IDs of 4 random articles (very lightweight)
+    const randomArticleIds = await Article.aggregate([
+      { $sample: { size: 4 } },
+      { $project: { _id: 1 } }
+    ]);
+    
+    // Step 2: Fetch only those 4 articles with author data
+    const selected = await Article.find({
+      _id: { $in: randomArticleIds.map(a => a._id) }
+    }).populate("author", "name email").lean();
 
     res.status(200).json({ articles: selected });
   } catch (error) {
