@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, memo } from "react";
+import React, { useState, useEffect, useCallback, memo, useRef } from "react";
 import {
   MdNavigateBefore,
   MdNavigateNext,
@@ -11,13 +11,65 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Fallback image
 const FALLBACK_IMAGE = "./placeholder-article.jpg";
 
-// Memoized Article Card Component with improvements
-const ArticleCard = memo(({ article, loading }) => {
+// 1. Optimized Image Component
+const OptimizedImage = ({ src, alt, className, priority = false }) => {
+  const [imageSrc, setImageSrc] = useState(src || FALLBACK_IMAGE);
+  const [isLoading, setIsLoading] = useState(true);
+
+  return (
+    <div className={`relative ${className}`}>
+      {isLoading && (
+        <Skeleton className="absolute inset-0 w-full h-full" />
+      )}
+      <img
+        src={imageSrc}
+        alt={alt}
+        className={`w-full h-full object-cover transition-opacity duration-500 ${
+          isLoading ? 'opacity-0' : 'opacity-100'
+        }`}
+        loading={priority ? "eager" : "lazy"}
+        onLoad={() => setIsLoading(false)}
+        onError={() => {
+          setImageSrc(FALLBACK_IMAGE);
+          setIsLoading(false);
+        }}
+      />
+    </div>
+  );
+};
+
+// 2. Intersection Observer Hook
+const useIntersectionObserver = (options = { threshold: 0.1, rootMargin: '200px' }) => {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsIntersecting(true);
+        observer.unobserve(entry.target);
+      }
+    }, options);
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [options]);
+
+  return [ref, isIntersecting];
+};
+
+// Memoized Article Card Component
+const ArticleCard = memo(({ article, loading, priority = false }) => {
   const navigate = useNavigate();
-  const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
   if (loading) {
@@ -57,19 +109,11 @@ const ArticleCard = memo(({ article, loading }) => {
     >
       <Card className={`hover:shadow-md transition-all duration-300 ${isHovered ? 'transform scale-[1.02]' : ''} h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black`}>
         <div className="relative h-[150px] sm:h-[150px] overflow-hidden">
-          {!imageLoaded && (
-            <Skeleton className="absolute inset-0 w-full h-full" />
-          )}
-          <img
-            src={article.bannerImage || FALLBACK_IMAGE}
+          <OptimizedImage
+            src={article.bannerImage}
             alt={article.title}
-            className={`absolute inset-0 w-full h-full object-cover rounded-t-lg transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-            loading="lazy"
-            onLoad={() => setImageLoaded(true)}
-            onError={(e) => {
-              e.target.src = FALLBACK_IMAGE;
-              setImageLoaded(true);
-            }}
+            className="rounded-t-lg"
+            priority={priority}
           />
         </div>
         <CardHeader className="p-3 sm:p-4 mt-1">
@@ -97,20 +141,10 @@ const ArticleCard = memo(({ article, loading }) => {
 
 ArticleCard.displayName = "ArticleCard";
 
-// Memoized Section Component with improvements
+// Memoized Section Component
 const Section = memo(({ title, articles, loading, limit = 4, genre }) => {
+  const [sectionRef, isVisible] = useIntersectionObserver();
   const navigate = useNavigate();
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => setInView(entry.isIntersecting),
-      { threshold: 0.1 }
-    );
-    const element = document.getElementById(`section-${genre}`);
-    if (element) observer.observe(element);
-    return () => observer.disconnect();
-  }, [genre]);
 
   const handleSeeMore = () => {
     const routeMap = {
@@ -125,8 +159,9 @@ const Section = memo(({ title, articles, loading, limit = 4, genre }) => {
 
   return (
     <div 
+      ref={sectionRef}
       id={`section-${genre}`}
-      className={`mt-10 sm:mt-11 transition-opacity duration-500 ${inView ? 'opacity-100' : 'opacity-0'}`}
+      className={`mt-10 sm:mt-11 transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
     >
       <div className="flex justify-between items-center mb-5">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
@@ -150,7 +185,12 @@ const Section = memo(({ title, articles, loading, limit = 4, genre }) => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {articles?.slice(0, limit).map((article, index) => (
-            <ArticleCard key={index} article={article} loading={false} />
+            <ArticleCard 
+              key={index} 
+              article={article} 
+              loading={false}
+              priority={index < 2} // Prioritize first two images
+            />
           ))}
         </div>
       )}
@@ -169,8 +209,6 @@ const Home = () => {
   const [interviews, setInterviews] = useState({ data: [] });
   const [spotlight, setSpotlight] = useState({ data: [] });
   const [activeArticle, setActiveArticle] = useState(0);
-  const [sort, setSort] = useState("latest");
-  const [currentPage, setCurrentPage] = useState(1);
   const [autoRotate, setAutoRotate] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const navigate = useNavigate();
@@ -189,7 +227,7 @@ const Home = () => {
     async (genre, setter, loadingKey) => {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/articles/genre/${genre}?sort=${sort}&page=${currentPage}&limit=8`
+          `http://localhost:5000/api/articles/genre/${genre}`
         );
         setter(data);
       } catch (e) {
@@ -198,7 +236,7 @@ const Home = () => {
         setLoading((prev) => ({ ...prev, [loadingKey]: false }));
       }
     },
-    [sort, currentPage]
+    []
   );
 
   useEffect(() => {
@@ -207,7 +245,7 @@ const Home = () => {
     fetchArticlesByGenre("Sustainable_Living", setSustainable, "sustainable");
     fetchArticlesByGenre("Interviews", setInterviews, "interviews");
     fetchArticlesByGenre("Spotlight", setSpotlight, "spotlight");
-  }, [fetchArticlesByGenre, sort, currentPage]);
+  }, [fetchArticlesByGenre]);
 
   const fetchFeatured = useCallback(async () => {
     try {
@@ -247,7 +285,7 @@ const Home = () => {
     setTimeout(() => {
       setActiveArticle((prev) => (prev + 1) % featured.length);
       setIsTransitioning(false);
-    }, 500); // Match this duration with the CSS transition duration
+    }, 500);
   }, [featured.length, isTransitioning]);
 
   const handlePrev = useCallback(() => {
@@ -257,10 +295,9 @@ const Home = () => {
     setTimeout(() => {
       setActiveArticle((prev) => (prev - 1 + featured.length) % featured.length);
       setIsTransitioning(false);
-    }, 500); // Match this duration with the CSS transition duration
+    }, 500);
   }, [featured.length, isTransitioning]);
 
-  // Auto-rotation effect
   useEffect(() => {
     if (!autoRotate || featured.length <= 1) return;
 
@@ -282,19 +319,19 @@ const Home = () => {
 
   return (
     <div className="container mx-auto px-4 sm:px-10 lg:px-8 py-4 sm:py-6 lg:py-8 min-h-screen bg-gray-100 dark:bg-custom-dark dark:text-gray-100">
-      {/* Banner Section Top with animation */}
-      <div className="w-full -mt-2 sm:-mt-3 lg:-mt-5 mb-4 sm:mb-5 animate-fadeIn">
-        <img
+      {/* Banner Section Top */}
+      <div className="w-full -mt-2 sm:-mt-3 lg:-mt-5 mb-4 sm:mb-5">
+        <OptimizedImage
           src="./whitegreen.png"
           alt="Eco-friendly lifestyle tips"
-          className="w-full h-auto max-h-32 sm:max-h-40 md:max-h-48 lg:max-h-56 object-cover rounded-xl sm:rounded-2xl shadow-sm transition-all duration-300 dark:hidden"
-          loading="eager"
+          className="w-full h-auto max-h-32 sm:max-h-40 md:max-h-48 lg:max-h-56 rounded-xl sm:rounded-2xl shadow-sm dark:hidden"
+          priority={true}
         />
-        <img
+        <OptimizedImage
           src="./dark.png"
           alt="Sustainable living in dark mode"
-          className="w-full h-auto max-h-32 sm:max-h-40 md:max-h-48 lg:max-h-56 object-cover rounded-xl sm:rounded-2xl shadow-sm transition-all duration-300 hidden dark:block"
-          loading="eager"
+          className="w-full h-auto max-h-32 sm:max-h-40 md:max-h-48 lg:max-h-56 rounded-xl sm:rounded-2xl shadow-sm hidden dark:block"
+          priority={true}
         />
       </div>
 
@@ -364,7 +401,7 @@ const Home = () => {
 
         {/* Middle Section */}
         <div className="lg:col-span-6">
-          {/* Featured News Section with improved carousel */}
+          {/* Featured News Section */}
           <div 
             className="relative h-[300px] sm:h-[350px] lg:h-[450px] rounded-xl sm:rounded-2xl overflow-hidden shadow-lg group"
             onMouseEnter={handleFeaturedMouseEnter}
@@ -380,14 +417,11 @@ const Home = () => {
                       key={index}
                       className={`absolute inset-0 transition-opacity duration-500 ${index === activeArticle ? 'opacity-100' : 'opacity-0'}`}
                     >
-                      <img
-                        src={article.bannerImage || FALLBACK_IMAGE}
+                      <OptimizedImage
+                        src={article.bannerImage}
                         alt={article.title}
-                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-                        loading={index === activeArticle ? "eager" : "lazy"}
-                        onError={(e) => {
-                          e.target.src = FALLBACK_IMAGE;
-                        }}
+                        className="w-full h-full"
+                        priority={index === 0}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                     </div>
@@ -494,6 +528,7 @@ const Home = () => {
                         key={index}
                         article={article}
                         loading={false}
+                        priority={index < 2}
                       />
                     ))}
             </div>
@@ -564,20 +599,17 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="w-full mt-10 animate-fadeIn">
-        <img
+      <div className="w-full mt-10">
+        <OptimizedImage
           src="./Grey Matter.png"
           alt="Discover more eco-friendly content"
           className="w-auto h-auto object-cover rounded-2xl shadow-lg hover:shadow-xl transition-shadow"
-          loading="lazy"
-          onError={(e) => {
-            e.target.src = FALLBACK_IMAGE;
-          }}
+          priority={false}
         />
       </div>
 
       {/* More Articles Section */}
-      <div className="flex justify-center items-center animate-fadeIn">
+      <div className="flex justify-center items-center">
         <h1 className="text-3xl mt-10 font-semibold text-gray-800 dark:text-gray-100">
           More Articles You'll Love
         </h1>

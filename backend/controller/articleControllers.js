@@ -53,6 +53,7 @@ const getArticleById = async (req, res) => {
       return res.status(400).json({ succes: false, message: "Invalid article ID" });
     }
     const article = await Article.findById(req.params.id)
+      .select("-__v -updatedAt")
       .populate("author", "name email")
       .lean();
     if (!article) {
@@ -116,12 +117,32 @@ const getArticleByGenre = async (req, res) => {
   }
 };
 
+const getArticlesForHomeByGenre = async (req, res) => {
+  try {
+    const { tag } = req.params;
+
+    const articles = await Article.find({ tags: tag })
+      .sort({ createdAt: -1 })
+      .limit(7)
+      .select("title author createdAt bannerImage")
+      .populate("author", "name email")
+      .lean();
+
+    res.status(200).json({ data: articles });
+  } catch (error) {
+    console.error("Error fetching articles for home by genre:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 // Get Latest Articles
 const getLatestArticles = async (req, res) => {
   try {
     const latestarticles = await Article.find()
       .sort({ createdAt: -1 })
       .limit(4)
+      .select("title author createdAt bannerImage")
       .populate("author", "name email")
       .lean();
     res.status(200).json(latestarticles);
@@ -224,6 +245,7 @@ const deleteArticle = async (req, res) => {
 const getFeaturedArticles = async (req, res) => {
   try {
     const featuredArticles = await Article.find({ isFeatured: true })
+      .select("title author createdAt bannerImage")
       .sort({ createdAt: -1 })
       .populate("author", "name email")
       .lean();
@@ -293,4 +315,5 @@ module.exports = {
   deleteArticle,
   getFeaturedArticles,
   searchArticles,
+  getArticlesForHomeByGenre,
 };

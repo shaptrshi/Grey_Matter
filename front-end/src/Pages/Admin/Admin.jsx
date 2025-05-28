@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipProvider } from "@/components/ui/tooltip";
-import { FaHome, FaUser, FaSignOutAlt } from "react-icons/fa"; // Import FaUser icon
-import { Search } from "lucide-react";
+import { FaHome, FaUser, FaSignOutAlt } from "react-icons/fa"; 
 import axios from "axios";
 import {
   Card,
@@ -12,7 +11,8 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import logo from "../../assets/logo2.png";
+import logo from "../../assets/logo.svg";
+import SearchBar from "../../components/searchbar/searchBar";
 
 const Admin = () => {
   const [authors, setAuthors] = useState([]);
@@ -90,7 +90,6 @@ const Admin = () => {
     );
   };
 
-  const handleEdit = (id) => navigate(`/edit-article/${id}`);
   const handleLogout = async () => {
     try {
       await axios.post(
@@ -132,21 +131,9 @@ const Admin = () => {
         <div className="flex items-center space-x-4">
           {/* Search Bar */}
           <div className="hidden sm:flex items-center max-w-xs flex-1 ml-4">
-            <div className="w-full flex items-center bg-gray-100 rounded-lg hover:bg-custom-green-1 transition-colors duration-200">
-              <input
-                type="text"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-transparent py-2 px-4 text-sm text-gray-900 placeholder-gray-500 focus:outline-none"
-              />
-              <button className="p-2 text-gray-600 hover:text-gray-900">
-                <Search size={20} />
-              </button>
-            </div>
+            <SearchBar className="w-full" />
           </div>
 
-          {/* Navbar Buttons */}
           <TooltipProvider>
             <Tooltip content="Go to Home">
               <Button
@@ -231,17 +218,6 @@ const Admin = () => {
                             {article.date}
                           </p>
                           <div className="flex justify-end gap-4 mt-2">
-                            <Button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handleEdit(article.id);
-                              }}
-                              variant="outline"
-                              size="sm"
-                              className="dark:text-white dark:bg-gray-700 hover:bg-gray-400"
-                            >
-                              Edit
-                            </Button>
                             <Button
                               onClick={(e) => {
                                 e.preventDefault();

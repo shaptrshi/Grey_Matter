@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { FaHome, FaSignOutAlt, FaPlus, FaUserCircle } from "react-icons/fa";
 import axios from "axios";
-import logo from "../../assets/logo2.png";
+import logo from "../../assets/logo.svg";
 import SearchBar from "../../components/searchbar/searchbar";
 
 const AuthorPage = () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import {
@@ -17,25 +17,39 @@ import {
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 
+const PAGE_SIZE = 8;
+const DEFAULT_SORT = "latest";
+
 const Forest = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
-  const sort = searchParams.get("sort") || "latest";
+  const sort = searchParams.get("sort") || DEFAULT_SORT;
 
   const fetchArticles = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/articles/genre/Forest?sort=${sort}&page=${currentPage}&limit=8`
+        `http://localhost:5000/api/articles/genre/Forest`,
+        {
+          params: {
+            sort,
+            page: currentPage,
+            limit: PAGE_SIZE,
+          },
+        }
       );
       setArticles(res.data.data);
       setTotalPages(res.data.totalPages);
-    } catch (error) {
-      console.error("Failed to fetch trending articles:", error);
+    } catch (err) {
+      console.error("Failed to fetch trending articles:", err);
+      setError("Failed to load articles. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -45,23 +59,131 @@ const Forest = () => {
     fetchArticles();
   }, [fetchArticles]);
 
+  // Scroll to top when page changes
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "auto" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
 
-  const updateParams = (newParams) => {
-    setSearchParams((prev) => {
-      const updated = new URLSearchParams(prev);
-      Object.entries(newParams).forEach(([key, value]) => {
-        if (value === undefined || value === null) {
-          updated.delete(key);
-        } else {
-          updated.set(key, value);
-        }
-      });
-      return updated;
+  const handleSortChange = useCallback(
+    (value) => {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set("sort", value);
+      newParams.set("page", "1");
+      navigate(`?${newParams.toString()}`, { replace: true });
+    },
+    [navigate, searchParams]
+  );
+
+  const handlePageChange = useCallback(
+    (page) => {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set("page", String(page));
+      navigate(`?${newParams.toString()}`, { replace: true });
+    },
+    [navigate, searchParams]
+  );
+
+  const handleArticleClick = useCallback(
+    (id) => {
+      navigate(`/articles/${id}`);
+    },
+    [navigate]
+  );
+
+  const handleAuthorClick = useCallback(
+    (e, id) => {
+      e.stopPropagation();
+      navigate(`/profile/${id}`);
+    },
+    [navigate]
+  );
+
+  // Memoized article cards to prevent unnecessary re-renders
+  const articleCards = useMemo(
+    () =>
+      articles.map((article) => (
+        <div
+          key={article._id}
+          onClick={() => handleArticleClick(article._id)}
+          className="cursor-pointer"
+          role="article"
+          aria-label={`Article: ${article.title}`}
+        >
+          <Card className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
+            <div className="relative h-[150px] sm:h-[150px]">
+              <img
+                src={article.bannerImage || "/default-image.jpg"}
+                alt={article.title}
+                className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+                loading="lazy"
+              />
+            </div>
+            <CardHeader className="p-3 sm:p-4 mt-1">
+              <CardTitle className="text-lg font-semibold text-gray-800 line-clamp-2 hover:underline dark:text-gray-100">
+                {article.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex justify-between items-center text-xs sm:text-sm">
+                <button
+                  onClick={(e) => handleAuthorClick(e, article.author?._id)}
+                  className="font-semibold text-teal-700 hover:underline"
+                  aria-label={`View articles by ${
+                    article.author?.name || "Unknown"
+                  }`}
+                >
+                  {article.author?.name || "Unknown"}
+                </button>
+                <time
+                  dateTime={new Date(article.createdAt).toISOString()}
+                  className="font-semibold text-teal-700"
+                >
+                  {new Date(article.createdAt).toLocaleDateString()}
+                </time>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )),
+    [articles, handleArticleClick, handleAuthorClick]
+  );
+
+  // Memoized pagination items
+  const paginationItems = useMemo(() => {
+    if (totalPages <= 1) return null;
+
+    const pageNumbersToShow = 5;
+    let startPage = Math.max(
+      1,
+      currentPage - Math.floor(pageNumbersToShow / 2)
+    );
+    let endPage = startPage + pageNumbersToShow - 1;
+
+    if (endPage > totalPages) {
+      endPage = totalPages;
+      startPage = Math.max(1, endPage - pageNumbersToShow + 1);
+    }
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+      const pageNum = startPage + i;
+      return (
+        <PaginationItem key={pageNum}>
+          <PaginationLink
+            isActive={pageNum === currentPage}
+            onClick={() => handlePageChange(pageNum)}
+            className={`cursor-pointer py-2 px-4 rounded-lg transition-all ${
+              pageNum === currentPage
+                ? "bg-teal-500 text-white dark:bg-custom-dark"
+                : "text-teal-700 hover:bg-teal-200 dark:hover:bg-teal-600 dark:text-gray-100 dark:hover:text-white"
+            }`}
+            aria-label={`Go to page ${pageNum}`}
+          >
+            {pageNum}
+          </PaginationLink>
+        </PaginationItem>
+      );
     });
-  };
+  }, [totalPages, currentPage, handlePageChange]);
 
   return (
     <div className="container mx-auto px-4 sm:px-10 lg:px-8 py-4 sm:py-6 lg:py-8 min-h-screen bg-gray-100 dark:bg-custom-dark dark:text-gray-100">
@@ -78,7 +200,8 @@ const Forest = () => {
         <div className="flex justify-center sm:justify-end mb-6 px-4">
           <Select
             value={sort}
-            onValueChange={(value) => updateParams({ sort: value, page: "1" })}
+            onValueChange={handleSortChange}
+            aria-label="Sort articles by"
           >
             <SelectTrigger
               className="w-[220px] bg-white dark:bg-custom-dark text-gray-800 dark:text-white rounded-lg border border-gray-300 dark:border-gray-600 shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 flex justify-between items-center py-2 px-4 transition-all"
@@ -95,9 +218,20 @@ const Forest = () => {
           </Select>
         </div>
 
-        {loading ? (
+        {error ? (
+          <div className="text-center text-red-500 py-10">
+            {error}
+            <button
+              onClick={fetchArticles}
+              className="ml-4 px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600"
+              aria-label="Retry loading articles"
+            >
+              Retry
+            </button>
+          </div>
+        ) : loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {[...Array(8)].map((_, i) => (
+            {[...Array(PAGE_SIZE)].map((_, i) => (
               <div key={i} className="p-2">
                 <Skeleton className="h-[150px] w-full rounded-lg mb-3" />
                 <Skeleton className="h-4 w-3/4 mb-2" />
@@ -110,118 +244,50 @@ const Forest = () => {
             ))}
           </div>
         ) : articles.length === 0 ? (
-          <p className="text-center text-muted-foreground">
+          <p className="text-center text-muted-foreground py-10">
             No articles found.
           </p>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
-              {articles.map((article) => (
-                <div
-                  key={article._id}
-                  onClick={() => navigate(`/articles/${article._id}`)}
-                  className="cursor-pointer"
-                >
-                  <Card className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
-                    <div className="relative h-[150px] sm:h-[150px]">
-                      <img
-                        src={article.bannerImage || "/default-image.jpg"}
-                        alt={article.title}
-                        className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
-                      />
-                    </div>
-                    <CardHeader className="p-3 sm:p-4 mt-1">
-                      <CardTitle className="text-lg font-semibold text-gray-800 line-clamp-2 hover:underline dark:text-gray-100">
-                        {article.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-3 sm:p-4">
-                      <div className="flex justify-between items-center text-xs sm:text-sm">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/profile/${article.author?._id}`);
-                          }}
-                          className="font-semibold text-teal-700 hover:underline"
-                        >
-                          {article.author?.name || "Unknown"}
-                        </button>
-                        <p className="font-semibold text-teal-700">
-                          {new Date(article.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
+              {articleCards}
             </div>
 
-            {/* Modern Pagination */}
+            {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex justify-center mt-16">
                 <Pagination className="bg-white dark:bg-custom-dark p-4">
                   <PaginationContent className="flex gap-2">
-                    {/* ← Prev */}
+                    {/* Previous Page */}
                     <PaginationItem>
                       <PaginationLink
-                        onClick={() =>
-                          currentPage > 1 &&
-                          updateParams({ page: String(currentPage - 1), sort })
-                        }
-                        className="cursor-pointer py-2 px-3 rounded-lg text-teal-700 hover:bg-teal-200 dark:hover:bg-teal-600 dark:text-gray-100 dark:hover:text-white"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage <= 1}
+                        className={`cursor-pointer py-2 px-3 rounded-lg text-teal-700 hover:bg-teal-200 dark:hover:bg-teal-600 dark:text-gray-100 dark:hover:text-white ${
+                          currentPage <= 1
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
+                        aria-label="Previous page"
                       >
                         ←
                       </PaginationLink>
                     </PaginationItem>
 
-                    {/* Dynamic Pages */}
-                    {(() => {
-                      const pageNumbersToShow = 5;
-                      let startPage = Math.max(
-                        1,
-                        currentPage - Math.floor(pageNumbersToShow / 2)
-                      );
-                      let endPage = startPage + pageNumbersToShow - 1;
+                    {/* Page Numbers */}
+                    {paginationItems}
 
-                      if (endPage > totalPages) {
-                        endPage = totalPages;
-                        startPage = Math.max(
-                          1,
-                          endPage - pageNumbersToShow + 1
-                        );
-                      }
-
-                      const pages = [];
-                      for (let i = startPage; i <= endPage; i++) {
-                        pages.push(
-                          <PaginationItem key={i}>
-                            <PaginationLink
-                              isActive={i === currentPage}
-                              onClick={() =>
-                                updateParams({ page: String(i), sort })
-                              }
-                              className={`cursor-pointer py-2 px-4 rounded-lg transition-all ${
-                                i === currentPage
-                                  ? "bg-teal-500 text-white dark:bg-custom-dark"
-                                  : "text-teal-700 hover:bg-teal-200 dark:hover:bg-teal-600 dark:text-gray-100 dark:hover:text-white"
-                              }`}
-                            >
-                              {i}
-                            </PaginationLink>
-                          </PaginationItem>
-                        );
-                      }
-                      return pages;
-                    })()}
-
-                    {/* → Next */}
+                    {/* Next Page */}
                     <PaginationItem>
                       <PaginationLink
-                        onClick={() =>
-                          currentPage < totalPages &&
-                          updateParams({ page: String(currentPage + 1), sort })
-                        }
-                        className="cursor-pointer py-2 px-3 rounded-lg text-teal-700 hover:bg-teal-200 dark:hover:bg-teal-600 dark:text-gray-100 dark:hover:text-white"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage >= totalPages}
+                        className={`cursor-pointer py-2 px-3 rounded-lg text-teal-700 hover:bg-teal-200 dark:hover:bg-teal-600 dark:text-gray-100 dark:hover:text-white ${
+                          currentPage >= totalPages
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
+                        aria-label="Next page"
                       >
                         →
                       </PaginationLink>
@@ -237,4 +303,4 @@ const Forest = () => {
   );
 };
 
-export default Forest;
+export default React.memo(Forest);
