@@ -171,7 +171,7 @@ const getPublicUserProfile = async (req, res) => {
 
     // Find user by ID and populate only necessary article fields
     const user = await User.findById(userId)
-      .select("name bio profilePhoto email articles") // Only public fields
+      .select("name bio profilePhoto articles") // Only public fields
       .populate({
         path: "articles",
         options: { sort: { createdAt: -1 } }, // Sort by createdAt in descending order
@@ -187,7 +187,6 @@ const getPublicUserProfile = async (req, res) => {
     res.status(200).json({
       success: true,
       name: user.name,
-      email: user.email, // include only if it's meant to be public
       bio: user.bio,
       profilePicture: user.profilePhoto,
       articles: user.articles.map((article) => ({

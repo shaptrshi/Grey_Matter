@@ -21,7 +21,7 @@ router.get("/", getAllArticles); // Get all articles
 router.get("/latest", getLatestArticles); // Get latest articles
 router.get("/random", getRandomArticles); // Get random articles
 router.get("/featured", getFeaturedArticles); // Get featured articles
-router.get("/home/:genre", getArticlesForHomeByGenre); // Get articles for home by genre
+router.get("/home/:tag", getArticlesForHomeByGenre); // Get articles for home by genre
 router.get("/genre/:tag", getArticleByGenre); // Get articles by genre
 router.get("/search", searchArticles); // Search articles
 router.get("/:id", getArticleById); // Get article by ID

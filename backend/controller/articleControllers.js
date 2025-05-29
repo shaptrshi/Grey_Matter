@@ -36,7 +36,7 @@ const createArticle = async (req, res) => {
 const getAllArticles = async (req, res) => {
   try {
     const articles = await Article.find()
-      .sort({ createdAt: -1 }) 
+      .sort({ createdAt: -1 })
       .populate("author", "name email")
       .lean();
     res.status(200).json(articles);
@@ -50,7 +50,9 @@ const getAllArticles = async (req, res) => {
 const getArticleById = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ succes: false, message: "Invalid article ID" });
+      return res
+        .status(400)
+        .json({ succes: false, message: "Invalid article ID" });
     }
     const article = await Article.findById(req.params.id)
       .select("-__v -updatedAt")
@@ -76,25 +78,25 @@ const getArticleByGenre = async (req, res) => {
     const limitNumber = isNaN(parseInt(limit)) ? 8 : parseInt(limit);
 
     const skip = (pageNumber - 1) * limitNumber;
-    
-    let sortOptions = {}
+
+    let sortOptions = {};
 
     switch (sort) {
       case "latest":
-        sortOptions = { createdAt: -1 }; 
+        sortOptions = { createdAt: -1 };
         break;
       case "oldest":
-        sortOptions = { createdAt: 1 }; 
+        sortOptions = { createdAt: 1 };
         break;
       case "title-asc":
-        sortOptions = { title: 1 }; 
+        sortOptions = { title: 1 };
         break;
       case "title-desc":
-        sortOptions = { title: -1 }; 
+        sortOptions = { title: -1 };
         break;
       default:
         sortOptions = { createdAt: -1 };
-    }          
+    }
 
     const articles = await Article.find({ tags: tag })
       .sort(sortOptions)
@@ -103,13 +105,13 @@ const getArticleByGenre = async (req, res) => {
       .populate("author", "name email")
       .lean();
 
-      const total = await Article.countDocuments({ tags: tag });
-      const totalPages = Math.ceil(total / limitNumber);
+    const total = await Article.countDocuments({ tags: tag });
+    const totalPages = Math.ceil(total / limitNumber);
     res.status(200).json({
       data: articles,
       currentPage: pageNumber,
       totalPages: totalPages,
-      totalArticles: total
+      totalArticles: total,
     });
   } catch (error) {
     console.error("Error fetching articles by genre:", error);
@@ -117,11 +119,22 @@ const getArticleByGenre = async (req, res) => {
   }
 };
 
+// controllers/articleController.js
 const getArticlesForHomeByGenre = async (req, res) => {
   try {
     const { tag } = req.params;
 
-    const articles = await Article.find({ tags: tag })
+    let query = {};
+
+    if (tag === "featured") {
+      query = { isFeatured: true };
+    } else if (tag === "latest") {
+      query = {};
+    } else {
+      query = { tags: tag };
+    }
+
+    const articles = await Article.find(query)
       .sort({ createdAt: -1 })
       .limit(7)
       .select("title author createdAt bannerImage")
@@ -134,7 +147,6 @@ const getArticlesForHomeByGenre = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 // Get Latest Articles
 const getLatestArticles = async (req, res) => {
@@ -158,13 +170,15 @@ const getRandomArticles = async (req, res) => {
     // Step 1: Get just the IDs of 4 random articles (very lightweight)
     const randomArticleIds = await Article.aggregate([
       { $sample: { size: 4 } },
-      { $project: { _id: 1 } }
+      { $project: { _id: 1 } },
     ]);
-    
+
     // Step 2: Fetch only those 4 articles with author data
     const selected = await Article.find({
-      _id: { $in: randomArticleIds.map(a => a._id) }
-    }).populate("author", "name email").lean();
+      _id: { $in: randomArticleIds.map((a) => a._id) },
+    })
+      .populate("author", "name email")
+      .lean();
 
     res.status(200).json({ articles: selected });
   } catch (error) {
@@ -277,11 +291,7 @@ const searchArticles = async (req, res) => {
     const regex = new RegExp(query, "i"); // Case-insensitive search
 
     const filter = {
-      $or: [
-        { title: regex },
-        { content: regex },
-        { tags: regex },
-      ],
+      $or: [{ title: regex }, { content: regex }, { tags: regex }],
     };
 
     // Fetch articles with pagination

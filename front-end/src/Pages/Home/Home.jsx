@@ -201,13 +201,16 @@ const Section = memo(({ title, articles, loading, limit = 4, genre }) => {
 Section.displayName = "Section";
 
 const Home = () => {
-  const [trending, setTrending] = useState({ data: [] });
-  const [featured, setFeatured] = useState([]);
-  const [latest, setLatest] = useState([]);
-  const [environment, setEnvironment] = useState({ data: [] });
-  const [sustainable, setSustainable] = useState({ data: [] });
-  const [interviews, setInterviews] = useState({ data: [] });
-  const [spotlight, setSpotlight] = useState({ data: [] });
+  const [articles, setArticles] = useState({
+    trending: [],
+    featured: [],
+    latest: [],
+    environment: [],
+    sustainable: [],
+    interviews: [],
+    spotlight: []
+  });
+  
   const [activeArticle, setActiveArticle] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -223,87 +226,76 @@ const Home = () => {
     spotlight: true,
   });
 
-  const fetchArticlesByGenre = useCallback(
-    async (genre, setter, loadingKey) => {
-      try {
-        const { data } = await axios.get(
-          `http://localhost:5000/api/articles/genre/${genre}`
-        );
-        setter(data);
-      } catch (e) {
-        console.error(`Error fetching ${genre}:`, e);
-      } finally {
-        setLoading((prev) => ({ ...prev, [loadingKey]: false }));
-      }
-    },
-    []
-  );
-
-  useEffect(() => {
-    fetchArticlesByGenre("Trending", setTrending, "trending");
-    fetchArticlesByGenre("Environment", setEnvironment, "environment");
-    fetchArticlesByGenre("Sustainable_Living", setSustainable, "sustainable");
-    fetchArticlesByGenre("Interviews", setInterviews, "interviews");
-    fetchArticlesByGenre("Spotlight", setSpotlight, "spotlight");
-  }, [fetchArticlesByGenre]);
-
-  const fetchFeatured = useCallback(async () => {
+  const fetchAllArticles = useCallback(async () => {
     try {
-      const { data } = await axios.get(
-        "http://localhost:5000/api/articles/featured"
-      );
-      setFeatured(data);
-    } catch (e) {
-      console.error("Error fetching featured:", e);
-    } finally {
-      setLoading((prev) => ({ ...prev, featured: false }));
-    }
-  }, []);
+      // Create an array of all the categories we need to fetch
+      const categories = [
+        { key: 'trending', tag: 'Trending' },
+        { key: 'featured', tag: 'featured' },
+        { key: 'latest', tag: 'latest' },
+        { key: 'environment', tag: 'Environment' },
+        { key: 'sustainable', tag: 'Sustainable_Living' },
+        { key: 'interviews', tag: 'Interviews' },
+        { key: 'spotlight', tag: 'Spotlight' }
+      ];
 
-  const fetchLatest = useCallback(async () => {
-    try {
-      const { data } = await axios.get(
-        "http://localhost:5000/api/articles/latest"
-      );
-      setLatest(data);
-    } catch (e) {
-      console.error("Error fetching latest:", e);
-    } finally {
-      setLoading((prev) => ({ ...prev, latest: false }));
+      // Fetch all categories in parallel
+      const requests = categories.map(({ key, tag }) => 
+        axios.get(`http://localhost:5000/api/articles/home/${tag}`)
+          .then(res => ({ key, data: res.data.data }))
+          .catch(err => {
+            console.error(`Error fetching ${key}:`, err);
+            return { key, data: [] };
+          }));
+
+      const results = await Promise.all(requests);
+      
+      // Update state with all fetched data
+      const newArticles = { ...articles };
+      const newLoading = { ...loading };
+      
+      results.forEach(({ key, data }) => {
+        newArticles[key] = data;
+        newLoading[key] = false;
+      });
+
+      setArticles(newArticles);
+      setLoading(newLoading);
+    } catch (error) {
+      console.error("Error fetching articles:", error);
     }
   }, []);
 
   useEffect(() => {
-    fetchFeatured();
-    fetchLatest();
-  }, [fetchFeatured, fetchLatest]);
+    fetchAllArticles();
+  }, [fetchAllArticles]);
 
   const handleNext = useCallback(() => {
-    if (isTransitioning || featured.length <= 1) return;
+    if (isTransitioning || articles.featured.length <= 1) return;
     
     setIsTransitioning(true);
     setTimeout(() => {
-      setActiveArticle((prev) => (prev + 1) % featured.length);
+      setActiveArticle((prev) => (prev + 1) % articles.featured.length);
       setIsTransitioning(false);
     }, 500);
-  }, [featured.length, isTransitioning]);
+  }, [articles.featured.length, isTransitioning]);
 
   const handlePrev = useCallback(() => {
-    if (isTransitioning || featured.length <= 1) return;
+    if (isTransitioning || articles.featured.length <= 1) return;
     
     setIsTransitioning(true);
     setTimeout(() => {
-      setActiveArticle((prev) => (prev - 1 + featured.length) % featured.length);
+      setActiveArticle((prev) => (prev - 1 + articles.featured.length) % articles.featured.length);
       setIsTransitioning(false);
     }, 500);
-  }, [featured.length, isTransitioning]);
+  }, [articles.featured.length, isTransitioning]);
 
   useEffect(() => {
-    if (!autoRotate || featured.length <= 1) return;
+    if (!autoRotate || articles.featured.length <= 1) return;
 
     const interval = setInterval(handleNext, 5000);
     return () => clearInterval(interval);
-  }, [autoRotate, featured.length, handleNext]);
+  }, [autoRotate, articles.featured.length, handleNext]);
 
   const handleSeeMoreTrending = () => {
     navigate("/trending");
@@ -365,7 +357,7 @@ const Home = () => {
             </div>
           ) : (
             <ul className="flex flex-col gap-8">
-              {trending.data?.slice(0, 7).map((article, index) => (
+              {articles.trending?.slice(0, 7).map((article, index) => (
                 <div key={index} className="gap-8 group">
                   <Card 
                     className="hover:shadow-lg transition-all duration-300 hover:bg-custom-green-1/10 dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black group-hover:scale-[1.02]"
@@ -409,10 +401,10 @@ const Home = () => {
           >
             {loading.featured ? (
               <Skeleton className="w-full h-full rounded-xl animate-pulse" />
-            ) : featured.length > 0 ? (
+            ) : articles.featured.length > 0 ? (
               <>
                 <div className="relative w-full h-full overflow-hidden">
-                  {featured.map((article, index) => (
+                  {articles.featured.map((article, index) => (
                     <div
                       key={index}
                       className={`absolute inset-0 transition-opacity duration-500 ${index === activeArticle ? 'opacity-100' : 'opacity-0'}`}
@@ -434,14 +426,14 @@ const Home = () => {
                   </span>
 
                   <div
-                    onClick={() => navigate(featured[activeArticle]?.link || `/articles/${featured[activeArticle]?._id}`)}
+                    onClick={() => navigate(articles.featured[activeArticle]?.link || `/articles/${articles.featured[activeArticle]?._id}`)}
                     className="cursor-pointer"
                   >
                     <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight hover:underline transition-all">
-                      {featured[activeArticle]?.title || "Featured Article"}
+                      {articles.featured[activeArticle]?.title || "Featured Article"}
                     </h3>
                     <p className="text-sm sm:text-base mt-2 line-clamp-2 opacity-90">
-                      {featured[activeArticle]?.excerpt || featured[activeArticle]?.description || ""}
+                      {articles.featured[activeArticle]?.excerpt || articles.featured[activeArticle]?.description || ""}
                     </p>
                   </div>
 
@@ -449,18 +441,18 @@ const Home = () => {
                     <span 
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (featured[activeArticle]?.author?._id) {
-                          navigate(`/profile/${featured[activeArticle].author._id}`);
+                        if (articles.featured[activeArticle]?.author?._id) {
+                          navigate(`/profile/${articles.featured[activeArticle].author._id}`);
                         }
                       }}
                       className="font-medium text-teal-300 hover:underline cursor-pointer transition-colors"
                     >
-                      By {featured[activeArticle]?.author?.name || featured[activeArticle]?.author || "Unknown"}
+                      By {articles.featured[activeArticle]?.author?.name || articles.featured[activeArticle]?.author || "Unknown"}
                     </span>
                     <span className="text-gray-300">•</span>
                     <span className="text-gray-300">
                       {new Date(
-                        featured[activeArticle]?.createdAt
+                        articles.featured[activeArticle]?.createdAt
                       ).toLocaleDateString()}
                     </span>
                   </div>
@@ -485,9 +477,9 @@ const Home = () => {
                 </div>
 
                 {/* Indicator dots */}
-                {featured.length > 1 && (
+                {articles.featured.length > 1 && (
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-                    {featured.map((_, index) => (
+                    {articles.featured.map((_, index) => (
                       <button
                         key={index}
                         onClick={() => setActiveArticle(index)}
@@ -521,7 +513,7 @@ const Home = () => {
                 ? [...Array(4)].map((_, index) => (
                     <ArticleCard key={index} loading={true} />
                   ))
-                : latest
+                : articles.latest
                     .slice(0, 4)
                     .map((article, index) => (
                       <ArticleCard
@@ -603,25 +595,25 @@ const Home = () => {
       {/* Memoized Sections */}
       <Section
         title="Spotlight"
-        articles={spotlight.data}
+        articles={articles.spotlight}
         loading={loading.spotlight}
         genre="Spotlight"
       />
       <Section
         title="Environment"
-        articles={environment.data}
+        articles={articles.environment}
         loading={loading.environment}
         genre="Environment"
       />
       <Section
         title="Sustainable Living"
-        articles={sustainable.data}
+        articles={articles.sustainable}
         loading={loading.sustainable}
         genre="Sustainable_Living"
       />
       <Section
         title="Interviews"
-        articles={interviews.data}
+        articles={articles.interviews}
         loading={loading.interviews}
         genre="Interviews"
       />
