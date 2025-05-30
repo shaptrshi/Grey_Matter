@@ -238,7 +238,6 @@ const EditArticle = () => {
                       accept="image/*"
                       onChange={handleBannerImageUpload}
                       className="hidden"
-                      required
                     />
                   </label>
                 </div>
