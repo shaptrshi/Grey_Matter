@@ -17,7 +17,7 @@ const userLogin = async (req, res) => {
         .json({ success: false, message: "All fields required" });
     }
 
-    const userExist = await User.findOne({ email, role }).populate("articles");
+    const userExist = await User.findOne({ email, role });
     if (!userExist) {
       return res
         .status(400)
@@ -141,8 +141,10 @@ const userProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate({
       path: "articles",
+      select: "title bannerImage createdAt slug",
       options: { sort: { createdAt: -1 } }, // Sort by createdAt in descending order
-    });
+    })
+    .lean();
 
     if (!user) {
       return res
@@ -158,7 +160,7 @@ const userProfile = async (req, res) => {
       role: user.role,
       bio: user.bio,
       profilePhoto: user.profilePhoto,
-      articles: user.articles, // This will now be populated
+      articles: user.articles,
     });
   } catch (error) {
     res.status(500).json({ success: false, error: "Server error", error });
@@ -169,14 +171,14 @@ const getPublicUserProfile = async (req, res) => {
   try {
     const userId = req.params.id;
 
-    // Find user by ID and populate only necessary article fields
     const user = await User.findById(userId)
-      .select("name bio profilePhoto articles") // Only public fields
+      .select("name bio profilePhoto articles")
       .populate({
         path: "articles",
-        options: { sort: { createdAt: -1 } }, // Sort by createdAt in descending order
-        select: "title bannerImage createdAt slug", // customize fields as needed
-      });
+        options: { sort: { createdAt: -1 } },
+        select: "title bannerImage createdAt slug author",
+      })
+      .lean();
 
     if (!user) {
       return res
