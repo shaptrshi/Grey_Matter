@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema(
     profilePhoto: {
       type: String,
     },
+    publicId: {
+      type: String,
+      select: false, // Exclude from queries by default
+    },
     articles: [
       {
         type: mongoose.Schema.Types.ObjectId,

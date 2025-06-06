@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const { uploadOnCloudinary, deleteFromCloudinary, getPublicIdFromUrl } = require("../utils/cloudinary");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 
@@ -48,7 +49,6 @@ const userLogin = async (req, res) => {
 const userRegister = async (req, res) => {
   try {
     const { name, email, password, confirmPassword, bio, role } = req.body;
-    const profilePhoto = req.file ? req.file.path : null;
 
     if (!name || !email || !password || !confirmPassword) {
       return res
@@ -69,7 +69,14 @@ const userRegister = async (req, res) => {
         .json({ success: false, message: "User already exists" });
     }
 
-    const user = new User({ name, email, password, bio, role, profilePhoto });
+    let profilePhoto, publicId;
+    if (req.file) {
+      const result = await uploadOnCloudinary(req.file.buffer, "profile_photos");
+      profilePhoto = result.secure_url;
+      publicId = result.public_id;
+    }  
+
+    const user = new User({ name, email, password, bio, role, profilePhoto, publicId });
 
     await user.save();
 
@@ -93,13 +100,26 @@ const userRegister = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { name, bio } = req.body;
-    const profilePhoto = req.file ? req.file.path : undefined;
+  
 
     const updateFields = {};
     if (name) updateFields.name = name;
     if (bio) updateFields.bio = bio;
-    if (profilePhoto) updateFields.profilePhoto = profilePhoto;
+  
+    if (req.file) {
+      const result = await uploadOnCloudinary(req.file.buffer, "profile_photos");
 
+      const currentUser = await User.findById(req.user._id).select("publicId profilePhoto");
+      if (currentUser.profilePhoto) {
+        const publicId = getPublicIdFromUrl(currentUser.profilePhoto);
+        if (publicId) {
+          await deleteFromCloudinary(publicId);
+        }
+      } 
+      
+      updateFields.profilePhoto = result.secure_url;
+      updateFields.publicId = result.public_id;
+    }
     const updateUser = await User.findByIdAndUpdate(
       req.user._id,
       updateFields,

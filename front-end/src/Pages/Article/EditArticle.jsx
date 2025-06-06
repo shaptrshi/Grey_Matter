@@ -25,6 +25,7 @@ const EditArticle = () => {
   const [loading, setLoading] = useState(true);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [fileToUpload, setFileToUpload] = useState(null);
 
   const availableTags = useMemo(() => [
     "Trending",
@@ -33,7 +34,7 @@ const EditArticle = () => {
     "Agriculture",
     "Forest",
     "Sustainable_Living",
-    "Technology_and_Advancements",
+    "Technology_and_Advancement",
     "Science_and_Research",
     "Startups_and_Entrepreneurship",
     "Evolving_Horizons",
@@ -80,14 +81,12 @@ const EditArticle = () => {
     setIsUploadingImage(true);
     
     try {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setBannerImage(e.target.result);
-        setIsUploadingImage(false);
-      };
-      reader.readAsDataURL(file);
+      const previewUrl = URL.createObjectURL(file);
+      setBannerImage(previewUrl);
+      setFileToUpload(file);
     } catch (error) {
       toast.error("Failed to upload image");
+    } finally {
       setIsUploadingImage(false);
     }
   };
@@ -111,27 +110,34 @@ const EditArticle = () => {
     setIsSaving(true);
 
     try {
-      const updatedArticle = {
-        title,
-        bannerImage,
-        content,
-        tags,
-        isFeatured,
-      };
+
+      const formData = new FormData();
+
+      if (fileToUpload) {
+        formData.append("bannerImage", fileToUpload);
+      }  
+
+      formData.append("title", title);
+      formData.append("content", content);
+      formData.append("isFeatured", isFeatured);
+      tags.forEach(tag => formData.append("tags[]", tag));
 
       const res = await axios.put(
         `http://localhost:5000/api/articles/${id}`,
-        updatedArticle,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
 
       if (res.status === 200 || res.data.success) {
         toast.success("Article updated successfully!");
+        if (fileToUpload) {
+          URL.revokeObjectURL(bannerImage); // Clean up the object URL
+        }
         navigate(`/articles/${id}`);
       } else {
         toast.error(
@@ -141,6 +147,10 @@ const EditArticle = () => {
     } catch (error) {
       console.error("Error updating article:", error);
       toast.error("An error occurred while updating the article.");
+
+      if (fileToUpload) {
+        URL.revokeObjectURL(bannerImage); // Clean up the object URL
+      }
     } finally {
       setIsSaving(false);
     }
@@ -346,7 +356,7 @@ const EditArticle = () => {
       </div>
 
       {/* Custom styles for Quill editor */}
-      <style jsx global>{`
+      <style>{`
         .ql-toolbar {
           border-top-left-radius: 0.5rem;
           border-top-right-radius: 0.5rem;

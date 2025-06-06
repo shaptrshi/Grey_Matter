@@ -1,19 +1,37 @@
 const Article = require("../models/articleModel");
 const User = require("../models/userModel");
 const mongoose = require("mongoose");
+const {
+  uploadOnCloudinary,
+  deleteFromCloudinary,
+  getPublicIdFromUrl,
+} = require("../utils/cloudinary");
 
 const createArticle = async (req, res) => {
   try {
-    const { title, content, bannerImage, tags, isFeatured } = req.body;
+    const { title, content, tags, isFeatured } = req.body;
     const authorId = req.user._id; // Logged-in user's ID
     if (!title || !content) {
       return res.status(400).json({ message: "All fields are required" });
+    }
+
+    let bannerImage, publicId;
+    if (req.file) {
+      const result = await uploadOnCloudinary(
+        req.file.buffer,
+        "article-banners"
+      );
+      bannerImage = result.secure_url;
+      publicId = result.public_id; // Store the public ID for future deletion
+    } else {
+      return res.status(400).json({ message: "Banner image is required" });
     }
 
     const article = new Article({
       title,
       content,
       bannerImage,
+      publicId, // Store the public ID for future deletion
       tags,
       isFeatured,
       author: authorId, // use logged-in user as author
@@ -191,7 +209,7 @@ const getRandomArticles = async (req, res) => {
 const updateArticle = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, content, bannerImage, tags, isFeatured } = req.body;
+    const { title, content, tags, isFeatured } = req.body;
     const userId = req.user._id; // Logged-in user's ID
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -210,16 +228,44 @@ const updateArticle = async (req, res) => {
         .json({ message: "You are not authorized to update this article" });
     }
 
+    const oldPublicId = article.publicId; // Store the old public ID for deletion
+    let newImageResult = null;
+
+    if (req.file) {
+      try {
+        newImageResult = await uploadOnCloudinary(
+          req.file.buffer,
+          "article-banners"
+        );
+
+        article.bannerImage = newImageResult.secure_url;
+        article.publicId = newImageResult.public_id;
+
+        if (oldPublicId) {
+          await deleteFromCloudinary(oldPublicId); 
+          console.log("Old image deleted from Cloudinary");
+        }
+      } catch (uploaderror) {
+        console.error("Error uploading new image to Cloudinary:", error);
+        if (!article.bannerImage && oldPublicId) {
+          console.log("No new image uploaded, reverting to old image");
+        }
+        throw uploaderror;
+      }
+    }
     // Update the article
     article.title = title || article.title;
     article.content = content || article.content;
-    article.bannerImage = bannerImage || article.bannerImage;
     article.tags = tags || article.tags;
     article.isFeatured = isFeatured || article.isFeatured;
 
-    await article.save();
+    const updateArticle = await article.save();
 
-    res.status(200).json({ message: "Article updated successfully", article });
+    res.status(200).json({
+      success: true,
+      message: "Article updated successfully",
+      article: updateArticle,
+    });
   } catch (error) {
     console.error("Error updating article:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -236,7 +282,9 @@ const deleteArticle = async (req, res) => {
       return res.status(400).json({ message: "Invalid article ID" });
     }
 
-    const article = await Article.findById(id);
+    const article = await Article.findById(id)
+      .select("publicId author") // Select only necessary fields
+      .lean();
 
     if (!article) {
       return res.status(404).json({ message: "Article not found" });
@@ -248,10 +296,37 @@ const deleteArticle = async (req, res) => {
         .json({ message: "You are not authorized to delete this article" });
     }
 
-    await article.deleteOne();
+    const deletionResult = await Promise.allSettled([
+      article.publicId
+        ? deleteFromCloudinary(article.publicId)
+        : Promise.resolve(),
+      Article.deleteOne({ _id: id }),
+      User.findByIdAndUpdate(
+        userId,
+        { $pull: { articles: id } },
+        { new: true }
+      ),
+    ]);
 
-    await User.findByIdAndUpdate(userId, { $pull: { articles: id } });
+    const cloudinarySuccess =
+      !article.publicId || deletionResult[0].status === "fulfilled";
+    const dbSuccess =
+      deletionResult[1].status === "fulfilled" &&
+      deletionResult[1].value.deletedCount == 1;
+    const userUpdateSuccess = deletionResult[2].status === "fulfilled";
 
+    if (!cloudinarySuccess || !dbSuccess) {
+      console.error("Error deleting article:", deletionResult);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        details: {
+          cloudinaryDeleted: cloudinarySuccess,
+          dbDeleted: dbSuccess,
+          userUpdated: userUpdateSuccess,
+        },
+      });
+    }
     res.status(200).json({ message: "Article deleted successfully" });
   } catch (error) {
     console.error("Error deleting article:", error);

@@ -13,6 +13,10 @@ const articleSchema = new mongoose.Schema(
     bannerImage: {
       type: String,
     },
+    imagePublicId: {
+      type: String,
+      select: false, // Exclude from queries by default
+    },
     tags: [
       {
         type: String,

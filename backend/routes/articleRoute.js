@@ -15,6 +15,7 @@ const {
 } = require("../controller/articleControllers");
 const { protect } = require("../middleware/authMiddleware");
 const { authorizeRoles } = require("../middleware/roleMiddleware");
+const upload = require("../middleware/upload");
 
 //Public routes
 router.get("/", getAllArticles); // Get all articles
@@ -28,8 +29,8 @@ router.get("/:id", getArticleById); // Get article by ID
 
 
 //Protected routes
-router.post("/", protect, authorizeRoles("author"), createArticle); // Create an article
-router.put("/:id", protect, authorizeRoles("author"), updateArticle); // Update an article
+router.post("/", protect, authorizeRoles("author"), upload.single("bannerImage"), createArticle); // Create an article
+router.put("/:id", protect, authorizeRoles("author"), upload.single("bannerImage"), updateArticle); // Update an article
 router.delete("/:id", protect, authorizeRoles("author"), deleteArticle); // Delete an article
 
 module.exports = router;

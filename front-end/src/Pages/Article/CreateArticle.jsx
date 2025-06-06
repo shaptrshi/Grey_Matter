@@ -21,39 +21,43 @@ const CreateArticle = () => {
   const [tags, setTags] = useState([]);
   const [isPublishing, setIsPublishing] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [bannerImageFile, setBannerImageFile] = useState(null);
+  const [bannerImagePreview, setBannerImagePreview] = useState(null);
 
-  const availableTags = useMemo(() => [
-    "Trending",
-    "Environment",
-    "Weather",
-    "Agriculture",
-    "Forest",
-    "Sustainable_Living",
-    "Technology_and_Advancements",
-    "Science_and_Research",
-    "Startups_and_Entrepreneurship",
-    "Evolving_Horizons",
-    "Interviews",
-    "Spotlight",
-    "Policy_and_Governance",
-  ], []);
+  const availableTags = useMemo(
+    () => [
+      "Trending",
+      "Environment",
+      "Weather",
+      "Agriculture",
+      "Forest",
+      "Sustainable_Living",
+      "Technology_and_Advancement",
+      "Science_and_Research",
+      "Startups_and_Entrepreneurship",
+      "Evolving_Horizons",
+      "Interviews",
+      "Spotlight",
+      "Policy_and_Governance",
+    ],
+    []
+  );
 
   const handleBannerImageUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
     setIsUploadingImage(true);
-    
+
     try {
-      // In a real app, you would upload to a CDN or your server here
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setBannerImage(e.target.result);
-        setIsUploadingImage(false);
-      };
-      reader.readAsDataURL(file);
+      const previewUrl = URL.createObjectURL(file);
+      setBannerImage(file);
+      setBannerImagePreview(previewUrl);
+      toast.success("Image uploaded successfully!");
     } catch (error) {
       toast.error("Failed to upload image");
+      console.error("Error uploading image:", error);
+    } finally {
       setIsUploadingImage(false);
     }
   };
@@ -76,19 +80,24 @@ const CreateArticle = () => {
     setIsPublishing(true);
 
     try {
-      const articleData = {
-        title,
-        content,
-        tags,
-        isFeatured,
-        bannerImage,
-      };
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+      tags.forEach(tag => formData.append("tags[]", tag));
+      formData.append("isFeatured", isFeatured);
+      if (bannerImage instanceof File) {
+        formData.append("bannerImage", bannerImage);
+      } else {
+        const response = await fetch(bannerImage);
+        const blob = await response.blob();
+        formData.append("bannerImage", blob, "banner.jpg");
+      }
 
       const backendUrl = "http://localhost:5000/api/articles";
-      const { data } = await axios.post(backendUrl, articleData, {
+      const { data } = await axios.post(backendUrl, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       });
 
@@ -135,7 +144,10 @@ const CreateArticle = () => {
               <form onSubmit={handlePublish} className="space-y-6">
                 {/* Title Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="title" className="text-gray-700 dark:text-gray-300">
+                  <Label
+                    htmlFor="title"
+                    className="text-gray-700 dark:text-gray-300"
+                  >
                     Article Title <span className="text-red-500">*</span>
                   </Label>
                   <Input
@@ -151,7 +163,10 @@ const CreateArticle = () => {
 
                 {/* Banner Image Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="banner" className="text-gray-700 dark:text-gray-300">
+                  <Label
+                    htmlFor="banner"
+                    className="text-gray-700 dark:text-gray-300"
+                  >
                     Banner Image <span className="text-red-500">*</span>
                   </Label>
                   <div className="relative">
@@ -201,7 +216,7 @@ const CreateArticle = () => {
                   {bannerImage && !isUploadingImage && (
                     <div className="mt-4">
                       <img
-                        src={bannerImage}
+                        src={bannerImagePreview || URL.createObjectURL(bannerImage)}
                         alt="Banner Preview"
                         className="max-h-64 w-auto rounded-md shadow-md border border-gray-200 dark:border-gray-700"
                       />
@@ -211,7 +226,10 @@ const CreateArticle = () => {
 
                 {/* Content Editor */}
                 <div className="space-y-2">
-                  <Label htmlFor="content" className="text-gray-700 dark:text-gray-300">
+                  <Label
+                    htmlFor="content"
+                    className="text-gray-700 dark:text-gray-300"
+                  >
                     Article Content <span className="text-red-500">*</span>
                   </Label>
                   <QuillToolbar />
@@ -262,14 +280,19 @@ const CreateArticle = () => {
 
                 {/* Featured Toggle */}
                 <div className="flex items-center space-x-4">
-                  <Label htmlFor="featured" className="text-gray-700 dark:text-gray-300">
+                  <Label
+                    htmlFor="featured"
+                    className="text-gray-700 dark:text-gray-300"
+                  >
                     Mark as Featured
                   </Label>
                   <button
                     type="button"
                     onClick={() => setIsFeatured(!isFeatured)}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-green ${
-                      isFeatured ? "bg-custom-green" : "bg-gray-300 dark:bg-gray-600"
+                      isFeatured
+                        ? "bg-custom-green"
+                        : "bg-gray-300 dark:bg-gray-600"
                     }`}
                     aria-pressed={isFeatured}
                   >
@@ -309,7 +332,7 @@ const CreateArticle = () => {
       </div>
 
       {/* Custom styles for Quill editor */}
-      <style jsx global>{`
+      <style>{`
         .ql-toolbar {
           border-top-left-radius: 0.5rem;
           border-top-right-radius: 0.5rem;
