@@ -161,7 +161,7 @@ const userProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate({
       path: "articles",
-      select: "title bannerImage createdAt slug",
+      select: "title bannerImage createdAt slug publicId",
       options: { sort: { createdAt: -1 } }, // Sort by createdAt in descending order
     })
     .lean();

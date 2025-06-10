@@ -33,9 +33,15 @@ const AuthorPublicProfilePage = () => {
 
   const getFileNameFromPhoturl = (url) => {
     if (!url) return "";
-    const formattedUrl = `${url.replace(/\\/g, "/")}`;
-    return `http://localhost:5000/${formattedUrl}`;
+    
+    if (url.startsWith("http")) {
+      return url; 
   };
+
+  if (url.startsWith('res.cloudinary.com')) {
+    return `https://${url}`;
+  }
+}
 
   if (error) {
     return (
