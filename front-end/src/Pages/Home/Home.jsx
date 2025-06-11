@@ -21,7 +21,7 @@ const OptimizedImage = ({ src, alt, className, priority = false }) => {
   return (
     <div className={`relative ${className}`}>
       {isLoading && (
-        <Skeleton className="absolute inset-0 w-full h-full" />
+        <Skeleton className="absolute inset-0 w-full h-full bg-gray-400" />
       )}
       <img
         src={imageSrc}
@@ -75,11 +75,11 @@ const ArticleCard = memo(({ article, loading, priority = false }) => {
   if (loading) {
     return (
       <div className="space-y-3 animate-pulse">
-        <Skeleton className="h-[150px] w-full rounded-t-lg" />
-        <Skeleton className="h-6 w-full" />
+        <Skeleton className="h-[150px] w-full rounded-t-lg bg-gray-400" />
+        <Skeleton className="h-6 w-full bg-gray-400" />
         <div className="flex justify-between px-4 pb-4">
-          <Skeleton className="h-4 w-20" />
-          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-4 w-20 bg-gray-400" />
+          <Skeleton className="h-4 w-20 bg-gray-400" />
         </div>
       </div>
     );
@@ -347,10 +347,10 @@ const Home = () => {
             <div className="flex flex-col gap-8">
               {[...Array(7)].map((_, index) => (
                 <div key={index} className="space-y-2 animate-pulse">
-                  <Skeleton className="h-6 w-full" />
+                  <Skeleton className="h-6 w-full bg-gray-400" />
                   <div className="flex justify-between">
-                    <Skeleton className="h-4 w-20" />
-                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-20 bg-gray-400" />
+                    <Skeleton className="h-4 w-20 bg-gray-400" />
                   </div>
                 </div>
               ))}
@@ -400,7 +400,7 @@ const Home = () => {
             onMouseLeave={handleFeaturedMouseLeave}
           >
             {loading.featured ? (
-              <Skeleton className="w-full h-full rounded-xl animate-pulse" />
+              <Skeleton className="w-full h-full rounded-xl animate-pulse bg-gray-400" />
             ) : articles.featured.length > 0 ? (
               <>
                 <div className="relative w-full h-full overflow-hidden">

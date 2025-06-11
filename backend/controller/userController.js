@@ -1,7 +1,13 @@
 const User = require("../models/userModel");
-const { uploadOnCloudinary, deleteFromCloudinary, getPublicIdFromUrl } = require("../utils/cloudinary");
+const {
+  uploadOnCloudinary,
+  deleteFromCloudinary,
+  getPublicIdFromUrl,
+} = require("../utils/cloudinary");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const Article = require("../models/articleModel");
+const { hash, hashSync } = require("bcryptjs");
 
 dotenv.config();
 
@@ -71,12 +77,23 @@ const userRegister = async (req, res) => {
 
     let profilePhoto, publicId;
     if (req.file) {
-      const result = await uploadOnCloudinary(req.file.buffer, "profile_photos");
+      const result = await uploadOnCloudinary(
+        req.file.buffer,
+        "profile_photos"
+      );
       profilePhoto = result.secure_url;
       publicId = result.public_id;
-    }  
+    }
 
-    const user = new User({ name, email, password, bio, role, profilePhoto, publicId });
+    const user = new User({
+      name,
+      email,
+      password,
+      bio,
+      role,
+      profilePhoto,
+      publicId,
+    });
 
     await user.save();
 
@@ -100,23 +117,27 @@ const userRegister = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { name, bio } = req.body;
-  
 
     const updateFields = {};
     if (name) updateFields.name = name;
     if (bio) updateFields.bio = bio;
-  
-    if (req.file) {
-      const result = await uploadOnCloudinary(req.file.buffer, "profile_photos");
 
-      const currentUser = await User.findById(req.user._id).select("publicId profilePhoto");
+    if (req.file) {
+      const result = await uploadOnCloudinary(
+        req.file.buffer,
+        "profile_photos"
+      );
+
+      const currentUser = await User.findById(req.user._id).select(
+        "publicId profilePhoto"
+      );
       if (currentUser.profilePhoto) {
         const publicId = getPublicIdFromUrl(currentUser.profilePhoto);
         if (publicId) {
           await deleteFromCloudinary(publicId);
         }
-      } 
-      
+      }
+
       updateFields.profilePhoto = result.secure_url;
       updateFields.publicId = result.public_id;
     }
@@ -159,18 +180,28 @@ const userLogout = async (req, res) => {
 
 const userProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).populate({
-      path: "articles",
-      select: "title bannerImage createdAt slug publicId",
-      options: { sort: { createdAt: -1 } }, // Sort by createdAt in descending order
-    })
-    .lean();
+    const page = parseInt(req.query.page) || 1;
+    const limit = 8;
+
+    const user = await User.findById(req.user._id).lean();
 
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
+
+    const articles = await Article.find({ author: req.user._id })
+      .select("title bannerImage createdAt slug publicId")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
+
+    const totalArticles = await Article.countDocuments({
+      author: req.user._id,
+    });
+    const totalPages = Math.ceil(totalArticles / limit);
 
     res.status(200).json({
       success: true,
@@ -180,7 +211,17 @@ const userProfile = async (req, res) => {
       role: user.role,
       bio: user.bio,
       profilePhoto: user.profilePhoto,
-      articles: user.articles,
+      articles: {
+        data: articles,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalArticles,
+          articlesPerPage: limit,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      },
     });
   } catch (error) {
     res.status(500).json({ success: false, error: "Server error", error });

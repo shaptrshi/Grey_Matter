@@ -67,10 +67,10 @@ const AuthorPublicProfilePage = () => {
       <section className="container mx-auto px-6 py-8">
         {loading ? (
           <div className="flex flex-col md:flex-row items-center gap-6 p-6 rounded-lg bg-white dark:bg-custom-dark shadow">
-            <Skeleton className="w-32 h-32 rounded-full" />
+            <Skeleton className="w-32 h-32 rounded-full bg-gray-400" />
             <div className="flex flex-col gap-2 w-full max-w-md">
-              <Skeleton className="h-8 w-3/4" />
-              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-8 w-3/4 bg-gray-400" />
+              <Skeleton className="h-16 w-full bg-gray-400" />
             </div>
           </div>
         ) : (
@@ -103,7 +103,7 @@ const AuthorPublicProfilePage = () => {
       <section className="container mx-auto px-6 pb-12">
         <h2 className="text-2xl font-semibold mb-6">
           {loading ? (
-            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-8 w-64 bg-gray-400" />
           ) : (
             `Articles by ${author.name}`
           )}
@@ -113,12 +113,12 @@ const AuthorPublicProfilePage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="p-2">
-                <Skeleton className="h-[150px] w-full rounded-lg mb-3" />
-                <Skeleton className="h-5 w-3/4 mb-2" />
-                <Skeleton className="h-4 w-2/3 mb-2" />
+                <Skeleton className="h-[150px] w-full rounded-lg mb-3 bg-gray-400" />
+                <Skeleton className="h-5 w-3/4 mb-2 bg-gray-400" />
+                <Skeleton className="h-4 w-2/3 mb-2 bg-gray-400" />
                 <div className="flex justify-between mt-4">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-4 w-20 bg-gray-400" />
+                  <Skeleton className="h-4 w-16 bg-gray-400" />
                 </div>
               </div>
             ))}
