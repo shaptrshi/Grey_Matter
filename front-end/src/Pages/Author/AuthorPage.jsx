@@ -370,12 +370,12 @@ const AuthorPage = () => {
         <div className="relative bg-white dark:bg-custom-dark rounded-xl  p-6 mb-8 -mt-2">
           {loading ? (
             <div className="flex flex-col md:flex-row items-center gap-6">
-              <Skeleton className="w-32 h-32 rounded-full bg-gray-400 animate-pulse" />
+              <Skeleton className="w-32 h-32 rounded-full bg-gray-300" />
               <div className="flex-1 space-y-3">
-                <Skeleton className="h-8 w-3/4 bg-gray-400" />
-                <Skeleton className="h-6 w-1/2 bg-gray-400" />
-                <Skeleton className="h-16 w-full bg-gray-400" />
-                <Skeleton className="h-10 w-32 bg-gray-400" />
+                <Skeleton className="h-8 w-3/4 bg-gray-300" />
+                <Skeleton className="h-6 w-1/2 bg-gray-300" />
+                <Skeleton className="h-16 w-full bg-gray-300" />
+                <Skeleton className="h-10 w-32 bg-gray-300" />
               </div>
             </div>
           ) : (
@@ -483,12 +483,12 @@ const AuthorPage = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="space-y-3">
-                  <Skeleton className="h-[150px] w-full rounded-lg bg-gray-400" />
-                  <Skeleton className="h-5 w-3/4 bg-gray-400" />
-                  <Skeleton className="h-4 w-1/2 bg-gray-400" />
+                  <Skeleton className="h-[150px] w-full rounded-lg bg-gray-300" />
+                  <Skeleton className="h-5 w-3/4 bg-gray-300" />
+                  <Skeleton className="h-4 w-1/2 bg-gray-300" />
                   <div className="flex justify-between">
-                    <Skeleton className="h-4 w-20 bg-gray-400" />
-                    <Skeleton className="h-4 w-16 bg-gray-400" />
+                    <Skeleton className="h-4 w-20 bg-gray-300" />
+                    <Skeleton className="h-4 w-16 bg-gray-300" />
                   </div>
                 </div>
               ))}

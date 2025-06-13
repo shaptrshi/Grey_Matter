@@ -232,12 +232,12 @@ const Interviews = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {[...Array(PAGE_SIZE)].map((_, i) => (
               <div key={i} className="p-2">
-                <Skeleton className="h-[150px] w-full rounded-lg mb-3" />
-                <Skeleton className="h-4 w-3/4 mb-2" />
-                <Skeleton className="h-4 w-2/3 mb-2" />
+                <Skeleton className="h-[150px] w-full rounded-lg mb-3 bg-gray-300" />
+                <Skeleton className="h-4 w-3/4 mb-2 bg-gray-300" />
+                <Skeleton className="h-4 w-2/3 mb-2 bg-gray-300" />
                 <div className="flex justify-between mt-4">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-4 w-20 bg-gray-300" />
+                  <Skeleton className="h-4 w-16 bg-gray-300" />
                 </div>
               </div>
             ))}

@@ -120,7 +120,7 @@ const Article = () => {
         {/* Banner - Only show skeleton if article is loading */}
         {articleLoading ? (
           <div className="w-full aspect-video md:aspect-[16/7] lg:aspect-[16/6] overflow-hidden mb-8 rounded-xl bg-gray-200 dark:bg-gray-800">
-            <Skeleton className="w-full h-full" />
+            <Skeleton className="w-full h-full bg-gray-300" />
           </div>
         ) : (
           <div className="relative w-full aspect-video md:aspect-[16/7] lg:aspect-[16/6] overflow-hidden mb-8 rounded-xl">
@@ -160,11 +160,11 @@ const Article = () => {
         {/* Content - Only show skeleton if article is loading */}
         {articleLoading ? (
           <div className="space-y-4 mb-8">
-            <Skeleton className="h-6 w-full" />
-            <Skeleton className="h-6 w-5/6" />
-            <Skeleton className="h-6 w-4/5" />
-            <Skeleton className="h-6 w-full" />
-            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-6 w-full bg-gray-300" />
+            <Skeleton className="h-6 w-5/6 bg-gray-300" />
+            <Skeleton className="h-6 w-4/5 bg-gray-300" />
+            <Skeleton className="h-6 w-full bg-gray-300" />
+            <Skeleton className="h-6 w-3/4 bg-gray-300" />
           </div>
         ) : (
           <Card className="overflow-hidden dark:bg-custom-dark shadow-sm mb-8">
@@ -263,14 +263,14 @@ const Article = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {[...Array(4)].map((_, index) => (
                 <Card key={index} className="h-[300px] dark:bg-custom-dark">
-                  <Skeleton className="h-[150px] w-full rounded-t-lg" />
+                  <Skeleton className="h-[150px] w-full rounded-t-lg bg-gray-300" />
                   <CardHeader className="space-y-2">
-                    <Skeleton className="h-6 w-full" />
-                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-6 w-full bg-gray-300" />
+                    <Skeleton className="h-6 w-3/4 bg-gray-300" />
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <Skeleton className="h-4 w-1/2" />
-                    <Skeleton className="h-4 w-1/3" />
+                    <Skeleton className="h-4 w-1/2 bg-gray-300" />
+                    <Skeleton className="h-4 w-1/3 bg-gray-300" />
                   </CardContent>
                 </Card>
               ))}
