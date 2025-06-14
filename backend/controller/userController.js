@@ -231,14 +231,12 @@ const userProfile = async (req, res) => {
 const getPublicUserProfile = async (req, res) => {
   try {
     const userId = req.params.id;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 8;
 
+    // Get basic user info
     const user = await User.findById(userId)
-      .select("name bio profilePhoto articles")
-      .populate({
-        path: "articles",
-        options: { sort: { createdAt: -1 } },
-        select: "title bannerImage createdAt slug author",
-      })
+      .select("name bio profilePhoto")
       .lean();
 
     if (!user) {
@@ -247,19 +245,41 @@ const getPublicUserProfile = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
+    // Get paginated articles
+    const articles = await Article.find({ author: userId })
+      .select("title bannerImage createdAt slug author")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
+
+    // Get total articles count
+    const totalArticles = await Article.countDocuments({ author: userId });
+    const totalPages = Math.ceil(totalArticles / limit);
+
     res.status(200).json({
       success: true,
       name: user.name,
       bio: user.bio,
       profilePicture: user.profilePhoto,
-      articles: user.articles.map((article) => ({
-        id: article._id,
-        title: article.title,
-        bannerImage: article.bannerImage,
-        date: article.createdAt,
-        link: `/article/${article.slug || article._id}`, // build link as needed
-        author: user.name,
-      })),
+      articles: {
+        data: articles.map((article) => ({
+          id: article._id,
+          title: article.title,
+          bannerImage: article.bannerImage,
+          date: article.createdAt,
+          link: `/article/${article.slug || article._id}`,
+          author: user.name,
+        })),
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalArticles,
+          articlesPerPage: limit,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      },
     });
   } catch (error) {
     res

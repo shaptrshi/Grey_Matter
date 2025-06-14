@@ -1,92 +1,87 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipProvider } from "@/components/ui/tooltip";
-import { FaHome, FaUser, FaSignOutAlt } from "react-icons/fa";
+import { FaHome, FaUser, FaSignOutAlt, FaChevronDown, FaChevronUp, FaTrash, FaEye } from "react-icons/fa";
 import axios from "axios";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import logo from "../../assets/logo.svg";
 import SearchBar from "../../components/searchbar/searchBar";
+import { toast } from "react-hot-toast";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Admin = () => {
   const [authors, setAuthors] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  const [expandedAuthors, setExpandedAuthors] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
-    setAuthors([
-      {
-        id: 1,
-        name: "John Doe",
-        profilePicture: "./pic.jpg",
-        isActive: true,
-        articles: [
-          {
-            id: 101,
-            title: "First Article",
-            bannerImage: "./pic.jpg",
-            link: "/articles/101",
-            date: "2021-09-01",
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/admin/users", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          {
-            id: 102,
-            title: "Second Article",
-            bannerImage: "./pic.jpg",
-            link: "/articles/102",
-            date: "2021-09-02",
-          },
-        ],
-      },
-      {
-        id: 2,
-        name: "Jane Smith",
-        profilePicture: "./pic.jpg",
-        isActive: true,
-        articles: [
-          {
-            id: 201,
-            title: "Jane's Article",
-            bannerImage: "./pic.jpg",
-            link: "/articles/201",
-            date: "2021-09-03",
-          },
-          {
-            id: 202,
-            title: "Another Article",
-            bannerImage: "./pic.jpg",
-            link: "/articles/202",
-            date: "2021-09-04",
-          },
-        ],
-      },
-    ]);
+        });
+        setAuthors(response.data.data);
+        const initialExpandedState = {};
+        response.data.data.forEach(author => {
+          initialExpandedState[author._id] = false;
+        });
+        setExpandedAuthors(initialExpandedState);
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Failed to fetch users");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
   }, []);
 
-  const handleDeleteAuthor = (authorId) => {
-    setAuthors((prevAuthors) =>
-      prevAuthors.filter((author) => author.id !== authorId)
-    );
+  const toggleAuthorExpansion = (authorId) => {
+    setExpandedAuthors(prev => ({
+      ...prev,
+      [authorId]: !prev[authorId]
+    }));
   };
 
-  const handleDelete = (authorId, articleId) => {
-    setAuthors((prevAuthors) =>
-      prevAuthors.map((author) =>
-        author.id === authorId
-          ? {
-              ...author,
-              articles: author.articles.filter(
-                (article) => article.id !== articleId
-              ),
-            }
-          : author
-      )
-    );
+  const handleDeleteAuthor = async (authorId) => {
+    if (window.confirm("Are you sure you want to delete this user and all their articles?")) {
+      try {
+        await axios.delete(`http://localhost:5000/api/admin/users/${authorId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setAuthors(authors.filter((author) => author._id !== authorId));
+        toast.success("User deleted successfully");
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Failed to delete user");
+      }
+    }
+  };
+
+  const handleDeleteArticle = async (articleId) => {
+    if (window.confirm("Are you sure you want to delete this article?")) {
+      try {
+        await axios.delete(`http://localhost:5000/api/admin/articles/${articleId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        
+        setAuthors(authors.map(author => ({
+          ...author,
+          articles: author.articles?.filter(article => article._id !== articleId) || []
+        })));
+        
+        toast.success("Article deleted successfully");
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Failed to delete article");
+      }
+    }
   };
 
   const handleLogout = async () => {
@@ -101,133 +96,230 @@ const Admin = () => {
         }
       );
       localStorage.removeItem("token");
+      toast.success("Logged out successfully");
       navigate("/signup");
     } catch (error) {
-      console.error("Error logging out", error);
+      toast.error(error.response?.data?.message || "Failed to logout");
     }
   };
 
-  const handleGoToHomePage = () => navigate("/");
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-custom-dark">
+        <nav className="sticky top-0 z-50 flex justify-between items-center px-4 py-3 mb-6 shadow-sm bg-white dark:bg-custom-dark">
+          <div className="pl-4">
+            <img src={logo} alt="Logo" className="h-8 md:h-12 w-auto" />
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="hidden sm:flex items-center max-w-xs flex-1 ml-4">
+              <SearchBar className="w-full" />
+            </div>
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-10 w-10 rounded-full" />
+          </div>
+        </nav>
 
-  const handleGoToProfilePage = (authorId) => {
-    navigate(`/profile/${authorId}`);
-  };
+        <div className="container mx-auto px-4 py-6">
+          <div className="bg-white dark:bg-custom-dark rounded-lg shadow overflow-hidden">
+            {[1, 2, 3].map((item) => (
+              <div key={item} className="border-b dark:border-custom-dark/50">
+                <div className="px-6 py-4 flex items-center">
+                  <Skeleton className="w-10 h-10 rounded-full mr-4" />
+                  <div className="flex-1">
+                    <Skeleton className="h-4 w-32 mb-2" />
+                    <Skeleton className="h-3 w-48" />
+                  </div>
+                  <Skeleton className="h-9 w-24 mr-2" />
+                  <Skeleton className="h-9 w-24 mr-2" />
+                  <Skeleton className="h-9 w-24" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen dark:text-white dark:bg-custom-dark">
-      {/* Navbar */}
-      <nav className="sticky top-0 z-50 flex justify-between items-center px-4 py-3 mb-6 shadow-md bg-gray-100 dark:bg-custom-dark dark:shadow-sm dark:shadow-black">
+    <div className="min-h-screen bg-gray-50 dark:bg-custom-dark">
+      <nav className="sticky top-0 z-50 flex justify-between items-center px-4 py-3 mb-6 shadow-sm bg-white dark:bg-custom-dark">
         <div className="pl-4">
-          <a href="/">
-            <img
-              src={logo}
-              alt="Logo"
-              className="h-8 md:h-12 w-auto transition-transform hover:scale-105"
-            />
-          </a>
+          <img src={logo} alt="Logo" className="h-8 md:h-12 w-auto" />
         </div>
         <div className="flex items-center space-x-4">
-          {/* Search Bar */}
           <div className="hidden sm:flex items-center max-w-xs flex-1 ml-4">
             <SearchBar className="w-full" />
           </div>
-
-          <TooltipProvider>
-            <Tooltip content="Go to Home">
-              <Button
-                onClick={handleGoToHomePage}
-                className="bg-gray-100 dark:bg-custom-dark text-black dark:text-white py-2 px-3 rounded-lg hover:scale-105 dark:hover:bg-blue-600 hover:bg-blue-500 transition-transform"
-              >
-                <FaHome size={24} />
-              </Button>
-            </Tooltip>
-            <Tooltip content="Log Out">
-              <Button
-                onClick={handleLogout}
-                className="bg-gray-100 dark:bg-custom-dark text-red-700 dark:text-red-500 py-2 px-3 rounded-lg hover:scale-105 dark:hover:bg-red-400 hover:bg-red-300 transition-transform"
-              >
-                <FaSignOutAlt size={24} />
-              </Button>
-            </Tooltip>
-          </TooltipProvider>
+          <Button 
+            onClick={() => navigate("/")} 
+            variant="ghost" 
+            size="icon"
+            className="rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+            aria-label="Home"
+          >
+            <FaHome className="h-5 w-5" />
+          </Button>
+          <Button 
+            onClick={handleLogout} 
+            variant="ghost" 
+            size="icon"
+            className="rounded-lg text-red-600 hover:bg-red-100 dark:hover:bg-red-900"
+            aria-label="Logout"
+          >
+            <FaSignOutAlt className="h-5 w-5" />
+          </Button>
         </div>
       </nav>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-10 py-2 bg-gray-100 dark:bg-custom-dark">
-        {/* Authors & Articles */}
-        {authors.map((author) => (
-          <div key={author.id} className="mb-10">
-            <div className="flex items-center space-x-4">
-              <img
-                src={author.profilePicture}
-                alt={author.name}
-                className="w-16 h-16 rounded-full"
-              />
-              <h2 className="text-xl font-semibold">{author.name}</h2>
-
-              {/* Author Actions */}
-              <div className="ml-auto space-x-3">
-                <Button
-                  onClick={() => handleGoToProfilePage(author.id)}
-                  className="text-gray-800 dark:text-white dark:bg-custom-dark bg-gray-100 px-3 rounded-lg hover:bg-blue-400 dark:hover:bg-blue-600 shadow-none"
-                >
-                  <FaUser size={24} />
-                </Button>
-
-                <Button
-                  onClick={() => handleDeleteAuthor(author.id)}
-                  className="text-red-700  dark:text-red-600 py-1 dark:bg-custom-dark bg-gray-100 px-3 rounded-lg dark:hover:bg-red-400 hover:bg-red-300 hover:text-gray-800 shadow-none"
-                >
-                  Delete
-                </Button>
-              </div>
+      <div className="container mx-auto px-4 py-6">
+        <div className="bg-white dark:bg-custom-dark rounded-lg shadow overflow-hidden">
+          {authors.length === 0 ? (
+            <div className="p-8 text-center">
+              <h3 className="text-lg font-medium text-gray-500 dark:text-gray-400">No users found</h3>
             </div>
-
-            {/* Articles */}
-            <div className="container mx-auto px-6 py-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
-                {author.articles.map((article) => (
-                  <Link to={article.link} key={article.id} className="block">
-                    <Card className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
-                      {/* Fixed card height */}
-                      <div className="relative h-[150px] sm:h-[150px]">
-                        <img
-                          src={article.bannerImage}
-                          alt={article.title}
-                          className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
-                        />
-                      </div>
-                      <CardHeader className="p-3 sm:p-4 mt-1">
-                        <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2 hover:underline dark:text-gray-100">
-                          {article.title}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-3 sm:p-4 -mt-2">
-                        <p className="font-semibold text-teal-700">
-                          {article.date}
-                        </p>
-                        <div className="flex justify-end gap-4 mt-2">
+          ) : (
+            <Table>
+              <TableHeader className="bg-gray-50 dark:bg-custom-dark/50">
+                <TableRow>
+                  <TableHead className="w-[200px]">Author</TableHead>
+                  <TableHead>Details</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {authors.map((author) => (
+                  <>
+                    <TableRow key={author._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <TableCell>
+                        <div className="flex items-center">
+                          <Avatar className="h-9 w-9 mr-3">
+                            <AvatarImage src={author.profilePicture} />
+                            <AvatarFallback>
+                              {author.name.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">{author.name}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {author.articles?.length || 0} articles
+                            </p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <p className="text-gray-600 dark:text-gray-300">{author.email}</p>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end space-x-2">
                           <Button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleDelete(article.id);
-                            }}
+                            onClick={() => toggleAuthorExpansion(author._id)}
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center dark:bg-custom-dark"
+                          >
+                            {expandedAuthors[author._id] ? (
+                              <>
+                                <FaChevronUp className="mr-1 h-3 w-3" /> Hide
+                              </>
+                            ) : (
+                              <>
+                                <FaChevronDown className="mr-1 h-3 w-3" /> Show
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            onClick={() => navigate(`/profile/${author._id}`)}
+                            variant="outline"
+                            size="sm"
+                          >
+                            <FaUser className="mr-1 h-3 w-3" /> Profile
+                          </Button>
+                          <Button
+                            onClick={() => handleDeleteAuthor(author._id)}
                             variant="destructive"
                             size="sm"
-                            className="dark:text-white dark:bg-red-700"
                           >
-                            Delete
+                            <FaTrash className="mr-1 h-3 w-3" /> Delete
                           </Button>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
+                      </TableCell>
+                    </TableRow>
+                    {expandedAuthors[author._id] && (
+                      <TableRow className="bg-gray-50 dark:bg-gray-700/30 hover:bg-gray-50">
+                        <TableCell colSpan={3} className="p-0">
+                          <div className="px-6 py-4">
+                            <h4 className="font-medium mb-3 text-gray-700 dark:text-gray-300">Articles</h4>
+                            {author.articles?.length > 0 ? (
+                              <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                  <thead className="bg-gray-100 dark:bg-gray-700">
+                                    <tr>
+                                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Preview</th>
+                                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Title</th>
+                                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
+                                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    {author.articles.map((article) => (
+                                      <tr key={article._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                        <td className="px-4 py-3 whitespace-nowrap">
+                                          <div 
+                                            className="h-12 w-16 rounded-md bg-gray-200 dark:bg-gray-600 overflow-hidden cursor-pointer"
+                                            onClick={() => navigate(`/articles/${article._id}`)}
+                                          >
+                                            {article.bannerImage ? (
+                                              <img
+                                                src={article.bannerImage}
+                                                alt={article.title}
+                                                className="h-full w-full object-cover"
+                                              />
+                                            ) : (
+                                              <div className="h-full w-full flex items-center justify-center text-gray-400">
+                                                <FaEye className="h-4 w-4" />
+                                              </div>
+                                            )}
+                                          </div>
+                                        </td>
+                                        <td className="px-4 py-3 whitespace-nowrap">
+                                          <button
+                                            onClick={() => navigate(`/articles/${article._id}`)}
+                                            className="text-left font-medium hover:underline"
+                                          >
+                                            {article.title}
+                                          </button>
+                                        </td>
+                                        <td className="px-4 py-3 whitespace-nowrap text-gray-500 dark:text-gray-400">
+                                          {new Date(article.createdAt).toLocaleDateString()}
+                                        </td>
+                                        <td className="px-4 py-3 whitespace-nowrap text-right">
+                                          <Button
+                                            onClick={() => handleDeleteArticle(article._id)}
+                                            variant="destructive"
+                                            size="sm"
+                                          >
+                                            <FaTrash className="mr-1 h-3 w-3" /> Delete
+                                          </Button>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            ) : (
+                              <p className="text-gray-500 dark:text-gray-400 py-4">No articles found</p>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </>
                 ))}
-              </div>
-            </div>
-          </div>
-        ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
       </div>
     </div>
   );

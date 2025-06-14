@@ -1,77 +1,167 @@
 const User = require("../models/userModel");
 const Article = require("../models/articleModel");
 
-//Get all users(Admin Only)
+// @desc    Get all users
+// @route   GET /api/admin/users
+// @access  Private/Admin
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find({})
-    .select("-password")
-    .populate({
-      path: "articles",
-      select: "title bannerImage createdAt",
-      options: { sort: { createdAt: -1}, limit: 4}
-    })
-    .lean();
-    res.status(200).json(users);
+      .select("-password -refreshToken")
+      .populate({
+        path: "articles",
+        select: "title bannerImage createdAt status",
+        options: { sort: { createdAt: -1 }, limit: 4 }
+      })
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      count: users.length,
+      data: users
+    });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error fetching users:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch users"
+    });
   }
 };
 
-//Delete a user (Admin Only)
+// @desc    Delete user
+// @route   DELETE /api/admin/users/:id
+// @access  Private/Admin
 const deleteUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
     }
+
+    // Delete all user articles first
     await Article.deleteMany({ author: user._id });
+    
+    // Then delete the user
     await user.deleteOne();
-    res.status(200).json({ message: "User deleted successfully" });
+
+    res.status(200).json({
+      success: true,
+      data: {},
+      message: "User and all associated articles deleted successfully"
+    });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error deleting user:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete user"
+    });
   }
 };
 
-//Get all articles (Admin Only)
+// @desc    Get all articles
+// @route   GET /api/admin/articles
+// @access  Private/Admin
 const getAllArticlesAdmin = async (req, res) => {
   try {
-    const articles = await Article.find({})
+    const { page = 1, limit = 10, status } = req.query;
+    const query = {};
+
+    if (status) {
+      query.status = status;
+    }
+
+    const articles = await Article.find(query)
       .populate("author", "name email")
+      .sort({ createdAt: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
       .lean();
-    res.status(200).json(articles);
+
+    const count = await Article.countDocuments(query);
+
+    res.status(200).json({
+      success: true,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+      count: articles.length,
+      data: articles
+    });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error fetching articles:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch articles"
+    });
   }
 };
 
-//Delete any article (Admin Only)
+// @desc    Delete article
+// @route   DELETE /api/admin/articles/:id
+// @access  Private/Admin
 const deleteArticleAdmin = async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
     if (!article) {
-      return res.status(404).json({ message: "Article not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Article not found"
+      });
     }
+
+    // Remove article reference from user
     await User.findByIdAndUpdate(article.author, {
-      $pull: { articles: article._id},
-    })
+      $pull: { articles: article._id }
+    });
+
     await article.deleteOne();
-    res.status(200).json({ message: "Article deleted successfully" });
+
+    res.status(200).json({
+      success: true,
+      data: {},
+      message: "Article deleted successfully"
+    });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error deleting article:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete article"
+    });
   }
 };
 
-//get all articles by user (Admin Only)
+// @desc    Get all articles by user
+// @route   GET /api/admin/users/:id/articles
+// @access  Private/Admin
 const getAllArticlesByUserAdmin = async (req, res) => {
   try {
+    const { page = 1, limit = 10 } = req.query;
+
     const articles = await Article.find({ author: req.params.id })
-      .sort({ createdAt: -1})
+      .sort({ createdAt: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
       .populate("author", "name email")
       .lean();
-    res.status(200).json(articles);
+
+    const count = await Article.countDocuments({ author: req.params.id });
+
+    res.status(200).json({
+      success: true,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+      count: articles.length,
+      data: articles
+    });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error fetching user articles:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch user articles"
+    });
   }
 };
 
@@ -80,5 +170,5 @@ module.exports = {
   deleteUser,
   getAllArticlesAdmin,
   deleteArticleAdmin,
-  getAllArticlesByUserAdmin,
+  getAllArticlesByUserAdmin
 };
