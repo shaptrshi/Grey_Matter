@@ -9,6 +9,7 @@ import SearchBar from "../../components/searchbar/searchBar";
 import { toast } from "react-hot-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 const Admin = () => {
   const [authors, setAuthors] = useState([]);
@@ -106,32 +107,35 @@ const Admin = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-custom-dark">
-        <nav className="sticky top-0 z-50 flex justify-between items-center px-4 py-3 mb-6 shadow-sm bg-white dark:bg-custom-dark">
-          <div className="pl-4">
-            <img src={logo} alt="Logo" className="h-8 md:h-12 w-auto" />
+        {/* Navbar Skeleton */}
+        <nav className="sticky top-0 z-50 flex justify-between items-center px-6 py-4 bg-white dark:bg-custom-dark">
+          <div className="flex items-center space-x-4">
+            <Skeleton className="h-10 w-10 rounded-lg" />
+            <Skeleton className="h-10 w-48 rounded-lg" />
           </div>
           <div className="flex items-center space-x-4">
-            <div className="hidden sm:flex items-center max-w-xs flex-1 ml-4">
-              <SearchBar className="w-full" />
-            </div>
+            <Skeleton className="h-10 w-64 rounded-lg" />
             <Skeleton className="h-10 w-10 rounded-full" />
             <Skeleton className="h-10 w-10 rounded-full" />
           </div>
         </nav>
 
-        <div className="container mx-auto px-4 py-6">
-          <div className="bg-white dark:bg-custom-dark rounded-lg shadow overflow-hidden">
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="border-b dark:border-custom-dark/50">
-                <div className="px-6 py-4 flex items-center">
-                  <Skeleton className="w-10 h-10 rounded-full mr-4" />
-                  <div className="flex-1">
-                    <Skeleton className="h-4 w-32 mb-2" />
-                    <Skeleton className="h-3 w-48" />
+        {/* Content Skeleton */}
+        <div className="container mx-auto px-6 py-8">
+          <div className="bg-white dark:bg-custom-dark rounded-xl shadow-sm overflow-hidden">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="border-b border-gray-200 dark:border-gray-700">
+                <div className="px-6 py-5 flex items-center">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="ml-4 flex-1">
+                    <Skeleton className="h-5 w-48 mb-2" />
+                    <Skeleton className="h-4 w-64" />
                   </div>
-                  <Skeleton className="h-9 w-24 mr-2" />
-                  <Skeleton className="h-9 w-24 mr-2" />
-                  <Skeleton className="h-9 w-24" />
+                  <div className="flex space-x-3">
+                    <Skeleton className="h-10 w-24 rounded-lg" />
+                    <Skeleton className="h-10 w-24 rounded-lg" />
+                    <Skeleton className="h-10 w-24 rounded-lg" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -143,19 +147,21 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-custom-dark">
-      <nav className="sticky top-0 z-50 flex justify-between items-center px-4 py-3 mb-6 shadow-sm bg-white dark:bg-custom-dark">
-        <div className="pl-4">
-          <img src={logo} alt="Logo" className="h-8 md:h-12 w-auto" />
+      {/* Enhanced Navbar */}
+      <nav className="sticky top-0 z-50 flex justify-between items-center px-6 py-4 bg-white dark:bg-custom-dark shadow-md dark:shadow-sm  dark:shadow-black">
+        <div className="flex items-center space-x-4">
+          <a href="/" className="flex items-center">
+            <img src={logo} alt="Logo" className="h-10 w-auto transition-transform hover:scale-105" />
+          </a>
+          <h1 className="text-xl font-semibold text-black dark:text-white pl-4">Admin Dashboard</h1>
         </div>
         <div className="flex items-center space-x-4">
-          <div className="hidden sm:flex items-center max-w-xs flex-1 ml-4">
-            <SearchBar className="w-full" />
-          </div>
+          <SearchBar className="w-full" />
           <Button 
             onClick={() => navigate("/")} 
             variant="ghost" 
             size="icon"
-            className="rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
             aria-label="Home"
           >
             <FaHome className="h-5 w-5" />
@@ -172,8 +178,9 @@ const Admin = () => {
         </div>
       </nav>
 
-      <div className="container mx-auto px-4 py-6">
-        <div className="bg-white dark:bg-custom-dark rounded-lg shadow overflow-hidden">
+      {/* Enhanced Table */}
+      <div className="container mx-auto px-6 py-8">
+        <div className="bg-white dark:bg-custom-dark rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           {authors.length === 0 ? (
             <div className="p-8 text-center">
               <h3 className="text-lg font-medium text-gray-500 dark:text-gray-400">No users found</h3>
@@ -182,33 +189,37 @@ const Admin = () => {
             <Table>
               <TableHeader className="bg-gray-50 dark:bg-custom-dark/50">
                 <TableRow>
-                  <TableHead className="w-[200px]">Author</TableHead>
-                  <TableHead>Details</TableHead>
+                  <TableHead className="w-[250px]">Author</TableHead>
+                  <TableHead>Articles</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {authors.map((author) => (
                   <>
-                    <TableRow key={author._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                    <TableRow 
+                      key={author._id} 
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700/30"
+                    >
                       <TableCell>
                         <div className="flex items-center">
-                          <Avatar className="h-9 w-9 mr-3">
+                          <Avatar className="h-10 w-10">
                             <AvatarImage src={author.profilePicture} />
-                            <AvatarFallback>
+                            <AvatarFallback className="bg-blue-100 dark:bg-blue-900">
                               {author.name.charAt(0).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
-                          <div>
+                          <div className="ml-4">
                             <p className="font-medium">{author.name}</p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              {author.articles?.length || 0} articles
-                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{author.email}</p>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <p className="text-gray-600 dark:text-gray-300">{author.email}</p>
+                        <div className="flex items-center">
+                          <span className="font-medium mr-2">{author.articles?.length || 0}</span>
+                          <span className="text-sm text-gray-500 dark:text-gray-400">articles</span>
+                        </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end space-x-2">
@@ -216,15 +227,15 @@ const Admin = () => {
                             onClick={() => toggleAuthorExpansion(author._id)}
                             variant="outline"
                             size="sm"
-                            className="flex items-center dark:bg-custom-dark"
+                            className="flex items-center dark:bg-custom-dark/50 dark:hover:bg-custom-dark/70"
                           >
                             {expandedAuthors[author._id] ? (
                               <>
-                                <FaChevronUp className="mr-1 h-3 w-3" /> Hide
+                                <FaChevronUp className="mr-2 h-3 w-3" /> Hide
                               </>
                             ) : (
                               <>
-                                <FaChevronDown className="mr-1 h-3 w-3" /> Show
+                                <FaChevronDown className="mr-2 h-3 w-3" /> Show
                               </>
                             )}
                           </Button>
@@ -232,83 +243,89 @@ const Admin = () => {
                             onClick={() => navigate(`/profile/${author._id}`)}
                             variant="outline"
                             size="sm"
+                            className="flex items-center dark:bg-custom-dark/50 dark:hover:bg-custom-dark/70"
                           >
-                            <FaUser className="mr-1 h-3 w-3" /> Profile
+                            <FaUser className="mr-2 h-3 w-3" /> Profile
                           </Button>
                           <Button
                             onClick={() => handleDeleteAuthor(author._id)}
                             variant="destructive"
                             size="sm"
                           >
-                            <FaTrash className="mr-1 h-3 w-3" /> Delete
+                            <FaTrash className="mr-2 h-3 w-3" /> Delete
                           </Button>
                         </div>
                       </TableCell>
                     </TableRow>
                     {expandedAuthors[author._id] && (
-                      <TableRow className="bg-gray-50 dark:bg-gray-700/30 hover:bg-gray-50">
-                        <TableCell colSpan={3} className="p-0">
+                      <TableRow className="bg-gray-50 dark:bg-gray-700/10 hover:bg-gray-50">
+                        <TableCell colSpan={4} className="p-0">
                           <div className="px-6 py-4">
-                            <h4 className="font-medium mb-3 text-gray-700 dark:text-gray-300">Articles</h4>
+                            <h4 className="font-medium mb-4 text-gray-700 dark:text-gray-300 flex items-center">
+                              <span className="mr-2">Articles</span>
+                              <Badge variant="outline" className="px-2 py-0.5">
+                                {author.articles?.length || 0}
+                              </Badge>
+                            </h4>
                             {author.articles?.length > 0 ? (
-                              <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                  <thead className="bg-gray-100 dark:bg-gray-700">
-                                    <tr>
-                                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Preview</th>
-                                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Title</th>
-                                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
-                                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                    {author.articles.map((article) => (
-                                      <tr key={article._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                        <td className="px-4 py-3 whitespace-nowrap">
-                                          <div 
-                                            className="h-12 w-16 rounded-md bg-gray-200 dark:bg-gray-600 overflow-hidden cursor-pointer"
-                                            onClick={() => navigate(`/articles/${article._id}`)}
-                                          >
-                                            {article.bannerImage ? (
-                                              <img
-                                                src={article.bannerImage}
-                                                alt={article.title}
-                                                className="h-full w-full object-cover"
-                                              />
-                                            ) : (
-                                              <div className="h-full w-full flex items-center justify-center text-gray-400">
-                                                <FaEye className="h-4 w-4" />
-                                              </div>
-                                            )}
-                                          </div>
-                                        </td>
-                                        <td className="px-4 py-3 whitespace-nowrap">
-                                          <button
-                                            onClick={() => navigate(`/articles/${article._id}`)}
-                                            className="text-left font-medium hover:underline"
-                                          >
-                                            {article.title}
-                                          </button>
-                                        </td>
-                                        <td className="px-4 py-3 whitespace-nowrap text-gray-500 dark:text-gray-400">
+                              <div className="space-y-3">
+                                {author.articles.map((article) => (
+                                  <div 
+                                    key={article._id} 
+                                    className="flex items-center p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700/30 transition-colors"
+                                  >
+                                    <div 
+                                      className="flex-shrink-0 h-16 w-24 rounded-md bg-gray-200 dark:bg-gray-700 overflow-hidden cursor-pointer"
+                                      onClick={() => navigate(`/articles/${article._id}`)}
+                                    >
+                                      {article.bannerImage ? (
+                                        <img
+                                          src={article.bannerImage}
+                                          alt={article.title}
+                                          className="h-full w-full object-cover"
+                                        />
+                                      ) : (
+                                        <div className="h-full w-full flex items-center justify-center text-gray-400">
+                                          <FaEye className="h-5 w-5" />
+                                        </div>
+                                      )}
+                                    </div>
+                                    <div 
+                                      className="ml-4 flex-1 min-w-0 cursor-pointer"
+                                      onClick={() => navigate(`/articles/${article._id}`)}
+                                    >
+                                      <h5 className="text-sm font-medium truncate hover:underline">
+                                        {article.title}
+                                      </h5>
+                                      <div className="flex items-center mt-1">
+                                        <span className="text-xs text-gray-500 dark:text-gray-400">
                                           {new Date(article.createdAt).toLocaleDateString()}
-                                        </td>
-                                        <td className="px-4 py-3 whitespace-nowrap text-right">
-                                          <Button
-                                            onClick={() => handleDeleteArticle(article._id)}
-                                            variant="destructive"
-                                            size="sm"
-                                          >
-                                            <FaTrash className="mr-1 h-3 w-3" /> Delete
-                                          </Button>
-                                        </td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
+                                        </span>
+                                        {article.status && (
+                                          <Badge variant="outline" className="ml-2 text-xs">
+                                            {article.status}
+                                          </Badge>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <Button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteArticle(article._id);
+                                      }}
+                                      variant="destructive"
+                                      size="sm"
+                                      className="ml-4"
+                                    >
+                                      <FaTrash className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                ))}
                               </div>
                             ) : (
-                              <p className="text-gray-500 dark:text-gray-400 py-4">No articles found</p>
+                              <div className="p-4 text-center border border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+                                <p className="text-gray-500 dark:text-gray-400">No articles found</p>
+                              </div>
                             )}
                           </div>
                         </TableCell>
