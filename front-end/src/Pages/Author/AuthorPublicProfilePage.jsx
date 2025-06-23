@@ -19,7 +19,7 @@ const AuthorPublicProfilePage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
-  
+
   const [author, setAuthor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -51,15 +51,15 @@ const AuthorPublicProfilePage = () => {
 
   const getFileNameFromPhoturl = (url) => {
     if (!url) return "";
-    
+
     if (url.startsWith("http")) {
-      return url; 
+      return url;
     }
 
-    if (url.startsWith('res.cloudinary.com')) {
+    if (url.startsWith("res.cloudinary.com")) {
       return `https://${url}`;
     }
-  }
+  };
 
   const handlePageChange = useCallback(
     (page) => {
@@ -80,7 +80,7 @@ const AuthorPublicProfilePage = () => {
   // Memoized article cards
   const articleCards = useMemo(() => {
     if (!author?.articles?.data) return null;
-    
+
     return author.articles.data.map((article) => (
       <div
         key={article.id}
@@ -251,7 +251,9 @@ const AuthorPublicProfilePage = () => {
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage <= 1}
                         className={`cursor-pointer py-2 px-3 rounded-lg text-teal-700 hover:bg-teal-200 dark:hover:bg-teal-600 dark:text-gray-100 dark:hover:text-white ${
-                          currentPage <= 1 ? "opacity-50 cursor-not-allowed" : ""
+                          currentPage <= 1
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
                         }`}
                         aria-label="Previous page"
                       >

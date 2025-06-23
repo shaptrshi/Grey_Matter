@@ -118,11 +118,25 @@ const updateUser = async (req, res) => {
   try {
     const { name, bio } = req.body;
 
-    const updateFields = {};
-    if (name) updateFields.name = name;
-    if (bio) updateFields.bio = bio;
+    // Validate input
+    if (!name || typeof name !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Valid name is required",
+      });
+    }
+
+    const updateFields = { name, bio: bio || "" };
 
     if (req.file) {
+      // Validate file type
+      if (!req.file.mimetype.startsWith("image/")) {
+        return res.status(400).json({
+          success: false,
+          message: "Only image files are allowed",
+        });
+      }
+
       const result = await uploadOnCloudinary(
         req.file.buffer,
         "profile_photos"
@@ -131,6 +145,8 @@ const updateUser = async (req, res) => {
       const currentUser = await User.findById(req.user._id).select(
         "publicId profilePhoto"
       );
+
+      // Delete old image if exists
       if (currentUser.profilePhoto) {
         const publicId = getPublicIdFromUrl(currentUser.profilePhoto);
         if (publicId) {
@@ -141,34 +157,40 @@ const updateUser = async (req, res) => {
       updateFields.profilePhoto = result.secure_url;
       updateFields.publicId = result.public_id;
     }
-    const updateUser = await User.findByIdAndUpdate(
+
+    const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       updateFields,
       { new: true }
     );
 
-    if (!updateUser) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
 
     res.status(200).json({
       success: true,
-      _id: updateUser._id,
-      name: updateUser.name,
-      email: updateUser.email,
-      role: updateUser.role,
-      bio: updateUser.bio,
-      profilePhoto: updateUser.profilePhoto,
+      user: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        bio: updatedUser.bio,
+        profilePhoto: updatedUser.profilePhoto,
+      },
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server error", error: error.message });
+    console.error("Update error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
   }
 };
-
 const userLogout = async (req, res) => {
   try {
     res.clearCookie("token");

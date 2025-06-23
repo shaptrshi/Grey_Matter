@@ -29,7 +29,6 @@ const AuthorPage = () => {
   const [editMode, setEditMode] = useState(false);
   const [newProfilePicture, setNewProfilePicture] = useState("");
 
-
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalArticles, setTotalArticles] = useState(0);
@@ -131,21 +130,34 @@ const AuthorPage = () => {
   );
 
   const handleSaveProfile = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    setLoading(true);
+    let loadingToast; // Declare loadingToast here
+
     try {
-      const token = localStorage.getItem("token");
-      setLoading(true);
-      const loadingToast = toast.loading("Saving profile...");
+      loadingToast = toast.loading("Saving profile..."); // Initialize here
+
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append("name", author.name);
+      formData.append("bio", author.bio || "");
+
+      // If new profile picture was selected (not just a local URL)
+      if (newProfilePicture && newProfilePicture.startsWith("blob:")) {
+        // Get the actual file from the input
+        const fileInput = document.querySelector('input[type="file"]');
+        if (fileInput && fileInput.files[0]) {
+          formData.append("profilePhoto", fileInput.files[0]);
+        }
+      }
 
       const response = await axios.put(
         "http://localhost:5000/api/users/update",
-        {
-          name: author.name,
-          bio: author.bio,
-          profilePhoto: author.profilePicture,
-        },
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -157,6 +169,7 @@ const AuthorPage = () => {
         bio: updatedUser.bio,
         profilePicture: updatedUser.profilePhoto,
       }));
+      setNewProfilePicture(""); // Clear the temporary URL
       setEditMode(false);
       toast.success("Profile updated successfully", { id: loadingToast });
     } catch (error) {
@@ -166,7 +179,7 @@ const AuthorPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [author]);
+  }, [author, newProfilePicture]);
 
   const handleChange = useCallback((e) => {
     setAuthor((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -203,10 +216,11 @@ const AuthorPage = () => {
   const handleProfilePictureChange = useCallback((e) => {
     const file = e.target.files[0];
     if (file) {
+      // Create a temporary URL for preview
       const imageUrl = URL.createObjectURL(file);
       setNewProfilePicture(imageUrl);
-      setAuthor((prev) => ({ ...prev, profilePicture: imageUrl }));
-      toast.success("Profile picture updated");
+      // Don't update author.profilePicture yet - wait for save
+      toast.success("Profile picture selected");
     }
   }, []);
 
@@ -382,7 +396,13 @@ const AuthorPage = () => {
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
               <div className="relative group">
                 <Avatar className="w-32 h-32">
-                  {author?.profilePicture ? (
+                  {newProfilePicture ? (
+                    <AvatarImage
+                      src={newProfilePicture}
+                      alt="New Profile Picture"
+                      className="rounded-full object-cover"
+                    />
+                  ) : author?.profilePicture ? (
                     <AvatarImage
                       src={getFileNameFromPhoturl(author.profilePicture)}
                       alt="Profile Picture"
@@ -446,7 +466,9 @@ const AuthorPage = () => {
                 ) : (
                   <div>
                     <h2 className="text-3xl font-semibold">{author?.name}</h2>
-                    <p className="text-gray-700 dark:text-gray-300 mt-1">{author?.email}</p>
+                    <p className="text-gray-700 dark:text-gray-300 mt-1">
+                      {author?.email}
+                    </p>
                     <p className="text-gray-700 dark:text-gray-300 mt-4">
                       {author?.bio || "No bio yet. Click edit to add one."}
                     </p>
@@ -468,7 +490,11 @@ const AuthorPage = () => {
         <div className="bg-white dark:bg-custom-dark rounded-xl shadow-md p-6 mb-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-semibold">
-              {loading ? <Skeleton className="h-8 w-48 bg-gray-400" /> : "Your Articles"}
+              {loading ? (
+                <Skeleton className="h-8 w-48 bg-gray-400" />
+              ) : (
+                "Your Articles"
+              )}
             </h2>
             {!loading && totalArticles > 0 && (
               <p className="text-sm text-gray-500">
