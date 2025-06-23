@@ -37,11 +37,6 @@ function App() {
       <Toaster position="top-center" reverseOrder={false} />
 
       <Routes>
-        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-          <Route path="/admin" element={<Admin />} />
-        </Route>
-        <Route path="/unauthorized" element={<Unauthorized />} />
-
         <Route
           path="/signup"
           element={
@@ -50,11 +45,17 @@ function App() {
             </AuthRoute>
           }
         />
-        <Route element={<ProtectedRoute allowedRoles={["author", "admin"]} />}>
-          <Route path="/author-page" element={<AuthorPage />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+
+        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+          <Route path="/admin" element={<Admin />} />
         </Route>
-        <Route path="/create-article" element={<CreateArticle />} />
-        <Route path="/edit-article/:id" element={<EditArticle />} />
+
+        <Route element={<ProtectedRoute allowedRoles={["author"]} />}>
+          <Route path="/author-page" element={<AuthorPage />} />
+          <Route path="/create-article" element={<CreateArticle />} />
+          <Route path="/edit-article/:id" element={<EditArticle />} />
+        </Route>
 
         <Route
           path="/articles/:id"
@@ -67,16 +68,9 @@ function App() {
           }
         />
 
-        <Route
-          path="/profile/:id"
-          element={
-            <>
-              <Navbar />
-              <AuthorPublicProfilePage />
-              <Footer />
-            </>
-          }
-        />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/profile/:id" element={<AuthorPublicProfilePage />} />
+        </Route>
 
         <Route
           path="*"
@@ -116,7 +110,6 @@ function App() {
                   path="/startups-and-entrepreneurship"
                   element={<StartupsAndEntrepreneurship />}
                 />
-                <Route path="/admin" element={<Admin />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-use" element={<Terms />} />
                 <Route path="/contact" element={<Contact />} />

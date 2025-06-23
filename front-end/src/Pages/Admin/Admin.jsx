@@ -1,9 +1,24 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { FaHome, FaUser, FaSignOutAlt, FaChevronDown, FaChevronUp, FaTrash, FaEye } from "react-icons/fa";
+import {
+  FaHome,
+  FaUser,
+  FaSignOutAlt,
+  FaChevronDown,
+  FaChevronUp,
+  FaTrash,
+  FaEye,
+} from "react-icons/fa";
 import axios from "axios";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import logo from "../../assets/logo.svg";
 import SearchBar from "../../components/searchbar/searchBar";
 import { toast } from "react-hot-toast";
@@ -20,14 +35,23 @@ const Admin = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/users", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        setAuthors(response.data.data);
+        const response = await axios.get(
+          "http://localhost:5000/api/admin/users",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        // Filter out admin users and only keep authors
+        const filteredAuthors = response.data.data.filter(
+          (user) => user.role === "author"
+        );
+
+        setAuthors(filteredAuthors);
         const initialExpandedState = {};
-        response.data.data.forEach(author => {
+        filteredAuthors.forEach((author) => {
           initialExpandedState[author._id] = false;
         });
         setExpandedAuthors(initialExpandedState);
@@ -42,20 +66,27 @@ const Admin = () => {
   }, []);
 
   const toggleAuthorExpansion = (authorId) => {
-    setExpandedAuthors(prev => ({
+    setExpandedAuthors((prev) => ({
       ...prev,
-      [authorId]: !prev[authorId]
+      [authorId]: !prev[authorId],
     }));
   };
 
   const handleDeleteAuthor = async (authorId) => {
-    if (window.confirm("Are you sure you want to delete this user and all their articles?")) {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this user and all their articles?"
+      )
+    ) {
       try {
-        await axios.delete(`http://localhost:5000/api/admin/users/${authorId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        await axios.delete(
+          `http://localhost:5000/api/admin/users/${authorId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
         setAuthors(authors.filter((author) => author._id !== authorId));
         toast.success("User deleted successfully");
       } catch (error) {
@@ -67,20 +98,29 @@ const Admin = () => {
   const handleDeleteArticle = async (articleId) => {
     if (window.confirm("Are you sure you want to delete this article?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/admin/articles/${articleId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        
-        setAuthors(authors.map(author => ({
-          ...author,
-          articles: author.articles?.filter(article => article._id !== articleId) || []
-        })));
-        
+        await axios.delete(
+          `http://localhost:5000/api/admin/articles/${articleId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        setAuthors(
+          authors.map((author) => ({
+            ...author,
+            articles:
+              author.articles?.filter((article) => article._id !== articleId) ||
+              [],
+          }))
+        );
+
         toast.success("Article deleted successfully");
       } catch (error) {
-        toast.error(error.response?.data?.message || "Failed to delete article");
+        toast.error(
+          error.response?.data?.message || "Failed to delete article"
+        );
       }
     }
   };
@@ -124,7 +164,10 @@ const Admin = () => {
         <div className="container mx-auto px-6 py-8">
           <div className="bg-white dark:bg-custom-dark rounded-xl shadow-sm overflow-hidden">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="border-b border-gray-200 dark:border-gray-700">
+              <div
+                key={i}
+                className="border-b border-gray-200 dark:border-gray-700"
+              >
                 <div className="px-6 py-5 flex items-center">
                   <Skeleton className="h-12 w-12 rounded-full" />
                   <div className="ml-4 flex-1">
@@ -151,24 +194,30 @@ const Admin = () => {
       <nav className="sticky top-0 z-50 flex justify-between items-center px-6 py-4 bg-white dark:bg-custom-dark shadow-md dark:shadow-sm  dark:shadow-black">
         <div className="flex items-center space-x-4">
           <a href="/" className="flex items-center">
-            <img src={logo} alt="Logo" className="h-10 w-auto transition-transform hover:scale-105" />
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-10 w-auto transition-transform hover:scale-105"
+            />
           </a>
-          <h1 className="text-xl font-semibold text-black dark:text-white pl-4">Admin Dashboard</h1>
+          <h1 className="text-xl font-semibold text-black dark:text-white pl-4">
+            Admin Dashboard
+          </h1>
         </div>
         <div className="flex items-center space-x-4">
           <SearchBar className="w-full" />
-          <Button 
-            onClick={() => navigate("/")} 
-            variant="ghost" 
+          <Button
+            onClick={() => navigate("/")}
+            variant="ghost"
             size="icon"
             className="rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
             aria-label="Home"
           >
             <FaHome className="h-5 w-5" />
           </Button>
-          <Button 
-            onClick={handleLogout} 
-            variant="ghost" 
+          <Button
+            onClick={handleLogout}
+            variant="ghost"
             size="icon"
             className="rounded-lg text-red-600 hover:bg-red-100 dark:hover:bg-red-900"
             aria-label="Logout"
@@ -183,7 +232,9 @@ const Admin = () => {
         <div className="bg-white dark:bg-custom-dark rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           {authors.length === 0 ? (
             <div className="p-8 text-center">
-              <h3 className="text-lg font-medium text-gray-500 dark:text-gray-400">No users found</h3>
+              <h3 className="text-lg font-medium text-gray-500 dark:text-gray-400">
+                No users found
+              </h3>
             </div>
           ) : (
             <Table>
@@ -197,8 +248,8 @@ const Admin = () => {
               <TableBody>
                 {authors.map((author) => (
                   <>
-                    <TableRow 
-                      key={author._id} 
+                    <TableRow
+                      key={author._id}
                       className="hover:bg-gray-50 dark:hover:bg-gray-700/30"
                     >
                       <TableCell>
@@ -211,14 +262,20 @@ const Admin = () => {
                           </Avatar>
                           <div className="ml-4">
                             <p className="font-medium">{author.name}</p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">{author.email}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {author.email}
+                            </p>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center">
-                          <span className="font-medium mr-2">{author.articles?.length || 0}</span>
-                          <span className="text-sm text-gray-500 dark:text-gray-400">articles</span>
+                          <span className="font-medium mr-2">
+                            {author.articles?.length || 0}
+                          </span>
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            articles
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -270,13 +327,15 @@ const Admin = () => {
                             {author.articles?.length > 0 ? (
                               <div className="space-y-3">
                                 {author.articles.map((article) => (
-                                  <div 
-                                    key={article._id} 
+                                  <div
+                                    key={article._id}
                                     className="flex items-center p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700/30 transition-colors"
                                   >
-                                    <div 
+                                    <div
                                       className="flex-shrink-0 h-16 w-24 rounded-md bg-gray-200 dark:bg-gray-700 overflow-hidden cursor-pointer"
-                                      onClick={() => navigate(`/articles/${article._id}`)}
+                                      onClick={() =>
+                                        navigate(`/articles/${article._id}`)
+                                      }
                                     >
                                       {article.bannerImage ? (
                                         <img
@@ -290,19 +349,26 @@ const Admin = () => {
                                         </div>
                                       )}
                                     </div>
-                                    <div 
+                                    <div
                                       className="ml-4 flex-1 min-w-0 cursor-pointer"
-                                      onClick={() => navigate(`/articles/${article._id}`)}
+                                      onClick={() =>
+                                        navigate(`/articles/${article._id}`)
+                                      }
                                     >
                                       <h5 className="text-sm font-medium truncate hover:underline">
                                         {article.title}
                                       </h5>
                                       <div className="flex items-center mt-1">
                                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                                          {new Date(article.createdAt).toLocaleDateString()}
+                                          {new Date(
+                                            article.createdAt
+                                          ).toLocaleDateString()}
                                         </span>
                                         {article.status && (
-                                          <Badge variant="outline" className="ml-2 text-xs">
+                                          <Badge
+                                            variant="outline"
+                                            className="ml-2 text-xs"
+                                          >
                                             {article.status}
                                           </Badge>
                                         )}
@@ -324,7 +390,9 @@ const Admin = () => {
                               </div>
                             ) : (
                               <div className="p-4 text-center border border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
-                                <p className="text-gray-500 dark:text-gray-400">No articles found</p>
+                                <p className="text-gray-500 dark:text-gray-400">
+                                  No articles found
+                                </p>
                               </div>
                             )}
                           </div>
