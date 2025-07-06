@@ -11,7 +11,7 @@ const getAllUsers = async (req, res) => {
       .populate({
         path: "articles",
         select: "title bannerImage createdAt status",
-        options: { sort: { createdAt: -1 }, limit: 4 }
+        options: { sort: { createdAt: -1 }}
       })
       .lean();
 
