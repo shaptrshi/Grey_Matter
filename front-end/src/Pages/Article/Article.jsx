@@ -245,7 +245,7 @@ const Article = () => {
           <Button
             variant="outline"
             onClick={() =>
-              (window.location.href = `mailto:shaptrshik@gmail.com?subject=Feedback on "${article?.title || "this article"}"&body=Your feedback here...`)
+              (window.location.href = `mailto:robbiesrivastava@icloud.com?subject=Feedback on "${article?.title || "this article"}"&body=Your feedback here...`)
             }
             className="rounded-lg border-2 border-black dark:border-gray-600 dark:text-gray-100 dark:bg-custom-dark bg-white px-6 py-3 font-semibold uppercase text-black transition-all duration-300 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:rounded-md hover:shadow-[4px_4px_0px_black] active:translate-x-[0px] active:translate-y-[0px] active:rounded-2xl active:shadow-none"
           >
