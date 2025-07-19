@@ -3,11 +3,13 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 import logo from "../../assets/logo.svg";
+import { Eye, EyeClosed } from "lucide-react";
 
 const SignUp = () => {
   const [role, setRole] = useState("author");
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [serverError, setServerError] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
   const [formData, setFormData] = useState({
@@ -48,10 +50,17 @@ const SignUp = () => {
     });
   };
 
+  const togglePasswordVisibility = () => {
+    setIsVisible((prev) => !prev);
+  };
+
   const validateEmail = (email) =>
     /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email);
 
-  const validatePassword = (password) => /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
+  const validatePassword = (password) =>
+    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+      password
+    );
 
   //const validatePassword = (password) => password.length >= 6;
 
@@ -97,7 +106,7 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError("");
-    
+
     if (!validateForm()) {
       return;
     }
@@ -188,7 +197,7 @@ const SignUp = () => {
         error.response?.data?.error ||
         error.message ||
         "An error occurred. Please try again.";
-      
+
       toast.dismiss(loadingToast);
       toast.error(errorMessage, { duration: 4000 });
       setServerError(errorMessage);
@@ -238,8 +247,9 @@ const SignUp = () => {
         toast.error("Please select an image file");
         return;
       }
-      
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+
+      if (file.size > 2 * 1024 * 1024) {
+        // 2MB limit
         toast.error("Image size should be less than 2MB");
         return;
       }
@@ -280,7 +290,7 @@ const SignUp = () => {
                 ? `${role.charAt(0).toUpperCase() + role.slice(1)} Login`
                 : "Author Sign Up"}
             </h2>
-            
+
             {serverError && (
               <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 rounded text-sm text-center">
                 {serverError}
@@ -388,12 +398,12 @@ const SignUp = () => {
                   <p className="text-red-500 text-sm mt-1">{errors.email}</p>
                 )}
               </div>
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
                   Password <span className="text-red-500">*</span>
                 </label>
                 <input
-                  type="password"
+                  type={isVisible ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
@@ -403,14 +413,17 @@ const SignUp = () => {
                   placeholder="Enter your password"
                   required
                 />
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-                )}
-                {!isLogin && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Must be at least 8 characters with a number and special character
-                  </p>
-                )}
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-8 text-gray-500 dark:text-gray-400 focus:outline-none"
+                >
+                  {isVisible ? (
+                    <Eye className="h-5 w-5" strokeWidth={1.5} />
+                  ) : (
+                    <EyeClosed className="h-5 w-5" />
+                  )}
+                </button>
               </div>
 
               {/* Confirm Password for sign up */}
@@ -425,7 +438,9 @@ const SignUp = () => {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 text-black dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 ${
-                      errors.confirmPassword ? "border-red-500" : "border-gray-300"
+                      errors.confirmPassword
+                        ? "border-red-500"
+                        : "border-gray-300"
                     }`}
                     placeholder="Confirm your password"
                     required
@@ -449,9 +464,25 @@ const SignUp = () => {
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
                     Processing...
                   </span>
