@@ -1,5 +1,10 @@
 const User = require("../models/userModel");
 const Article = require("../models/articleModel");
+4;
+const {
+  deleteFromCloudinary,
+  getPublicIdFromUrl,
+} = require("../utils/cloudinary");
 
 // @desc    Get all users
 // @route   GET /api/admin/users
@@ -11,20 +16,20 @@ const getAllUsers = async (req, res) => {
       .populate({
         path: "articles",
         select: "title bannerImage createdAt status",
-        options: { sort: { createdAt: -1 }}
+        options: { sort: { createdAt: -1 } },
       })
       .lean();
 
     res.status(200).json({
       success: true,
       count: users.length,
-      data: users
+      data: users,
     });
   } catch (error) {
     console.error("Error fetching users:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to fetch users"
+      message: "Failed to fetch users",
     });
   }
 };
@@ -38,26 +43,26 @@ const deleteUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found"
+        message: "User not found",
       });
     }
 
     // Delete all user articles first
     await Article.deleteMany({ author: user._id });
-    
+
     // Then delete the user
     await user.deleteOne();
 
     res.status(200).json({
       success: true,
       data: {},
-      message: "User and all associated articles deleted successfully"
+      message: "User and all associated articles deleted successfully",
     });
   } catch (error) {
     console.error("Error deleting user:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to delete user"
+      message: "Failed to delete user",
     });
   }
 };
@@ -88,13 +93,13 @@ const getAllArticlesAdmin = async (req, res) => {
       totalPages: Math.ceil(count / limit),
       currentPage: page,
       count: articles.length,
-      data: articles
+      data: articles,
     });
   } catch (error) {
     console.error("Error fetching articles:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to fetch articles"
+      message: "Failed to fetch articles",
     });
   }
 };
@@ -104,17 +109,34 @@ const getAllArticlesAdmin = async (req, res) => {
 // @access  Private/Admin
 const deleteArticleAdmin = async (req, res) => {
   try {
-    const article = await Article.findById(req.params.id);
+    const article = await Article.findById(req.params.id)
+      .select("+imagePublicId")
+      .select("bannerImage");
+
     if (!article) {
       return res.status(404).json({
         success: false,
-        message: "Article not found"
+        message: "Article not found",
       });
+    }
+
+    let cloudinaryDeleted = false;
+    const publicId =
+      article.imagePublicId || getPublicIdFromUrl(article.bannerImage);
+
+    // Delete from Cloudinary if image exists
+    if (publicId) {
+      try {
+        await deleteFromCloudinary(publicId);
+        cloudinaryDeleted = true;
+      } catch (error) {
+        console.error("Cloudinary deletion error:", error);
+      }
     }
 
     // Remove article reference from user
     await User.findByIdAndUpdate(article.author, {
-      $pull: { articles: article._id }
+      $pull: { articles: article._id },
     });
 
     await article.deleteOne();
@@ -122,13 +144,14 @@ const deleteArticleAdmin = async (req, res) => {
     res.status(200).json({
       success: true,
       data: {},
-      message: "Article deleted successfully"
+      cloudinaryDeleted,
+      message: "Article deleted successfully",
     });
   } catch (error) {
     console.error("Error deleting article:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to delete article"
+      message: "Failed to delete article",
     });
   }
 };
@@ -154,13 +177,13 @@ const getAllArticlesByUserAdmin = async (req, res) => {
       totalPages: Math.ceil(count / limit),
       currentPage: page,
       count: articles.length,
-      data: articles
+      data: articles,
     });
   } catch (error) {
     console.error("Error fetching user articles:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to fetch user articles"
+      message: "Failed to fetch user articles",
     });
   }
 };
@@ -170,5 +193,5 @@ module.exports = {
   deleteUser,
   getAllArticlesAdmin,
   deleteArticleAdmin,
-  getAllArticlesByUserAdmin
+  getAllArticlesByUserAdmin,
 };
