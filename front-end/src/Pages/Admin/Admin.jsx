@@ -19,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import logo from "../../assets/logo.svg";
+import logo from "../../assets/logo.png";
 import SearchBar from "../../components/searchbar/searchBar";
 import { toast } from "react-hot-toast";
 import { Skeleton } from "@/components/ui/skeleton";

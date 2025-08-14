@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { FaHome, FaSignOutAlt, FaPlus, FaUserCircle } from "react-icons/fa";
 import axios from "axios";
-import logo from "../../assets/logo.svg";
+import logo from "../../assets/logo.png";
 import SearchBar from "../../components/searchbar/searchbar";
 import { Skeleton } from "@/components/ui/skeleton";
 import toast, { Toaster } from "react-hot-toast";
