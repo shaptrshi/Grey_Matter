@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
-import logo from "../../assets/logo.svg";
+import logo from "../../assets/logo.png";
 import { Eye, EyeClosed } from "lucide-react";
 
 const SignUp = () => {

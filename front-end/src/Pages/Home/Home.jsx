@@ -495,7 +495,7 @@ const Home = () => {
                 )}
               </>
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+              <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-custom-dark">
                 <p className="text-gray-500 dark:text-gray-400">
                   No featured articles available
                 </p>
@@ -580,7 +580,7 @@ const Home = () => {
         <OptimizedImage
           src="./Grey Matter.png"
           alt="Discover more eco-friendly content"
-          className="w-auto h-auto object-cover rounded-2xl shadow-lg hover:shadow-xl transition-shadow"
+          className="w-auto h-auto object-cover rounded-2xl shadow-lg hover:shadow-xl transition-shadow "
           priority={false}
         />
       </div>
