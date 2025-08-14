@@ -70,7 +70,6 @@ function App() {
 
         <Route path="/profile/:id" element={<AuthorPublicProfilePage />} />
 
-
         <Route
           path="*"
           element={
