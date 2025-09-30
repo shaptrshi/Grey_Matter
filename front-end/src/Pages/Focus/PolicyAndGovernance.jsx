@@ -192,8 +192,8 @@ const PolicyandGovernance = () => {
           Policy And Governance
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Explore policies and governance frameworks that influence
-          environmental and sustainability practices.
+          Explore policies and governance frameworks guiding innovation and
+          scientific progress.
         </p>
 
         {/* Sort Dropdown */}

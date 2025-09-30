@@ -314,16 +314,10 @@ const Home = () => {
       {/* Banner Section Top */}
       <div className="w-full -mt-2 sm:-mt-3 lg:-mt-5 mb-4 sm:mb-5">
         <OptimizedImage
-          src="./whitegreen.png"
-          alt="Eco-friendly lifestyle tips"
-          className="w-full h-auto max-h-32 sm:max-h-40 md:max-h-48 lg:max-h-56 rounded-xl sm:rounded-2xl shadow-sm dark:hidden"
-          priority={true}
-        />
-        <OptimizedImage
           src="./dark.png"
           alt="Sustainable living in dark mode"
-          className="w-full h-auto max-h-32 sm:max-h-40 md:max-h-48 lg:max-h-56 rounded-xl sm:rounded-2xl shadow-sm hidden dark:block"
-          priority={true}
+          className="w-full h-auto max-h-32 sm:max-h-40 md:max-h-48 lg:max-h-56 rounded-xl sm:rounded-2xl object-cover"
+          priority={false}
         />
       </div>
 
@@ -421,7 +415,7 @@ const Home = () => {
                 </div>
 
                 <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 text-white space-y-3">
-                  <span className="inline-block px-3 py-1 text-xs font-semibold tracking-wide rounded-full bg-custom-green text-white hover:bg-custom-green-1 transition-colors">
+                  <span className="inline-block px-3 py-1 text-xs font-semibold tracking-wide rounded-full bg-custom-green text-white transition-colors">
                     Featured
                   </span>
 
@@ -445,7 +439,7 @@ const Home = () => {
                           navigate(`/profile/${articles.featured[activeArticle].author._id}`);
                         }
                       }}
-                      className="font-medium text-teal-300 hover:underline cursor-pointer transition-colors"
+                      className="font-medium text-custom-green hover:underline cursor-pointer transition-colors"
                     >
                       By {articles.featured[activeArticle]?.author?.name || articles.featured[activeArticle]?.author || "Unknown"}
                     </span>
@@ -580,7 +574,7 @@ const Home = () => {
         <OptimizedImage
           src="./Grey Matter.png"
           alt="Discover more eco-friendly content"
-          className="w-auto h-auto object-cover rounded-2xl shadow-lg hover:shadow-xl transition-shadow "
+          className="w-auto h-auto object-cover"
           priority={false}
         />
       </div>

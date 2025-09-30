@@ -192,8 +192,8 @@ const TechnologyAndAdvancement = () => {
           Technology And Advancement
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Explore technological advancements addressing climate and
-          environmental challenges.
+          Explore technological advancements revolutionizing the world of
+          science and technology.
         </p>
 
         {/* Sort Dropdown */}

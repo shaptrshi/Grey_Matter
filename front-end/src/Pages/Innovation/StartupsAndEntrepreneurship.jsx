@@ -189,11 +189,11 @@ const StartupsAndEntrepreneurship = () => {
     <div className="container mx-auto px-4 sm:px-10 lg:px-8 py-4 sm:py-6 lg:py-8 min-h-screen bg-gray-100 dark:bg-custom-dark dark:text-gray-100">
       <div className="mt-8">
         <h1 className="text-4xl font-extrabold tracking-tight text-center mb-10">
-          StartupsAndEntrepreneurship
+          Startups And Entrepreneurship
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Showcase innovative startups and entrepreneurial efforts driving
-          sustainability.
+          Showcase innovative startups and entrepreneurial efforts shaping the
+          future of technology.
         </p>
 
         {/* Sort Dropdown */}

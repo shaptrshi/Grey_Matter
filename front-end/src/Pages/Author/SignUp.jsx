@@ -276,7 +276,7 @@ const SignUp = () => {
             <img
               src={logo}
               alt="Logo"
-              className="h-9 md:h-14 w-auto transition-transform hover:scale-105 duration-300"
+              className="h-9 md:h-14 w-auto transition-transform hover:scale-105 duration-300 origin-center"
             />
           </a>
         </div>

@@ -192,8 +192,8 @@ const EvolvingHorizons = () => {
           Evolving Horizons
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Highlight progress, milestones, and key projects in the environment,
-          agriculture, and related fields.
+          Highlight progress, milestones, and key projects in innovation and
+          emerging technologies.
         </p>
 
         {/* Sort Dropdown */}

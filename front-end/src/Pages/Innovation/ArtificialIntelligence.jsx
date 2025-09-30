@@ -20,7 +20,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 const PAGE_SIZE = 8;
 const DEFAULT_SORT = "latest";
 
-const Forest = () => {
+const ArtificialIntelligence = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,7 +36,7 @@ const Forest = () => {
     setError(null);
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/articles/genre/Forest`,
+        `http://localhost:5000/api/articles/genre/Artificial_Intelligence`,
         {
           params: {
             sort,
@@ -189,11 +189,10 @@ const Forest = () => {
     <div className="container mx-auto px-4 sm:px-10 lg:px-8 py-4 sm:py-6 lg:py-8 min-h-screen bg-gray-100 dark:bg-custom-dark dark:text-gray-100">
       <div className="mt-8">
         <h1 className="text-4xl font-extrabold tracking-tight text-center mb-10">
-          Forest
+          Artificial Intelligence
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Highlight forest conservation, wildlife preservation, and related
-          topics.
+          Highlight AI research, applications, and future trends.
         </p>
 
         {/* Sort Dropdown */}
@@ -303,4 +302,4 @@ const Forest = () => {
   );
 };
 
-export default React.memo(Forest);
+export default React.memo(ArtificialIntelligence);

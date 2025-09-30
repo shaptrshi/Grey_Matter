@@ -278,8 +278,20 @@ const Article = () => {
           ) : recommendedArticles.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {recommendedArticles.map((article) => (
-                <Link to={`/articles/${article._id}`} key={article._id} className="block">
-                  <Card className="hover:shadow-md h-[300px] dark:bg-custom-dark dark:border-none transition-transform transform hover:scale-105 dark:shadow-sm dark:shadow-black">
+                <div
+                 key={article._id}
+                 role ="link"
+                  tabIndex={0}
+                  onClick={() => navigate(`/articles/${article._id}`)}
+                  onKeyDown={(e) => { 
+                    if (e.key === 'Enter' || e.key === " ") {
+                      e.preventDefault();
+                       navigate(`/articles/${article._id}`);
+                    }
+                  }}
+                  className="block cursor-pointer"
+                  >
+                  <Card className="hover:shadow-md h-[300px] dark:bg-custom-dark dark:border-none transition-transform transform hover:scale-105 dark:shadow-sm dark:shadow-black flex flex-col">
                     <div className="relative h-[150px] overflow-hidden rounded-t-lg">
                       <img
                         src={article.bannerImage}
@@ -288,12 +300,12 @@ const Article = () => {
                         loading="lazy"
                       />
                     </div>
-                    <CardHeader className="p-3 sm:p-4 mt-1">
-                      <CardTitle className="text-lg font-semibold line-clamp-2 hover:underline dark:text-gray-100 text-gray-800">
+                    <CardHeader className="p-3 sm:p-4 mt-1 h-[3.5rem] flex flex-col justify-end">
+                      <CardTitle className="text-lg font-semibold line-clamp-2 hover:underline dark:text-gray-100 text-gray-800 leading-snug">
                         {article.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-3 sm:p-4">
+                    <CardContent className="p-3 sm:p-4 mt-auto">
                       <div className="flex justify-between items-center font-semibold text-xs sm:text-sm text-teal-700">
                         <Link 
                           to={`/profile/${article.author?._id}`}
@@ -311,7 +323,7 @@ const Article = () => {
                       </div>
                     </CardContent>
                   </Card>
-                </Link>
+                </div>
               ))}
             </div>
           ) : (

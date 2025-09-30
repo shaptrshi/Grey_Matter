@@ -72,17 +72,18 @@ const Navbar = () => {
     { name: "Home", link: "/" },
     { name: "Trending", link: "/trending" },
     {
-      name: "Nature",
+      name: "Geography",
       dropdown: [
         { name: "Environment", link: "/environment" },
         { name: "Weather", link: "/weather" },
         { name: "Agriculture", link: "/agriculture" },
-        { name: "Forest", link: "/forest" },
+        { name: "Sustainable Living", link: "/sustainable-living" },
       ],
     },
     {
       name: "Innovation",
       dropdown: [
+        { name: "Artificial Intelligence", link: "/artificial-intelligence" },
         { name: "Science And Research", link: "/science-and-research" },
         {
           name: "Startups And Entrepreneurship",
@@ -92,7 +93,7 @@ const Navbar = () => {
           name: "Technology And Advancement",
           link: "/technology-and-advancement",
         },
-        { name: "Sustainable Living", link: "/sustainable-living" },
+        
       ],
     },
     {
@@ -128,12 +129,12 @@ const Navbar = () => {
           </button>
 
           {/* Logo */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 pt-3 md:pt-5">
             <Link to="/">
               <img
                 src={logo}
                 alt="Logo"
-                className="h-12 md:h-16 w-auto transition-transform hover:scale-105"
+                className="h-16 md:h-24 w-auto transition-transform hover:scale-105 origin-center"
               />
             </Link>
           </div>

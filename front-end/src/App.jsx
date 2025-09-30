@@ -14,7 +14,7 @@ import StartupsAndEntrepreneurship from "./Pages/Innovation/StartupsAndEntrepren
 import Environment from "./Pages/Nature/Environment";
 import Weather from "./Pages/Nature/Weather";
 import Agriculture from "./Pages/Nature/Agriculture";
-import Forest from "./Pages/Nature/Forest";
+import ArtificialIntelligence from "./Pages/Innovation/ArtificialIntelligence";
 import SustainableLiving from "./Pages/Innovation/SustainableLiving";
 import EvolvingHorizons from "./Pages/Focus/EvolvingHorizons";
 import Interviews from "./Pages/Focus/Interviews";
@@ -81,7 +81,7 @@ function App() {
                 <Route path="/environment" element={<Environment />} />
                 <Route path="/weather" element={<Weather />} />
                 <Route path="/agriculture" element={<Agriculture />} />
-                <Route path="/forest" element={<Forest />} />
+                <Route path="/artificial-intelligence" element={<ArtificialIntelligence />} />
                 <Route
                   path="/evolving-horizons"
                   element={<EvolvingHorizons />}

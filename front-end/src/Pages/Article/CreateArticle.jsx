@@ -30,7 +30,7 @@ const CreateArticle = () => {
       "Environment",
       "Weather",
       "Agriculture",
-      "Forest",
+      "Artificial_Intelligence",
       "Sustainable_Living",
       "Technology_and_Advancement",
       "Science_and_Research",

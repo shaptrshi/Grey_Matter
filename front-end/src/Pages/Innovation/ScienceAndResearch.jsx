@@ -193,7 +193,7 @@ const ScienceAndResearch = () => {
         </h1>
         <p className="text-center text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
           Highlight cutting-edge research and scientific breakthroughs in
-          environmental and sustainability fields.
+          science and technology fields.
         </p>
 
         {/* Sort Dropdown */}
