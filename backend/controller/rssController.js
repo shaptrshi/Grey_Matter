@@ -7,7 +7,7 @@ const generateRSSFeed = async (req, res) => {
 
     // Create proper base URL - fix the undefined issue
     const baseUrl =
-      process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
+      process.env.BASE_URL
 
     console.log("Base URL for RSS:", baseUrl);
 

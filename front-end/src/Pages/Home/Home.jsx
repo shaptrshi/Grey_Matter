@@ -252,7 +252,7 @@ const Home = () => {
       // Fetch all categories in parallel
       const requests = categories.map(({ key, tag }) =>
         axios
-          .get(`http://localhost:5000/api/articles/home/${tag}`)
+          .get(`https://api.thatgreymatter.com/api/articles/home/${tag}`)
           .then((res) => ({ key, data: res.data.data }))
           .catch((err) => {
             console.error(`Error fetching ${key}:`, err);
@@ -310,7 +310,7 @@ const Home = () => {
 
     // Use the ngrok URL directly - NOT localhost
     const rssFeedUrl =
-      "https://gretta-unsacrificing-transfixedly.ngrok-free.dev/api/rss/feed";
+      "https://api.thatgreymatter.com/api/rss/feed";
 
     console.log("Using RSS URL:", rssFeedUrl);
 
