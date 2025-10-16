@@ -9,6 +9,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import DOMPurify from "dompurify";
 
+const API_BASE = import.meta.env.VITE_API_URL || "https://api.thatgreymatter.com";
+
 const Article = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -21,7 +23,7 @@ const Article = () => {
   const fetchArticle = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
-      const backendUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/articles/${id}`;
+      const backendUrl = `${API_BASE}/api/articles/${id}`;
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       const { data } = await axios.get(backendUrl, { headers });
 
@@ -36,9 +38,7 @@ const Article = () => {
 
   const fetchRecommendedArticles = useCallback(async () => {
     try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/articles/random`
-      );
+      const { data } = await axios.get(`${API_BASE}/api/articles/random`);
       setRecommendedArticles(data.articles || []);
     } catch (error) {
       console.error("Failed to fetch recommended articles:", error);
@@ -59,24 +59,27 @@ const Article = () => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  const shareArticle = useCallback((platform) => {
-    const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(article?.title || "Check out this amazing article!");
+  const shareArticle = useCallback(
+    (platform) => {
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent(article?.title || "Check out this amazing article!");
 
-    const shareUrls = {
-      linkedin: `https://linkedin.com/shareArticle?url=${url}`,
-      email: `mailto:?subject=${text}&body=${url}`,
-    };
+      const shareUrls = {
+        linkedin: `https://linkedin.com/shareArticle?url=${url}`,
+        email: `mailto:?subject=${text}&body=${url}`,
+      };
 
-    if (platform === "link") {
-      copyUrlToClipboard();
-      return;
-    }
+      if (platform === "link") {
+        copyUrlToClipboard();
+        return;
+      }
 
-    if (shareUrls[platform]) {
-      window.open(shareUrls[platform], platform === "email" ? "_self" : "_blank");
-    }
-  }, [article]);
+      if (shareUrls[platform]) {
+        window.open(shareUrls[platform], platform === "email" ? "_self" : "_blank");
+      }
+    },
+    [article]
+  );
 
   const copyUrlToClipboard = useCallback(() => {
     const url = window.location.href;
@@ -124,7 +127,7 @@ const Article = () => {
           </div>
         ) : (
           <div className="relative w-full aspect-video md:aspect-[16/7] lg:aspect-[16/6] overflow-hidden mb-8 rounded-xl">
-            {article.bannerImage && (
+            {article?.bannerImage && (
               <>
                 <img
                   src={article.bannerImage}
@@ -137,21 +140,24 @@ const Article = () => {
             )}
             <div className="absolute bottom-0 left-0 right-0 z-20 text-white px-5 md:px-10 lg:px-20 pb-8">
               <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg">
-                {article.title}
+                {article?.title}
               </h1>
               <p className="text-base md:text-lg text-gray-200 drop-shadow-md">
                 By{" "}
                 <Link
-                  to={`/profile/${article.author?._id}`}
+                  to={`/profile/${article?.author?._id}`}
                   className="font-semibold hover:underline"
                 >
-                  {article.author?.name || "Unknown Author"}
+                  {article?.author?.name || "Unknown Author"}
                 </Link>{" "}
-                · {new Date(article.createdAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+                ·{" "}
+                {article?.createdAt
+                  ? new Date(article.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                  : ""}
               </p>
             </div>
           </div>
@@ -172,7 +178,7 @@ const Article = () => {
               <div
                 className="prose dark:prose-invert max-w-none"
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(article.content),
+                  __html: DOMPurify.sanitize(article?.content || ""),
                 }}
               />
             </CardContent>
@@ -183,9 +189,7 @@ const Article = () => {
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Share */}
           <div>
-            <h2 className="text-2xl font-semibold text-foreground mb-4">
-              Share this article
-            </h2>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">Share this article</h2>
             <div className="flex flex-wrap gap-3">
               {renderShareButton(
                 "linkedin",
@@ -208,9 +212,7 @@ const Article = () => {
           {/* Tags - Only show skeleton if article is loading */}
           {articleLoading ? (
             <div>
-              <h2 className="text-2xl font-semibold text-foreground mb-4">
-                Topics
-              </h2>
+              <h2 className="text-2xl font-semibold text-foreground mb-4">Topics</h2>
               <div className="flex flex-wrap gap-2">
                 {[...Array(3)].map((_, index) => (
                   <Skeleton key={index} className="h-8 w-20 rounded-full" />
@@ -219,10 +221,8 @@ const Article = () => {
             </div>
           ) : (
             <div>
-              <h2 className="text-2xl font-semibold text-foreground mb-4">
-                Topics
-              </h2>
-              {Array.isArray(article.tags) && article.tags.length > 0 ? (
+              <h2 className="text-2xl font-semibold text-foreground mb-4">Topics</h2>
+              {Array.isArray(article?.tags) && article.tags.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {article.tags.map((tag, index) => (
                     <span
@@ -255,10 +255,8 @@ const Article = () => {
 
         {/* Recommendations */}
         <div className="mt-12">
-          <h2 className="text-2xl font-semibold text-foreground mb-6">
-            You May Also Like
-          </h2>
-          
+          <h2 className="text-2xl font-semibold text-foreground mb-6">You May Also Like</h2>
+
           {recommendedLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {[...Array(4)].map((_, index) => (
@@ -279,18 +277,18 @@ const Article = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {recommendedArticles.map((article) => (
                 <div
-                 key={article._id}
-                 role ="link"
+                  key={article._id}
+                  role="link"
                   tabIndex={0}
                   onClick={() => navigate(`/articles/${article._id}`)}
-                  onKeyDown={(e) => { 
-                    if (e.key === 'Enter' || e.key === " ") {
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault();
-                       navigate(`/articles/${article._id}`);
+                      navigate(`/articles/${article._id}`);
                     }
                   }}
                   className="block cursor-pointer"
-                  >
+                >
                   <Card className="hover:shadow-md h-[300px] dark:bg-custom-dark dark:border-none transition-transform transform hover:scale-105 dark:shadow-sm dark:shadow-black flex flex-col">
                     <div className="relative h-[150px] overflow-hidden rounded-t-lg">
                       <img
@@ -307,7 +305,7 @@ const Article = () => {
                     </CardHeader>
                     <CardContent className="p-3 sm:p-4 mt-auto">
                       <div className="flex justify-between items-center font-semibold text-xs sm:text-sm text-teal-700">
-                        <Link 
+                        <Link
                           to={`/profile/${article.author?._id}`}
                           onClick={(e) => e.stopPropagation()}
                           className="hover:underline"
@@ -315,10 +313,12 @@ const Article = () => {
                           {article.author?.name || "Unknown"}
                         </Link>
                         <span>
-                          {new Date(article.createdAt).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                          })}
+                          {article.createdAt
+                            ? new Date(article.createdAt).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                              })
+                            : ""}
                         </span>
                       </div>
                     </CardContent>
