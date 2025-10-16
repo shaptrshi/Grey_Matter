@@ -36,7 +36,7 @@ const Trending = () => {
     setError(null);
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/articles/genre/Trending`,
+        `https://api.thatgreymatter.com/api/articles/genre/Trending`,
         {
           params: {
             sort,
