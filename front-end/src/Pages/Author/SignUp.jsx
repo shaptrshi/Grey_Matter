@@ -5,6 +5,8 @@ import { Toaster, toast } from "react-hot-toast";
 import logo from "../../assets/logo.png";
 import { Eye, EyeClosed } from "lucide-react";
 
+const API_BASE = import.meta.env.VITE_API_URL || "https://api.thatgreymatter.com";
+
 const SignUp = () => {
   const [role, setRole] = useState("author");
   const [isLogin, setIsLogin] = useState(true);
@@ -62,11 +64,9 @@ const SignUp = () => {
       password
     );
 
-  //const validatePassword = (password) => password.length >= 6;
-
   const validateForm = () => {
     let isValid = true;
-    const newErrors = { ...errors };
+    const newErrors = { ...errors, name: "", email: "", password: "", confirmPassword: "" };
 
     // Common validations for both login and signup
     if (!formData.email.trim()) {
@@ -149,42 +149,47 @@ const SignUp = () => {
       }
 
       const res = await axios.post(
-        `https://api.thatgreymatter.com/api/users/${endpoint}`,
+        `${API_BASE}/api/users/${endpoint}`,
         dataToSend,
         config
       );
 
+      // defensive extraction: some APIs return user in res.data.user
+      const resp = res?.data || {};
+      const user = resp.user || resp;
+      const token = resp.token || user.token;
+
       // Role mismatch validation
-      if (role === "author" && res.data.role !== "author") {
+      if (role === "author" && user.role !== "author") {
         throw new Error("Invalid credentials for selected role.");
       }
 
-      if (role === "admin" && res.data.role !== "admin") {
+      if (role === "admin" && user.role !== "admin") {
         throw new Error("Invalid credentials for selected role.");
       }
 
-      // Store user data in localStorage
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("userRole", res.data.role);
-      localStorage.setItem("userId", res.data._id);
-      localStorage.setItem("userName", res.data.name);
-      localStorage.setItem("email", res.data.email);
-      localStorage.setItem("bio", res.data.bio);
-      localStorage.setItem("profilePhoto", res.data.profilePhoto);
-      localStorage.setItem("articles", JSON.stringify(res.data.articles));
+      // Store user data in localStorage (avoid storing sensitive data like passwords)
+      if (token) localStorage.setItem("token", token);
+      if (user.role) localStorage.setItem("userRole", user.role);
+      if (user._id) localStorage.setItem("userId", user._id);
+      if (user.name) localStorage.setItem("userName", user.name);
+      if (user.email) localStorage.setItem("email", user.email);
+      if (user.bio) localStorage.setItem("bio", user.bio);
+      if (user.profilePhoto) localStorage.setItem("profilePhoto", user.profilePhoto);
+      if (user.articles) localStorage.setItem("articles", JSON.stringify(user.articles));
 
       // Show success toast
       toast.dismiss(loadingToast);
       toast.success(
         isLogin
-          ? `Logged in as ${res.data.role} successfully!`
+          ? `Logged in as ${user.role} successfully!`
           : "Account created successfully!",
         { duration: 3000 }
       );
 
       // Redirect based on role
       setTimeout(() => {
-        if (res.data.role === "admin") {
+        if (user.role === "admin") {
           navigate("/admin");
         } else {
           navigate("/author-page");
@@ -267,6 +272,7 @@ const SignUp = () => {
 
   return (
     <>
+      <Toaster />
       <nav className="sticky top-0 z-50 bg-white dark:bg-custom-dark shadow-md dark:shadow-sm dark:shadow-black p-4">
         <div className="mx-auto flex justify-center items-center">
           <a
@@ -438,9 +444,7 @@ const SignUp = () => {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 text-black dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 ${
-                      errors.confirmPassword
-                        ? "border-red-500"
-                        : "border-gray-300"
+                      errors.confirmPassword ? "border-red-500" : "border-gray-300"
                     }`}
                     placeholder="Confirm your password"
                     required
