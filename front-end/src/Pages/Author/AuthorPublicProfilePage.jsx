@@ -29,7 +29,7 @@ const AuthorPublicProfilePage = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:5000/api/users/public/${id}?page=${currentPage}`
+        `https://api.thatgreymatter.com/api/users/public/${id}?page=${currentPage}`
       );
       setAuthor(response.data);
       setTotalPages(response.data.articles.pagination.totalPages);
