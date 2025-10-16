@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const adminRoute = require("./routes/adminRoute");
 const userRoute = require("./routes/userRoute");
 const articleRoute = require("./routes/articleRoute");
+const rssRoute = require("./routes/rssRoute");
 const cors = require("cors");
 const connectDb = require("./config/db");
 const path = require("path");
@@ -32,6 +33,7 @@ app.get("/", (req, res) => {
 app.use("/api/admin", adminRoute);
 app.use("/api/articles", articleRoute);
 app.use("/api/users", userRoute);
+app.use("/api/rss", rssRoute);
 
 app.listen(port, () => {
   console.log(`Server is listening at port number ${port}`);

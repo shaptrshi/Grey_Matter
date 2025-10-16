@@ -27,7 +27,7 @@ const OptimizedImage = ({ src, alt, className, priority = false }) => {
         src={imageSrc}
         alt={alt}
         className={`w-full h-full object-cover transition-opacity duration-500 ${
-          isLoading ? 'opacity-0' : 'opacity-100'
+          isLoading ? "opacity-0" : "opacity-100"
         }`}
         loading={priority ? "eager" : "lazy"}
         onLoad={() => setIsLoading(false)}
@@ -41,7 +41,9 @@ const OptimizedImage = ({ src, alt, className, priority = false }) => {
 };
 
 // 2. Intersection Observer Hook
-const useIntersectionObserver = (options = { threshold: 0.1, rootMargin: '200px' }) => {
+const useIntersectionObserver = (
+  options = { threshold: 0.1, rootMargin: "200px" }
+) => {
   const [isIntersecting, setIsIntersecting] = useState(false);
   const ref = useRef(null);
 
@@ -86,7 +88,7 @@ const ArticleCard = memo(({ article, loading, priority = false }) => {
   }
 
   const handleCardClick = (e) => {
-    if (e.target.closest('.author-name')) {
+    if (e.target.closest(".author-name")) {
       return;
     }
     navigate(article.link || `/articles/${article._id}`);
@@ -100,14 +102,18 @@ const ArticleCard = memo(({ article, loading, priority = false }) => {
   };
 
   return (
-    <div 
+    <div
       onClick={handleCardClick}
       className="cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       aria-label={`Read article: ${article.title}`}
     >
-      <Card className={`hover:shadow-md transition-all duration-300 ${isHovered ? 'transform scale-[1.02]' : ''} h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black`}>
+      <Card
+        className={`hover:shadow-md transition-all duration-300 ${
+          isHovered ? "transform scale-[1.02]" : ""
+        } h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black`}
+      >
         <div className="relative h-[150px] sm:h-[150px] overflow-hidden">
           <OptimizedImage
             src={article.bannerImage}
@@ -158,10 +164,12 @@ const Section = memo(({ title, articles, loading, limit = 4, genre }) => {
   };
 
   return (
-    <div 
+    <div
       ref={sectionRef}
       id={`section-${genre}`}
-      className={`mt-10 sm:mt-11 transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+      className={`mt-10 sm:mt-11 transition-opacity duration-500 ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
     >
       <div className="flex justify-between items-center mb-5">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
@@ -173,7 +181,8 @@ const Section = memo(({ title, articles, loading, limit = 4, genre }) => {
           className="text-custom-green hover:text-custom-green-1 dark:text-custom-green dark:hover:text-custom-green-1 group"
           aria-label={`See more ${title} articles`}
         >
-          See More <MdArrowForward className="ml-1 transition-transform group-hover:translate-x-1" />
+          See More{" "}
+          <MdArrowForward className="ml-1 transition-transform group-hover:translate-x-1" />
         </Button>
       </div>
       {loading ? (
@@ -185,9 +194,9 @@ const Section = memo(({ title, articles, loading, limit = 4, genre }) => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
           {articles?.slice(0, limit).map((article, index) => (
-            <ArticleCard 
-              key={index} 
-              article={article} 
+            <ArticleCard
+              key={index}
+              article={article}
               loading={false}
               priority={index < 2} // Prioritize first two images
             />
@@ -208,12 +217,13 @@ const Home = () => {
     environment: [],
     sustainable: [],
     interviews: [],
-    spotlight: []
+    spotlight: [],
   });
-  
+
   const [activeArticle, setActiveArticle] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState({
@@ -230,30 +240,32 @@ const Home = () => {
     try {
       // Create an array of all the categories we need to fetch
       const categories = [
-        { key: 'trending', tag: 'Trending' },
-        { key: 'featured', tag: 'featured' },
-        { key: 'latest', tag: 'latest' },
-        { key: 'environment', tag: 'Environment' },
-        { key: 'sustainable', tag: 'Sustainable_Living' },
-        { key: 'interviews', tag: 'Interviews' },
-        { key: 'spotlight', tag: 'Spotlight' }
+        { key: "trending", tag: "Trending" },
+        { key: "featured", tag: "featured" },
+        { key: "latest", tag: "latest" },
+        { key: "environment", tag: "Environment" },
+        { key: "sustainable", tag: "Sustainable_Living" },
+        { key: "interviews", tag: "Interviews" },
+        { key: "spotlight", tag: "Spotlight" },
       ];
 
       // Fetch all categories in parallel
-      const requests = categories.map(({ key, tag }) => 
-        axios.get(`http://localhost:5000/api/articles/home/${tag}`)
-          .then(res => ({ key, data: res.data.data }))
-          .catch(err => {
+      const requests = categories.map(({ key, tag }) =>
+        axios
+          .get(`http://localhost:5000/api/articles/home/${tag}`)
+          .then((res) => ({ key, data: res.data.data }))
+          .catch((err) => {
             console.error(`Error fetching ${key}:`, err);
             return { key, data: [] };
-          }));
+          })
+      );
 
       const results = await Promise.all(requests);
-      
+
       // Update state with all fetched data
       const newArticles = { ...articles };
       const newLoading = { ...loading };
-      
+
       results.forEach(({ key, data }) => {
         newArticles[key] = data;
         newLoading[key] = false;
@@ -272,7 +284,7 @@ const Home = () => {
 
   const handleNext = useCallback(() => {
     if (isTransitioning || articles.featured.length <= 1) return;
-    
+
     setIsTransitioning(true);
     setTimeout(() => {
       setActiveArticle((prev) => (prev + 1) % articles.featured.length);
@@ -282,13 +294,51 @@ const Home = () => {
 
   const handlePrev = useCallback(() => {
     if (isTransitioning || articles.featured.length <= 1) return;
-    
+
     setIsTransitioning(true);
     setTimeout(() => {
-      setActiveArticle((prev) => (prev - 1 + articles.featured.length) % articles.featured.length);
+      setActiveArticle(
+        (prev) =>
+          (prev - 1 + articles.featured.length) % articles.featured.length
+      );
       setIsTransitioning(false);
     }, 500);
   }, [articles.featured.length, isTransitioning]);
+
+  const handleSubscribeClick = async (e) => {
+    e.preventDefault();
+
+    // Use the ngrok URL directly - NOT localhost
+    const rssFeedUrl =
+      "https://gretta-unsacrificing-transfixedly.ngrok-free.dev/api/rss/feed";
+
+    console.log("Using RSS URL:", rssFeedUrl);
+
+    try {
+      // Test if RSS feed is accessible
+      const response = await fetch(rssFeedUrl);
+      if (!response.ok) {
+        throw new Error(`RSS feed returned status: ${response.status}`);
+      }
+
+      // Copy to clipboard
+      await navigator.clipboard.writeText(rssFeedUrl);
+      setIsCopied(true);
+
+      // Open Feedly with the NGrok URL (not localhost)
+      // const feedlyUrl = `https://feedly.com/i/subscription/feed/${encodeURIComponent(
+      //   rssFeedUrl
+      // )}`;
+      // console.log("Opening Feedly with URL:", feedlyUrl);
+      // window.open(feedlyUrl, "_blank", "noopener,noreferrer");
+
+      setTimeout(() => setIsCopied(false), 4000);
+    } catch (err) {
+      console.error("RSS Feed Error:", err);
+      console.log(`Cannot access RSS feed: ${err.message}`);
+      window.open("https://feedly.com/i/welcome", "_blank");
+    }
+  };
 
   useEffect(() => {
     if (!autoRotate || articles.featured.length <= 1) return;
@@ -334,7 +384,8 @@ const Home = () => {
               className="text-custom-green hover:text-custom-green-1 dark:text-custom-green dark:hover:text-custom-green-1 group"
               aria-label="See more trending articles"
             >
-              See More <MdArrowForward className="ml-1 transition-transform group-hover:translate-x-1" />
+              See More{" "}
+              <MdArrowForward className="ml-1 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
           {loading.trending ? (
@@ -353,11 +404,15 @@ const Home = () => {
             <ul className="flex flex-col gap-8">
               {articles.trending?.slice(0, 7).map((article, index) => (
                 <div key={index} className="gap-8 group">
-                  <Card 
+                  <Card
                     className="hover:shadow-lg transition-all duration-300 hover:bg-custom-green-1/10 dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black group-hover:scale-[1.02]"
                     aria-label={`Trending article: ${article.title}`}
                   >
-                    <div onClick={() => navigate(article.link || `/articles/${article._id}`)}>
+                    <div
+                      onClick={() =>
+                        navigate(article.link || `/articles/${article._id}`)
+                      }
+                    >
                       <CardHeader className="p-3 sm:p-4">
                         <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 hover:underline line-clamp-2 dark:text-gray-100 transition-all">
                           {article.title}
@@ -388,7 +443,7 @@ const Home = () => {
         {/* Middle Section */}
         <div className="lg:col-span-6">
           {/* Featured News Section */}
-          <div 
+          <div
             className="relative h-[300px] sm:h-[350px] lg:h-[450px] rounded-xl sm:rounded-2xl overflow-hidden shadow-lg group"
             onMouseEnter={handleFeaturedMouseEnter}
             onMouseLeave={handleFeaturedMouseLeave}
@@ -401,7 +456,9 @@ const Home = () => {
                   {articles.featured.map((article, index) => (
                     <div
                       key={index}
-                      className={`absolute inset-0 transition-opacity duration-500 ${index === activeArticle ? 'opacity-100' : 'opacity-0'}`}
+                      className={`absolute inset-0 transition-opacity duration-500 ${
+                        index === activeArticle ? "opacity-100" : "opacity-0"
+                      }`}
                     >
                       <OptimizedImage
                         src={article.bannerImage}
@@ -420,28 +477,41 @@ const Home = () => {
                   </span>
 
                   <div
-                    onClick={() => navigate(articles.featured[activeArticle]?.link || `/articles/${articles.featured[activeArticle]?._id}`)}
+                    onClick={() =>
+                      navigate(
+                        articles.featured[activeArticle]?.link ||
+                          `/articles/${articles.featured[activeArticle]?._id}`
+                      )
+                    }
                     className="cursor-pointer"
                   >
                     <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight hover:underline transition-all">
-                      {articles.featured[activeArticle]?.title || "Featured Article"}
+                      {articles.featured[activeArticle]?.title ||
+                        "Featured Article"}
                     </h3>
                     <p className="text-sm sm:text-base mt-2 line-clamp-2 opacity-90">
-                      {articles.featured[activeArticle]?.excerpt || articles.featured[activeArticle]?.description || ""}
+                      {articles.featured[activeArticle]?.excerpt ||
+                        articles.featured[activeArticle]?.description ||
+                        ""}
                     </p>
                   </div>
 
                   <div className="flex items-center space-x-4 text-sm sm:text-base">
-                    <span 
+                    <span
                       onClick={(e) => {
                         e.stopPropagation();
                         if (articles.featured[activeArticle]?.author?._id) {
-                          navigate(`/profile/${articles.featured[activeArticle].author._id}`);
+                          navigate(
+                            `/profile/${articles.featured[activeArticle].author._id}`
+                          );
                         }
                       }}
                       className="font-medium text-custom-green hover:underline cursor-pointer transition-colors"
                     >
-                      By {articles.featured[activeArticle]?.author?.name || articles.featured[activeArticle]?.author || "Unknown"}
+                      By{" "}
+                      {articles.featured[activeArticle]?.author?.name ||
+                        articles.featured[activeArticle]?.author ||
+                        "Unknown"}
                     </span>
                     <span className="text-gray-300">•</span>
                     <span className="text-gray-300">
@@ -524,49 +594,61 @@ const Home = () => {
         {/* Right Section */}
         <div className="lg:col-span-2 space-y-4 sm:space-y-5">
           {/* Contact Us Card */}
-            <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] lg:h-[400px] bg-custom-green-1 transition-all hover:shadow-lg">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
+          <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] lg:h-[400px] bg-custom-green-1 transition-all hover:shadow-lg">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
+              Contact Us
+            </h2>
+            <p className="text-gray-800 mb-10 dark:text-gray-800">
+              Got a story or suggestion? <br /> We'd love to hear from you!
+            </p>
+            <Link to="/contact">
+              <Button
+                variant="primary"
+                className="w-full rounded-full bg-custom-green text-custom-green-1 hover:scale-105 mt-6 lg:mt-36 font-bold transition-transform focus:outline-none focus:ring-2 focus:ring-custom-green focus:ring-offset-2"
+                aria-label="Contact us"
+              >
                 Contact Us
-              </h2>
-              <p className="text-gray-800 mb-10 dark:text-gray-800">
-                Got a story or suggestion? <br /> We'd love to hear from you!
-              </p>
-              <Link to="/contact">
-                <Button
-                  variant="primary"
-                  className="w-full rounded-full bg-custom-green text-custom-green-1 hover:scale-105 mt-6 lg:mt-36 font-bold transition-transform focus:outline-none focus:ring-2 focus:ring-custom-green focus:ring-offset-2"
-                  aria-label="Contact us"
-                >
-                  Contact Us
-                  <MdNavigateNext size={24} className="ml-2 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </Link>
-            </div>
+                <MdNavigateNext
+                  size={24}
+                  className="ml-2 transition-transform group-hover:translate-x-1"
+                />
+              </Button>
+            </Link>
+          </div>
 
           {/* Subscribe Card */}
-            <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] bg-custom-green transition-all hover:shadow-lg">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-200 mb-3">
-                Subscribe
-              </h2>
-              <p className="text-gray-200 mb-10">
-                Stay updated with our latest articles. <br /> Subscribe to our
-                RSS feed now!
-              </p>
-              <a
-                href="https://rss.com/"
-                target="_blank"
-                rel="noreferrer"
-                className="block mt-6 group"
+          <div className="rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 h-[250px] sm:h-[300px] bg-custom-green transition-all hover:shadow-lg">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-200 mb-3">
+              Subscribe
+            </h2>
+            <p className="text-gray-200 mb-10">
+              Stay updated with our latest articles. <br />
+              {isCopied
+                ? "RSS link copied! Opening Feedly..."
+                : "Subscribe to our RSS feed now!"}
+            </p>
+            <button
+              onClick={handleSubscribeClick}
+              className="block mt-6 group w-full"
+            >
+              <Button
+                variant="primary"
+                className="w-full rounded-full bg-custom-accent-green text-custom-green hover:scale-105 font-bold transition-transform focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                aria-label="Subscribe to RSS feed"
               >
-                <Button
-                  variant="primary"
-                  className="w-full rounded-full bg-custom-accent-green text-custom-green hover:scale-105 font-bold transition-transform focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
-                  aria-label="Subscribe to RSS feed"
-                >
-                  Subscribe <MdRssFeed size={24} className="ml-2 transition-transform group-hover:scale-110" />
-                </Button>
-              </a>
+                {isCopied ? "Copied!" : "Subscribe"}
+                <MdRssFeed
+                  size={24}
+                  className="ml-2 transition-transform group-hover:scale-110"
+                />
+              </Button>
+            </button>
+
+            {/* Optional: Show direct link for manual copying */}
+            <div className="mt-4 text-xs text-gray-300 text-center">
+              <p>RSS Feed URL automatically copied</p>
             </div>
+          </div>
         </div>
       </div>
 
