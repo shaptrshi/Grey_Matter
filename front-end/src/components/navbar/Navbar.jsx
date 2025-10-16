@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import { Menu, X, ChevronDown, Moon, Sun } from "lucide-react";
 import { ThemeContext } from "../../context/ThemeContext";
 import logo from "../../assets/logo.png";
-import SearchBar from "../searchbar/SearchBar";
+import SearchBar from "../searchbar/searchBar";
 import { Link, useNavigate } from "react-router-dom";
 
 const Dropdown = ({ label, items, isDesktop, onItemClick = () => {} }) => {
@@ -93,7 +93,6 @@ const Navbar = () => {
           name: "Technology And Advancement",
           link: "/technology-and-advancement",
         },
-        
       ],
     },
     {
@@ -163,7 +162,7 @@ const Navbar = () => {
 
           {/* Search Bar */}
           <div className="hidden sm:flex items-center max-w-xs flex-1 ml-auto">
-            <SearchBar 
+            <SearchBar
               onSearchSubmit={handleSearchSubmit}
               onItemSelect={handleSearchItemSelect}
               className="w-full"
@@ -196,7 +195,7 @@ const Navbar = () => {
 
             <div className="mt-6 mb-8">
               <div className="w-full max-w-xs mx-auto">
-                <SearchBar 
+                <SearchBar
                   onSearchSubmit={handleSearchSubmit}
                   onItemSelect={handleSearchItemSelect}
                   className="w-full"
