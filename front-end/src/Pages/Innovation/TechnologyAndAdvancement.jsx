@@ -36,7 +36,7 @@ const TechnologyAndAdvancement = () => {
     setError(null);
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/articles/genre/Technology_and_Advancement`,
+        `https://api.thatgreymatter.com/api/articles/genre/Technology_and_Advancement`,
         {
           params: {
             sort,

@@ -36,7 +36,7 @@ const ScienceAndResearch = () => {
     setError(null);
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/articles/genre/Science_and_Research`,
+        `https://api.thatgreymatter.com/api/articles/genre/Science_and_Research`,
         {
           params: {
             sort,

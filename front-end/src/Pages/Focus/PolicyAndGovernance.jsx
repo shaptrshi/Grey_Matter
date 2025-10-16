@@ -36,7 +36,7 @@ const PolicyandGovernance = () => {
     setError(null);
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/articles/genre/Policy_and_Governance`,
+        `https://api.thatgreymatter.com/api/articles/genre/Policy_and_Governance`,
         {
           params: {
             sort,

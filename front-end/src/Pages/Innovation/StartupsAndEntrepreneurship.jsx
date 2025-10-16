@@ -36,7 +36,7 @@ const StartupsAndEntrepreneurship = () => {
     setError(null);
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/articles/genre/Startups_and_Entrepreneurship`,
+        `https://api.thatgreymatter.com/api/articles/genre/Startups_and_Entrepreneurship`,
         {
           params: {
             sort,

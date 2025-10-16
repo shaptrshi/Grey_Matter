@@ -36,7 +36,7 @@ const EvolvingHorizons = () => {
     setError(null);
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/articles/genre/Evolving_Horizons`,
+        `https://api.thatgreymatter.com/api/articles/genre/Evolving_Horizons`,
         {
           params: {
             sort,
