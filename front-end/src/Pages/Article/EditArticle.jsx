@@ -47,7 +47,7 @@ const EditArticle = () => {
     const fetchArticleData = async () => {
       try {
         const source = state || await axios.get(
-          `http://localhost:5000/api/articles/${id}`,
+          `https://api.thatgreymatter.com/api/articles/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -123,7 +123,7 @@ const EditArticle = () => {
       tags.forEach(tag => formData.append("tags[]", tag));
 
       const res = await axios.put(
-        `http://localhost:5000/api/articles/${id}`,
+        `https://api.thatgreymatter.com/api/articles/${id}`,
         formData,
         {
           headers: {

@@ -39,7 +39,7 @@ const AuthorPage = () => {
 
       // Fetch basic user info first
       const userResponse = await axios.get(
-        "http://localhost:5000/api/users/profile",
+        "https://api.thatgreymatter.com/api/users/profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -51,7 +51,7 @@ const AuthorPage = () => {
 
       // Then fetch paginated articles using page from URL
       const articlesResponse = await axios.get(
-        `http://localhost:5000/api/users/profile?page=${currentPage}`,
+        `https://api.thatgreymatter.com/api/users/profile?page=${currentPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -152,7 +152,7 @@ const AuthorPage = () => {
       }
 
       const response = await axios.put(
-        "http://localhost:5000/api/users/update",
+        "https://api.thatgreymatter.com/api/users/update",
         formData,
         {
           headers: {
@@ -191,7 +191,7 @@ const AuthorPage = () => {
         const token = localStorage.getItem("token");
         const loadingToast = toast.loading("Deleting article...");
 
-        await axios.delete(`http://localhost:5000/api/articles/${id}`, {
+        await axios.delete(`https://api.thatgreymatter.com/api/articles/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -235,7 +235,7 @@ const AuthorPage = () => {
   const handleLogout = useCallback(async () => {
     try {
       await axios.post(
-        "http://localhost:5000/api/users/logout",
+        "https://api.thatgreymatter.com/api/users/logout",
         {},
         {
           headers: {

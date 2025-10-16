@@ -93,7 +93,7 @@ const CreateArticle = () => {
         formData.append("bannerImage", blob, "banner.jpg");
       }
 
-      const backendUrl = "http://localhost:5000/api/articles";
+      const backendUrl = "https://api.thatgreymatter.com/api/articles";
       const { data } = await axios.post(backendUrl, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

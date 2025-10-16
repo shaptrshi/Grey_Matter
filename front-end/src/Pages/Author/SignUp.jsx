@@ -149,7 +149,7 @@ const SignUp = () => {
       }
 
       const res = await axios.post(
-        `http://localhost:5000/api/users/${endpoint}`,
+        `https://api.thatgreymatter.com/api/users/${endpoint}`,
         dataToSend,
         config
       );

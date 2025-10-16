@@ -86,7 +86,7 @@ const Admin = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/admin/users",
+          "https://api.thatgreymatter.com/api/admin/users",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -129,7 +129,7 @@ const Admin = () => {
     ) {
       try {
         await axios.delete(
-          `http://localhost:5000/api/admin/users/${authorId}`,
+          `https://api.thatgreymatter.com/api/admin/users/${authorId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -148,7 +148,7 @@ const Admin = () => {
     if (window.confirm("Are you sure you want to delete this article?")) {
       try {
         await axios.delete(
-          `http://localhost:5000/api/admin/articles/${articleId}`,
+          `https://api.thatgreymatter.com/api/admin/articles/${articleId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -177,7 +177,7 @@ const Admin = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/api/users/logout",
+        "https://api.thatgreymatter.com/api/users/logout",
         {},
         {
           headers: {
