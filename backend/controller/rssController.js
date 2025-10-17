@@ -3,7 +3,6 @@ const RSS = require("rss");
 
 const generateRSSFeed = async (req, res) => {
   try {
-    console.log("=== RSS FEED REQUEST START ===");
     
     // SET HEADERS FIRST - before any processing
     res.set({
@@ -31,7 +30,6 @@ const generateRSSFeed = async (req, res) => {
     });
 
     // Get latest articles
-    console.log("Fetching articles from database...");
     
     const articles = await Article.find()
       .sort({ createdAt: -1 })
@@ -39,7 +37,6 @@ const generateRSSFeed = async (req, res) => {
       .populate("author", "name")
       .lean();
 
-    console.log(`✅ Found ${articles.length} total articles in database`);
     
     // Log each article found
     articles.forEach((article, index) => {
@@ -65,7 +62,6 @@ const generateRSSFeed = async (req, res) => {
         date: new Date(),
       });
     } else {
-      console.log(`🔄 Adding ${articles.length} articles to RSS feed...`);
       
       // Add articles to RSS feed
       articles.forEach((article, index) => {
@@ -75,7 +71,6 @@ const generateRSSFeed = async (req, res) => {
 
         const articleUrl = `${frontendUrl}/articles/${article._id}`;
 
-        console.log(`➕ Adding to RSS - Article ${index + 1}: "${article.title}"`);
 
         feed.item({
           title: article.title || "Untitled Article",
@@ -95,7 +90,6 @@ const generateRSSFeed = async (req, res) => {
 
     const xml = feed.xml({ indent: true });
     console.log(`✅ RSS feed generated successfully with ${articles.length} articles`);
-    console.log("=== RSS FEED REQUEST END ===");
     
     res.send(xml);
 
