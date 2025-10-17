@@ -11,6 +11,7 @@ import DOMPurify from "dompurify";
 
 const API_BASE = "https://api.thatgreymatter.com";
 
+
 const Article = () => {
   const navigate = useNavigate();
   const { id } = useParams();
