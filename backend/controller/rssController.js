@@ -1,31 +1,27 @@
-const Article = require("../models/articleModel");
-const RSS = require("rss");
-
 const generateRSSFeed = async (req, res) => {
   try {
     console.log("RSS Feed requested");
 
-    // Create proper base URL - fix the undefined issue
-    const baseUrl =
-      process.env.BASE_URL
+    const backendUrl = process.env.BASE_URL || "https://api.thatgreymatter.com";
+    const frontendUrl = "https://thatgreymatter.com";
 
-    console.log("Base URL for RSS:", baseUrl);
+    console.log("Backend URL:", backendUrl);
+    console.log("Frontend URL:", frontendUrl);
 
     const feed = new RSS({
-      title: "EcoBlog - Sustainable Living",
-      description:
-        "Latest articles about environment, sustainable living, and eco-friendly tips",
-      feed_url: `${baseUrl}/api/rss/feed`,
-      site_url: baseUrl,
-      image_url: `${baseUrl}/images/logo.png`, // Fixed undefined issue
-      managingEditor: "editor@ecoblog.com",
-      webMaster: "admin@ecoblog.com",
-      copyright: `${new Date().getFullYear()} EcoBlog`,
+      title: "That Grey Matter",
+      description: "Latest articles and thoughts",
+      feed_url: `${backendUrl}/api/rss/feed`,
+      site_url: frontendUrl,
+      image_url: `${frontendUrl}/images/logo.png`,
+      managingEditor: "editor@thatgreymatter.com",
+      webMaster: "admin@thatgreymatter.com",
+      copyright: `${new Date().getFullYear()} That Grey Matter`,
       language: "en",
-      categories: ["Environment", "Sustainable Living", "Eco-friendly"],
+      categories: ["Blog", "Articles", "Thoughts"],
       pubDate: new Date().toISOString(),
       ttl: 60,
-      generator: "EcoBlog RSS Generator",
+      generator: "That Grey Matter RSS Generator",
     });
 
     // Get latest articles
@@ -38,27 +34,22 @@ const generateRSSFeed = async (req, res) => {
     console.log(`Found ${articles.length} articles for RSS feed`);
 
     if (articles.length === 0) {
-      // Add a default item if no articles exist
       feed.item({
-        title: "Welcome to Our Blog",
-        description:
-          "Stay tuned for upcoming articles about sustainable living and environmental topics.",
-        url: baseUrl,
+        title: "Welcome to That Grey Matter",
+        description: "Stay tuned for upcoming articles and thoughts.",
+        url: frontendUrl,
         guid: "welcome-post",
         categories: ["Announcement"],
         author: "Admin",
         date: new Date(),
       });
     } else {
-      // Add articles to RSS feed
       articles.forEach((article, index) => {
-        // Create a clean description (strip HTML tags)
         const cleanContent = article.content
           ? article.content.replace(/<[^>]*>/g, "").substring(0, 250)
           : "Read the full article for more details.";
 
-        // Build proper article URL
-        const articleUrl = `${baseUrl}/api/articles/${article._id}`;
+        const articleUrl = `${frontendUrl}/articles/${article._id}`;
 
         console.log(`Adding article ${index + 1}:`, article.title);
         console.log(`Article URL:`, articleUrl);
@@ -66,25 +57,22 @@ const generateRSSFeed = async (req, res) => {
         feed.item({
           title: article.title || "Untitled Article",
           description: cleanContent + "...",
-          url: articleUrl, // Fixed undefined issue
+          url: articleUrl,
           guid: article._id.toString(),
-          categories:
-            article.tags && article.tags.length > 0
-              ? article.tags
-              : ["General"],
+          categories: article.tags && article.tags.length > 0 ? article.tags : ["General"],
           author: article.author?.name || "Unknown Author",
           date: article.createdAt || new Date(),
-          enclosure: article.bannerImage
-            ? {
-                url: article.bannerImage,
-                type: "image/jpeg",
-              }
-            : undefined,
+          enclosure: article.bannerImage ? {
+            url: article.bannerImage.startsWith('http') 
+              ? article.bannerImage 
+              : `${frontendUrl}${article.bannerImage}`,
+            type: "image/jpeg",
+          } : undefined,
         });
       });
     }
 
-    // Set proper headers for RSS
+    // Set proper headers
     res.set({
       "Content-Type": "application/rss+xml; charset=utf-8",
       "Access-Control-Allow-Origin": "*",
@@ -102,8 +90,4 @@ const generateRSSFeed = async (req, res) => {
   <details>${error.message}</details>
 </error>`);
   }
-};
-
-module.exports = {
-  generateRSSFeed,
 };
