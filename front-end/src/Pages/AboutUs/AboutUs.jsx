@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 function AboutUs() {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="container max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-white dark:bg-custom-dark rounded-lg">
       {/* Page Heading */}
@@ -41,14 +46,14 @@ function AboutUs() {
           <li>Raise awareness about climate change and environmental conservation.</li>
           <li>Share scientific insights and research-based solutions for sustainable living.</li>
           <li>Explore innovative approaches in agriculture and rural development.</li>
-          <li>Discuss government policies and grassroots initiatives shaping India’s green future.</li>
+          <li>Discuss government policies and grassroots initiatives shaping India's green future.</li>
         </ul>
       </section>
 
       {/* What You'll Find Here */}
       <section className="mt-6">
         <h2 className="text-lg sm:text-xl font-semibold text-green-500 dark:text-green-400">
-          What You’ll Find Here?
+          What You'll Find Here?
         </h2>
         <ul className="mt-3 list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300">
           <li>Articles on climate change, renewable energy, and ecological balance.</li>
@@ -61,11 +66,11 @@ function AboutUs() {
       {/* Let's Connect */}
       <section className="mt-6">
         <h2 className="text-lg sm:text-xl font-semibold text-green-500 dark:text-green-400">
-          Let’s Connect!
+          Let's Connect!
         </h2>
         <p className="mt-2 text-gray-700 dark:text-gray-300 text-justify leading-relaxed">
-          This blog is a space for meaningful conversations. If you’re passionate about sustainability, 
-          science, or green innovations, I’d love to hear from you! Let’s work together toward a more 
+          This blog is a space for meaningful conversations. If you're passionate about sustainability, 
+          science, or green innovations, I'd love to hear from you! Let's work together toward a more 
           sustainable and scientifically informed future.
         </p>
       </section>

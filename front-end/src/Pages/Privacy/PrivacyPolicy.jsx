@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 function PrivacyPolicy() {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="container max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-white dark:bg-custom-dark rounded-lg">
       {/* Page Heading */}
