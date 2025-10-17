@@ -10,6 +10,7 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Toaster, toast } from "react-hot-toast";
 
 const FALLBACK_IMAGE = "./placeholder-article.jpg";
 
@@ -223,7 +224,6 @@ const Home = () => {
   const [activeArticle, setActiveArticle] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState({
@@ -309,8 +309,7 @@ const Home = () => {
     e.preventDefault();
 
     // Use the ngrok URL directly - NOT localhost
-    const rssFeedUrl =
-      "https://api.thatgreymatter.com/api/rss/feed";
+    const rssFeedUrl = "https://api.thatgreymatter.com/api/rss/feed";
 
     console.log("Using RSS URL:", rssFeedUrl);
 
@@ -323,7 +322,17 @@ const Home = () => {
 
       // Copy to clipboard
       await navigator.clipboard.writeText(rssFeedUrl);
-      setIsCopied(true);
+      
+      // Show success toast
+      toast.success('RSS Feed URL copied to clipboard!', {
+        duration: 4000,
+        position: 'bottom-right',
+        icon: '📋',
+        style: {
+          background: '#10b981',
+          color: 'white',
+        },
+      });
 
       // Open Feedly with the NGrok URL (not localhost)
       // const feedlyUrl = `https://feedly.com/i/subscription/feed/${encodeURIComponent(
@@ -332,10 +341,21 @@ const Home = () => {
       // console.log("Opening Feedly with URL:", feedlyUrl);
       // window.open(feedlyUrl, "_blank", "noopener,noreferrer");
 
-      setTimeout(() => setIsCopied(false), 4000);
     } catch (err) {
       console.error("RSS Feed Error:", err);
       console.log(`Cannot access RSS feed: ${err.message}`);
+      
+      // Show error toast
+      toast.error('Failed to copy RSS feed URL', {
+        duration: 4000,
+        position: 'bottom-right',
+        icon: '❌',
+        style: {
+          background: '#ef4444',
+          color: 'white',
+        },
+      });
+      
       window.open("https://feedly.com/i/welcome", "_blank");
     }
   };
@@ -361,6 +381,18 @@ const Home = () => {
 
   return (
     <div className="container mx-auto px-4 sm:px-10 lg:px-8 py-4 sm:py-6 lg:py-8 min-h-screen bg-gray-100 dark:bg-custom-dark dark:text-gray-100">
+      {/* React Hot Toast Container */}
+      <Toaster 
+        toastOptions={{
+          className: '',
+          style: {
+            border: '1px solid #713200',
+            padding: '16px',
+            color: '#ffffff',
+          },
+        }}
+      />
+
       {/* Banner Section Top */}
       <div className="w-full -mt-2 sm:-mt-3 lg:-mt-5 mb-4 sm:mb-5">
         <OptimizedImage
@@ -623,31 +655,20 @@ const Home = () => {
             </h2>
             <p className="text-gray-200 mb-10">
               Stay updated with our latest articles. <br />
-              {isCopied
-                ? "RSS link copied! Opening Feedly..."
-                : "Subscribe to our RSS feed now!"}
+              Subscribe to our RSS feed now!
             </p>
-            <button
+            <Button
               onClick={handleSubscribeClick}
-              className="block mt-6 group w-full"
+              variant="primary"
+              className="w-full rounded-full bg-custom-accent-green text-custom-green hover:scale-105 font-bold transition-transform focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 mt-6 group"
+              aria-label="Subscribe to RSS feed"
             >
-              <Button
-                variant="primary"
-                className="w-full rounded-full bg-custom-accent-green text-custom-green hover:scale-105 font-bold transition-transform focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
-                aria-label="Subscribe to RSS feed"
-              >
-                {isCopied ? "Copied!" : "Subscribe"}
-                <MdRssFeed
-                  size={24}
-                  className="ml-2 transition-transform group-hover:scale-110"
-                />
-              </Button>
-            </button>
-
-            {/* Optional: Show direct link for manual copying */}
-            <div className="mt-4 text-xs text-gray-300 text-center">
-              <p>RSS Feed URL automatically copied</p>
-            </div>
+              Subscribe
+              <MdRssFeed
+                size={24}
+                className="ml-2 transition-transform group-hover:scale-110"
+              />
+            </Button>
           </div>
         </div>
       </div>

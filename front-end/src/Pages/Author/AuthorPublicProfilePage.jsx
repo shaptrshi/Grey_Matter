@@ -72,7 +72,7 @@ const AuthorPublicProfilePage = () => {
 
   const handleArticleClick = useCallback(
     (id) => {
-      navigate(`/article/${id}`);
+      navigate(`/articles/${id}`);
     },
     [navigate]
   );

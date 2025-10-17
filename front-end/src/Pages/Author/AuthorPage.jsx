@@ -542,21 +542,21 @@ const AuthorPage = () => {
                     className="cursor-pointer"
                     onClick={() => navigate(article.link)}
                   >
-                    <Card className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[280px] sm:h-[300px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black">
-                      <div className="relative h-[150px] sm:h-[150px]">
+                    <Card className="hover:shadow-md transition-transform transform hover:scale-105 p-2 h-[320px] sm:h-[340px] dark:bg-custom-dark dark:border-none dark:shadow-sm dark:shadow-black flex flex-col">
+                      <div className="relative h-[150px] sm:h-[150px] flex-shrink-0">
                         <img
                           src={article.bannerImage}
                           alt={article.title}
                           className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
                         />
                       </div>
-                      <CardHeader className="p-3 sm:p-4 mt-1">
-                        <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2 hover:underline dark:text-gray-100">
+                      <CardHeader className="p-3 sm:p-4 mt-1 flex-shrink-0">
+                        <CardTitle className="text-lg sm:text-lg font-semibold text-gray-800 line-clamp-2 hover:underline dark:text-gray-100 min-h-[3.5rem] overflow-hidden">
                           {article.title}
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="p-3 sm:p-4 -mt-2">
-                        <div className="flex justify-between items-center text-xs sm:text-sm">
+                      <CardContent className="p-3 sm:p-4 -mt-2 flex-grow flex flex-col justify-end">
+                        <div className="flex justify-between items-center text-xs sm:text-sm mb-2">
                           <p className="font-semibold text-teal-700">
                             {article.authorName}
                           </p>
@@ -564,7 +564,7 @@ const AuthorPage = () => {
                             {article.date}
                           </p>
                         </div>
-                        <div className="flex justify-end gap-4 mt-2">
+                        <div className="flex justify-end gap-4 mt-auto">
                           <Button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -572,7 +572,7 @@ const AuthorPage = () => {
                             }}
                             variant="outline"
                             size="sm"
-                            className="dark:text-white dark:bg-gray-700 hover:bg-gray-400 bg-gray-300"
+                            className="dark:text-white dark:bg-gray-700 hover:bg-gray-400 bg-gray-300 text-xs"
                           >
                             Edit
                           </Button>
@@ -583,7 +583,7 @@ const AuthorPage = () => {
                             }}
                             variant="destructive"
                             size="sm"
-                            className="dark:text-white dark:bg-red-700"
+                            className="dark:text-white dark:bg-red-700 text-xs"
                           >
                             Delete
                           </Button>
