@@ -9,7 +9,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import DOMPurify from "dompurify";
 
-const API_BASE = import.meta.env.VITE_API_URL || "https://api.thatgreymatter.com";
+const API_BASE = "https://api.thatgreymatter.com";
 
 const Article = () => {
   const navigate = useNavigate();
