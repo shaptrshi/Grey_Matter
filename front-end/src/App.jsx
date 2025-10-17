@@ -34,7 +34,7 @@ import { Toaster } from "react-hot-toast";
 function App() {
   return (
     <Router>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="bottom-right" reverseOrder={false} />
 
       <Routes>
         <Route

@@ -272,7 +272,6 @@ const SignUp = () => {
 
   return (
     <>
-      <Toaster />
       <nav className="sticky top-0 z-50 bg-white dark:bg-custom-dark shadow-md dark:shadow-sm dark:shadow-black p-4">
         <div className="mx-auto flex justify-center items-center">
           <a

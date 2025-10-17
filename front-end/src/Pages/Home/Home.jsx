@@ -324,15 +324,7 @@ const Home = () => {
       await navigator.clipboard.writeText(rssFeedUrl);
       
       // Show success toast
-      toast.success('RSS Feed URL copied to clipboard!', {
-        duration: 4000,
-        position: 'bottom-right',
-        icon: '📋',
-        style: {
-          background: '#10b981',
-          color: 'white',
-        },
-      });
+      toast.success('RSS Feed URL copied to clipboard!');
 
       // Open Feedly with the NGrok URL (not localhost)
       // const feedlyUrl = `https://feedly.com/i/subscription/feed/${encodeURIComponent(
@@ -346,15 +338,7 @@ const Home = () => {
       console.log(`Cannot access RSS feed: ${err.message}`);
       
       // Show error toast
-      toast.error('Failed to copy RSS feed URL', {
-        duration: 4000,
-        position: 'bottom-right',
-        icon: '❌',
-        style: {
-          background: '#ef4444',
-          color: 'white',
-        },
-      });
+      toast.error('Failed to copy RSS feed URL');
       
       window.open("https://feedly.com/i/welcome", "_blank");
     }
@@ -382,16 +366,6 @@ const Home = () => {
   return (
     <div className="container mx-auto px-4 sm:px-10 lg:px-8 py-4 sm:py-6 lg:py-8 min-h-screen bg-gray-100 dark:bg-custom-dark dark:text-gray-100">
       {/* React Hot Toast Container */}
-      <Toaster 
-        toastOptions={{
-          className: '',
-          style: {
-            border: '1px solid #713200',
-            padding: '16px',
-            color: '#ffffff',
-          },
-        }}
-      />
 
       {/* Banner Section Top */}
       <div className="w-full -mt-2 sm:-mt-3 lg:-mt-5 mb-4 sm:mb-5">
