@@ -1,3 +1,4 @@
+// controllers/articleController.js
 const Article = require("../models/articleModel");
 const User = require("../models/userModel");
 const mongoose = require("mongoose");
@@ -7,44 +8,87 @@ const {
   getPublicIdFromUrl,
 } = require("../utils/cloudinary");
 
-const createArticle = async (req, res) => {
+const parseTags = (tags) => {
+  if (!tags) return [];
+  if (Array.isArray(tags)) return tags;
+  // try JSON parse (frontend might send JSON string) else split by comma
   try {
-    const { title, content, tags, isFeatured } = req.body;
+    const parsed = JSON.parse(tags);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (e) {
+    // not JSON - continue
+  }
+  return tags
+    .toString()
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+};
+
+const parseBoolean = (val) => {
+  if (typeof val === "boolean") return val;
+  if (typeof val === "string") {
+    const s = val.toLowerCase().trim();
+    return s === "true" || s === "1" || s === "yes";
+  }
+  return Boolean(val);
+};
+
+// Create article (store imagePublicId consistently)
+const createArticle = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const { title, content } = req.body;
+    let { tags, isFeatured } = req.body;
     const authorId = req.user._id; // Logged-in user's ID
+
     if (!title || !content) {
-      return res.status(400).json({ message: "All fields are required" });
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({ message: "Title and content are required" });
     }
 
-    let bannerImage, publicId;
-    if (req.file) {
-      const result = await uploadOnCloudinary(
-        req.file.buffer,
-        "article-banners"
-      );
-      bannerImage = result.secure_url;
-      publicId = result.public_id; // Store the public ID for future deletion
-    } else {
+    tags = parseTags(tags);
+    isFeatured = parseBoolean(isFeatured);
+
+    if (!req.file || !req.file.buffer) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({ message: "Banner image is required" });
     }
+
+    // upload image
+    const result = await uploadOnCloudinary(req.file.buffer, "article-banners");
+    const bannerImage = result.secure_url;
+    const imagePublicId = result.public_id; // consistent field name
 
     const article = new Article({
       title,
       content,
       bannerImage,
-      publicId, // Store the public ID for future deletion
+      imagePublicId,
       tags,
       isFeatured,
-      author: authorId, // use logged-in user as author
+      author: authorId,
     });
 
-    await article.save();
+    await article.save({ session });
 
-    await User.findByIdAndUpdate(authorId, {
-      $push: { articles: article._id },
-    });
+    // push to user articles
+    await User.findByIdAndUpdate(
+      authorId,
+      { $push: { articles: article._id } },
+      { session }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
 
     res.status(201).json({ message: "Article created successfully", article });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     console.error("Error creating article:", error);
     res.status(500).json({ message: "Internal server error" });
   }
@@ -67,19 +111,20 @@ const getAllArticles = async (req, res) => {
 // Get a single article
 const getArticleById = async (req, res) => {
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res
         .status(400)
-        .json({ succes: false, message: "Invalid article ID" });
+        .json({ success: false, message: "Invalid article ID" });
     }
-    const article = await Article.findById(req.params.id)
+    const article = await Article.findById(id)
       .select("-__v -updatedAt")
       .populate("author", "name email")
       .lean();
     if (!article) {
       return res.status(404).json({ message: "Article not found" });
     }
-    res.status(200).json(article);
+    res.status(200).json({ success: true, article });
   } catch (error) {
     console.error("Error fetching article:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -94,11 +139,9 @@ const getArticleByGenre = async (req, res) => {
 
     const pageNumber = isNaN(parseInt(page)) ? 1 : parseInt(page);
     const limitNumber = isNaN(parseInt(limit)) ? 8 : parseInt(limit);
-
     const skip = (pageNumber - 1) * limitNumber;
 
     let sortOptions = {};
-
     switch (sort) {
       case "latest":
         sortOptions = { createdAt: -1 };
@@ -107,28 +150,32 @@ const getArticleByGenre = async (req, res) => {
         sortOptions = { createdAt: 1 };
         break;
       case "title-asc":
+      case "title-ascending":
         sortOptions = { title: 1 };
         break;
       case "title-desc":
+      case "title-descending":
         sortOptions = { title: -1 };
         break;
       default:
         sortOptions = { createdAt: -1 };
     }
 
-    const articles = await Article.find({ tags: tag })
+    const filter = tag ? { tags: tag } : {};
+
+    const articles = await Article.find(filter)
       .sort(sortOptions)
       .skip(skip)
       .limit(limitNumber)
       .populate("author", "name email")
       .lean();
 
-    const total = await Article.countDocuments({ tags: tag });
+    const total = await Article.countDocuments(filter);
     const totalPages = Math.ceil(total / limitNumber);
     res.status(200).json({
       data: articles,
       currentPage: pageNumber,
-      totalPages: totalPages,
+      totalPages,
       totalArticles: total,
     });
   } catch (error) {
@@ -137,18 +184,17 @@ const getArticleByGenre = async (req, res) => {
   }
 };
 
-// controllers/articleController.js
+// Get articles for home by genre (small list)
 const getArticlesForHomeByGenre = async (req, res) => {
   try {
     const { tag } = req.params;
 
     let query = {};
-
     if (tag === "featured") {
       query = { isFeatured: true };
     } else if (tag === "latest") {
       query = {};
-    } else {
+    } else if (tag) {
       query = { tags: tag };
     }
 
@@ -169,29 +215,27 @@ const getArticlesForHomeByGenre = async (req, res) => {
 // Get Latest Articles
 const getLatestArticles = async (req, res) => {
   try {
-    const latestarticles = await Article.find()
+    const latestArticles = await Article.find()
       .sort({ createdAt: -1 })
       .limit(4)
       .select("title author createdAt bannerImage")
       .populate("author", "name email")
       .lean();
-    res.status(200).json(latestarticles);
+    res.status(200).json(latestArticles);
   } catch (error) {
     console.error("Error fetching latest articles:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-//Get random articles
+// Get random articles
 const getRandomArticles = async (req, res) => {
   try {
-    // Step 1: Get just the IDs of 4 random articles (very lightweight)
     const randomArticleIds = await Article.aggregate([
       { $sample: { size: 4 } },
       { $project: { _id: 1 } },
     ]);
 
-    // Step 2: Fetch only those 4 articles with author data
     const selected = await Article.find({
       _id: { $in: randomArticleIds.map((a) => a._id) },
     })
@@ -205,76 +249,80 @@ const getRandomArticles = async (req, res) => {
   }
 };
 
-// Update an article (only author can access)
+// Update an article (only author)
 const updateArticle = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const { id } = req.params;
-    const { title, content, tags, isFeatured } = req.body;
+    let { title, content, tags, isFeatured } = req.body;
     const userId = req.user._id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({ message: "Invalid article ID" });
     }
 
     const article = await Article.findById(id).select("+imagePublicId");
 
     if (!article) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(404).json({ message: "Article not found" });
     }
 
     if (article.author.toString() !== userId.toString()) {
-      return res
-        .status(403)
-        .json({ message: "Unauthorized to update this article" });
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(403).json({ message: "Unauthorized to update this article" });
     }
 
-    // Store old image references before any updates
-    const oldPublicId = article.imagePublicId;
+    tags = parseTags(tags);
+    isFeatured = typeof isFeatured !== "undefined" ? parseBoolean(isFeatured) : article.isFeatured;
+
+    const oldImagePublicId = article.imagePublicId;
     const oldBannerImage = article.bannerImage;
     let newImageResult = null;
 
-    // Handle image upload if new file provided
-    if (req.file) {
+    // If new file provided -> upload first (so we only delete old after success)
+    if (req.file && req.file.buffer) {
       try {
-        // Upload new image first
-        newImageResult = await uploadOnCloudinary(
-          req.file.buffer,
-          "article-banners"
-        );
-
-        // Only update references if upload succeeded
+        newImageResult = await uploadOnCloudinary(req.file.buffer, "article-banners");
         article.bannerImage = newImageResult.secure_url;
         article.imagePublicId = newImageResult.public_id;
 
-        console.log("BannerImage for update");
-
-        // Delete old image only after new image is successfully uploaded
-        if (oldPublicId) {
+        // delete old image if present (best effort)
+        if (oldImagePublicId) {
           try {
-            await deleteFromCloudinary(oldPublicId);
+            await deleteFromCloudinary(oldImagePublicId);
             console.log("Old image deleted from Cloudinary");
           } catch (deleteError) {
             console.error("Error deleting old image:", deleteError);
-            // This shouldn't fail the whole operation
+            // don't fail the whole update for deletion problems
           }
         }
       } catch (uploadError) {
         console.error("Error uploading new image:", uploadError);
-        // Revert to old image if upload fails
+        // revert to old values and throw to abort
         article.bannerImage = oldBannerImage;
-        article.imagePublicId = oldPublicId;
-        throw new Error("Failed to upload new image");
+        article.imagePublicId = oldImagePublicId;
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(500).json({ message: "Failed to upload new image" });
       }
     }
 
     // Update other fields
     article.title = title || article.title;
     article.content = content || article.content;
-    article.tags = tags || article.tags; // Assuming tags comes as JSON string
-    article.isFeatured =
-      typeof isFeatured !== "undefined" ? isFeatured : article.isFeatured;
+    article.tags = tags.length ? tags : article.tags;
+    article.isFeatured = typeof isFeatured !== "undefined" ? isFeatured : article.isFeatured;
 
-    const updatedArticle = await article.save();
+    const updatedArticle = await article.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     res.status(200).json({
       success: true,
@@ -282,6 +330,8 @@ const updateArticle = async (req, res) => {
       article: updatedArticle,
     });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     console.error("Error updating article:", error);
     res.status(500).json({
       message: error.message || "Internal server error",
@@ -289,24 +339,39 @@ const updateArticle = async (req, res) => {
     });
   }
 };
-//Detete an article (only author can access)
+
+// Delete an article (only author)
 const deleteArticle = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const { id } = req.params;
     const userId = req.user._id;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({ message: "Invalid article ID" });
+    }
+
     const article = await Article.findById(id)
       .select("+imagePublicId")
-      .select("author bannerImage");
+      .select("author bannerImage imagePublicId");
 
-    if (!article) return res.status(404).json({ message: "Article not found" });
+    if (!article) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(404).json({ message: "Article not found" });
+    }
+
     if (article.author.toString() !== userId.toString()) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(403).json({ message: "Unauthorized" });
     }
 
     let cloudinaryDeleted = false;
-    const publicId =
-      article.imagePublicId || getPublicIdFromUrl(article.bannerImage);
+    const publicId = article.imagePublicId || getPublicIdFromUrl(article.bannerImage);
 
     if (publicId) {
       try {
@@ -314,18 +379,24 @@ const deleteArticle = async (req, res) => {
         cloudinaryDeleted = true;
       } catch (error) {
         console.error("Cloudinary deletion error:", error);
+        // continue — don't block deletion of DB record
       }
     }
 
-    await Article.deleteOne({ _id: id });
-    await User.findByIdAndUpdate(userId, { $pull: { articles: id } });
+    await Article.deleteOne({ _id: id }, { session });
+    await User.findByIdAndUpdate(userId, { $pull: { articles: id } }, { session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     res.status(200).json({
       message: "Article deleted",
       cloudinaryDeleted,
     });
   } catch (error) {
-    console.error("Error:", error);
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error deleting article:", error);
     res.status(500).json({ message: "Error deleting article" });
   }
 };
@@ -350,11 +421,10 @@ const searchArticles = async (req, res) => {
     const { query = "", page = 1, limit = 10 } = req.query;
 
     // Validate the query parameter
-    if (!query.trim()) {
+    if (!query || !query.toString().trim()) {
       return res.status(400).json({ message: "Query parameter is required" });
     }
 
-    // Ensure page and limit are valid numbers
     const pageNumber = parseInt(page) || 1;
     const limitNumber = Math.min(parseInt(limit) || 10, 100); // Max limit of 100
     const skip = (pageNumber - 1) * limitNumber;
@@ -365,7 +435,6 @@ const searchArticles = async (req, res) => {
       $or: [{ title: regex }, { content: regex }, { tags: regex }],
     };
 
-    // Fetch articles with pagination
     const articles = await Article.find(filter)
       .skip(skip)
       .limit(limitNumber)
@@ -373,7 +442,6 @@ const searchArticles = async (req, res) => {
       .populate("author", "name email")
       .lean();
 
-    // Get the total number of matching articles for pagination
     const total = await Article.countDocuments(filter);
     const totalPages = Math.ceil(total / limitNumber);
 
