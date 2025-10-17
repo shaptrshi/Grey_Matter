@@ -3,14 +3,12 @@ const Article = require("../models/articleModel");
 
 const generateRSSFeed = async (req, res) => {
   try {
-    console.log("RSS Feed requested");
+    console.log("=== RSS FEED REQUEST START ===");
 
     const backendUrl = process.env.BASE_URL || "https://api.thatgreymatter.com";
     const frontendUrl = "https://thatgreymatter.com";
 
-    console.log("Backend URL:", backendUrl);
-    console.log("Frontend URL:", frontendUrl);
-
+    // Create RSS feed
     const feed = new RSS({
       title: "That Grey Matter",
       description: "Latest articles and thoughts",
@@ -21,22 +19,35 @@ const generateRSSFeed = async (req, res) => {
       webMaster: "admin@thatgreymatter.com",
       copyright: `${new Date().getFullYear()} That Grey Matter`,
       language: "en",
-      categories: ["Blog", "Articles", "Thoughts"],
       pubDate: new Date().toISOString(),
       ttl: 60,
-      generator: "That Grey Matter RSS Generator",
     });
 
-    // Get latest articles
+    // DEBUG: Check what articles are being fetched
+    console.log("Fetching articles from database...");
+    
     const articles = await Article.find()
       .sort({ createdAt: -1 })
       .limit(20)
       .populate("author", "name")
       .lean();
 
-    console.log(`Found ${articles.length} articles for RSS feed`);
+    console.log(`✅ Found ${articles.length} total articles in database`);
+    
+    // Log each article found
+    articles.forEach((article, index) => {
+      console.log(`📄 Article ${index + 1}:`, {
+        id: article._id,
+        title: article.title,
+        createdAt: article.createdAt,
+        author: article.author?.name || 'No author',
+        tags: article.tags?.length || 0
+      });
+    });
 
+    // Check if we have articles
     if (articles.length === 0) {
+      console.log("❌ No articles found in database");
       feed.item({
         title: "Welcome to That Grey Matter",
         description: "Stay tuned for upcoming articles and thoughts.",
@@ -47,6 +58,9 @@ const generateRSSFeed = async (req, res) => {
         date: new Date(),
       });
     } else {
+      console.log(`🔄 Adding ${articles.length} articles to RSS feed...`);
+      
+      // Add articles to RSS feed
       articles.forEach((article, index) => {
         const cleanContent = article.content
           ? article.content.replace(/<[^>]*>/g, "").substring(0, 250)
@@ -54,21 +68,18 @@ const generateRSSFeed = async (req, res) => {
 
         const articleUrl = `${frontendUrl}/articles/${article._id}`;
 
-        console.log(`Adding article ${index + 1}:`, article.title);
-        console.log(`Article URL:`, articleUrl);
+        console.log(`➕ Adding to RSS - Article ${index + 1}: "${article.title}"`);
 
         feed.item({
           title: article.title || "Untitled Article",
           description: cleanContent + "...",
           url: articleUrl,
           guid: article._id.toString(),
-          categories: article.tags && article.tags.length > 0 ? article.tags : ["General"],
+          categories: article.tags || ["General"],
           author: article.author?.name || "Unknown Author",
           date: article.createdAt || new Date(),
           enclosure: article.bannerImage ? {
-            url: article.bannerImage.startsWith('http') 
-              ? article.bannerImage 
-              : `${frontendUrl}${article.bannerImage}`,
+            url: article.bannerImage,
             type: "image/jpeg",
           } : undefined,
         });
@@ -78,14 +89,18 @@ const generateRSSFeed = async (req, res) => {
     // Set proper headers
     res.set({
       "Content-Type": "application/rss+xml; charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
     });
 
     const xml = feed.xml({ indent: true });
-    console.log("RSS feed generated successfully");
+    console.log(`✅ RSS feed generated successfully with ${articles.length} articles`);
+    console.log("=== RSS FEED REQUEST END ===");
+    
     res.send(xml);
+
   } catch (error) {
-    console.error("Error generating RSS feed:", error);
+    console.error("❌ ERROR generating RSS feed:", error);
+    console.error("Error stack:", error.stack);
+    
     res.set("Content-Type", "application/xml");
     res.status(500).send(`<?xml version="1.0" encoding="UTF-8"?>
 <error>
@@ -94,7 +109,6 @@ const generateRSSFeed = async (req, res) => {
 </error>`);
   }
 };
-
 module.exports = {
   generateRSSFeed,
 };
