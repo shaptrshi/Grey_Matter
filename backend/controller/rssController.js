@@ -1,14 +1,21 @@
-const RSS = require("rss");
 const Article = require("../models/articleModel");
+const RSS = require("rss");
 
 const generateRSSFeed = async (req, res) => {
   try {
     console.log("=== RSS FEED REQUEST START ===");
+    
+    // SET HEADERS FIRST - before any processing
+    res.set({
+      "Content-Type": "application/rss+xml; charset=utf-8",
+    });
 
-    const backendUrl = process.env.BASE_URL || "https://api.thatgreymatter.com";
+    // Use consistent hardcoded URLs without environment variables
+    const backendUrl = "https://api.thatgreymatter.com";
     const frontendUrl = "https://thatgreymatter.com";
 
-    // Create RSS feed
+    console.log("Using hardcoded URLs:", { backendUrl, frontendUrl });
+
     const feed = new RSS({
       title: "That Grey Matter",
       description: "Latest articles and thoughts",
@@ -23,7 +30,7 @@ const generateRSSFeed = async (req, res) => {
       ttl: 60,
     });
 
-    // DEBUG: Check what articles are being fetched
+    // Get latest articles
     console.log("Fetching articles from database...");
     
     const articles = await Article.find()
@@ -86,11 +93,6 @@ const generateRSSFeed = async (req, res) => {
       });
     }
 
-    // Set proper headers
-    res.set({
-      "Content-Type": "application/rss+xml; charset=utf-8",
-    });
-
     const xml = feed.xml({ indent: true });
     console.log(`✅ RSS feed generated successfully with ${articles.length} articles`);
     console.log("=== RSS FEED REQUEST END ===");
@@ -109,6 +111,5 @@ const generateRSSFeed = async (req, res) => {
 </error>`);
   }
 };
-module.exports = {
-  generateRSSFeed,
-};
+
+module.exports = { generateRSSFeed };
