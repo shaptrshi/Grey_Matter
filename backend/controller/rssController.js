@@ -91,3 +91,7 @@ const generateRSSFeed = async (req, res) => {
 </error>`);
   }
 };
+
+module.exports = {
+  generateRSSFeed,
+};
