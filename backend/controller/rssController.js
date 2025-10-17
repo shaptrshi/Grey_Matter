@@ -1,3 +1,6 @@
+const RSS = require("rss");
+const Article = require("../models/articleModel");
+
 const generateRSSFeed = async (req, res) => {
   try {
     console.log("RSS Feed requested");
