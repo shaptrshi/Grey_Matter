@@ -9,7 +9,7 @@ import { toast } from "react-hot-toast";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import QuillToolbar, { modules, formats } from "./EditorToolbar";
-import { FaArrowLeft, FaCheck, FaImage } from "react-icons/fa";
+import { FaArrowLeft, FaCheck, FaImage, FaExclamationTriangle } from "react-icons/fa";
 import axios from "axios";
 
 const CreateArticle = () => {
@@ -23,6 +23,7 @@ const CreateArticle = () => {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [bannerImageFile, setBannerImageFile] = useState(null);
   const [bannerImagePreview, setBannerImagePreview] = useState(null);
+  const [bannerImageError, setBannerImageError] = useState("");
 
   const availableTags = useMemo(
     () => [
@@ -47,7 +48,20 @@ const CreateArticle = () => {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setBannerImageError("Please upload a valid image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setBannerImageError("Image size should be less than 5MB");
+      return;
+    }
+
     setIsUploadingImage(true);
+    setBannerImageError(""); // Clear any previous errors
 
     try {
       const previewUrl = URL.createObjectURL(file);
@@ -55,7 +69,9 @@ const CreateArticle = () => {
       setBannerImagePreview(previewUrl);
       toast.success("Image uploaded successfully!");
     } catch (error) {
-      toast.error("Failed to upload image");
+      const errorMsg = "Failed to upload image";
+      setBannerImageError(errorMsg);
+      toast.error(errorMsg);
       console.error("Error uploading image:", error);
     } finally {
       setIsUploadingImage(false);
@@ -72,8 +88,29 @@ const CreateArticle = () => {
 
   const handlePublish = async (e) => {
     e.preventDefault();
-    if (!title || !content || !bannerImage || tags.length === 0) {
-      toast.error("Please fill out all required fields.");
+    
+    // Clear previous errors
+    setBannerImageError("");
+
+    // Validation
+    if (!title) {
+      toast.error("Please enter a title");
+      return;
+    }
+
+    if (!bannerImage) {
+      setBannerImageError("Banner image is required");
+      toast.error("Please upload a banner image");
+      return;
+    }
+
+    if (!content || content === "<p><br></p>" || content === "<p></p>") {
+      toast.error("Please add article content");
+      return;
+    }
+
+    if (tags.length === 0) {
+      toast.error("Please select at least one tag");
       return;
     }
 
@@ -112,6 +149,16 @@ const CreateArticle = () => {
       console.error("Error publishing article:", error);
     } finally {
       setIsPublishing(false);
+    }
+  };
+
+  const removeBannerImage = () => {
+    setBannerImage(null);
+    setBannerImagePreview(null);
+    setBannerImageError("");
+    // Revoke the object URL to avoid memory leaks
+    if (bannerImagePreview) {
+      URL.revokeObjectURL(bannerImagePreview);
     }
   };
 
@@ -169,13 +216,24 @@ const CreateArticle = () => {
                   >
                     Banner Image <span className="text-red-500">*</span>
                   </Label>
+                  
+                  {/* Error Message */}
+                  {bannerImageError && (
+                    <div className="flex items-center space-x-2 text-red-500 text-sm bg-red-50 dark:bg-red-900/20 p-2 rounded-md">
+                      <FaExclamationTriangle />
+                      <span>{bannerImageError}</span>
+                    </div>
+                  )}
+
                   <div className="relative">
                     <label
                       htmlFor="banner"
                       className={`flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors duration-200 ${
                         bannerImage
                           ? "border-custom-green bg-green-50 dark:bg-gray-800"
-                          : "border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500"
+                          : bannerImageError 
+                            ? "border-red-300 bg-red-50 dark:bg-red-900/10 dark:border-red-700"
+                            : "border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500"
                       }`}
                     >
                       {isUploadingImage ? (
@@ -189,17 +247,23 @@ const CreateArticle = () => {
                         <div className="flex flex-col items-center">
                           <FaCheck className="text-green-500 text-2xl mb-2" />
                           <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Image selected
+                            Image selected - Click to change
                           </p>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center">
-                          <FaImage className="text-gray-400 text-2xl mb-2" />
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                          <FaImage className={`text-2xl mb-2 ${
+                            bannerImageError ? "text-red-400" : "text-gray-400"
+                          }`} />
+                          <p className={`text-sm ${
+                            bannerImageError 
+                              ? "text-red-600 dark:text-red-400" 
+                              : "text-gray-600 dark:text-gray-400"
+                          }`}>
                             Click to upload or drag and drop
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                            Recommended size: 1200x630px
+                            Recommended size: 1200x630px • Max 5MB
                           </p>
                         </div>
                       )}
@@ -209,18 +273,36 @@ const CreateArticle = () => {
                         accept="image/*"
                         onChange={handleBannerImageUpload}
                         className="hidden"
-                        required
                       />
                     </label>
                   </div>
+
+                  {/* Image Preview with Remove Option */}
                   {bannerImage && !isUploadingImage && (
-                    <div className="mt-4">
+                    <div className="mt-4 relative inline-block">
                       <img
                         src={bannerImagePreview || URL.createObjectURL(bannerImage)}
                         alt="Banner Preview"
                         className="max-h-64 w-auto rounded-md shadow-md border border-gray-200 dark:border-gray-700"
                       />
+                      <button
+                        type="button"
+                        onClick={removeBannerImage}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 transition-colors duration-200 shadow-lg"
+                        aria-label="Remove image"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
                     </div>
+                  )}
+
+                  {/* Helper text when no image is selected */}
+                  {!bannerImage && !bannerImageError && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      Banner image is required for publishing
+                    </p>
                   )}
                 </div>
 
